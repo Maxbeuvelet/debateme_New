@@ -409,7 +409,7 @@ export default function CreateDebate() {
                     type="button"
                     onClick={() => setCategory(key)}
                     variant={category === key ? "default" : "outline"}
-                    className={category === key ? "bg-cyan-600 text-black hover:bg-cyan-700 font-bold" : "border-slate-400 text-white hover:bg-slate-700 hover:border-cyan-500"}
+                    className={category === key ? "bg-cyan-600 text-black hover:bg-cyan-700 hover:text-black font-bold" : "border-slate-400 text-black hover:bg-slate-700 hover:text-black bg-slate-800"}
                   >
                     {label}
                   </Button>

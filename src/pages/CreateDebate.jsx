@@ -42,7 +42,7 @@ const categoryLabels = {
 const categoryColors = {
   politics: {
     selected: "bg-gradient-to-r from-gray-400 to-gray-600 text-black hover:from-gray-500 hover:to-gray-700 hover:text-black",
-    unselected: "border-gray-400 text-gray-300 hover:bg-gray-700 hover:border-gray-500 hover:text-white"
+    unselected: "border-gray-400 text-black hover:bg-gray-700 hover:border-gray-500 hover:text-black"
   },
   technology: {
     selected: "bg-gradient-to-r from-blue-400 to-blue-600 text-black hover:from-blue-500 hover:to-blue-700 hover:text-black",

@@ -546,7 +546,7 @@ export default function CreateDebate() {
                 variant="outline"
                 onClick={() => setShowCreateDialog(false)}
                 disabled={isSubmitting}
-                className="border-slate-400 text-white hover:bg-slate-700"
+                className="bg-red-600 hover:bg-red-700 text-white border-red-600"
               >
                 Cancel
               </Button>

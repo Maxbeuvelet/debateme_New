@@ -77,32 +77,32 @@ export default function CategoryArena({ debates, categoryCounts, isLoading }) {
           <div className="h-4 sm:h-6 w-64 sm:w-96 bg-gray-200 rounded mx-auto animate-pulse" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          {categories.map((_, index) =>
-          <div key={index} className="bg-white/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 h-[280px] animate-pulse" />
-          )}
+          {categories.map((_, index) => (
+            <div key={index} className="bg-white/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 h-[280px] animate-pulse" />
+          ))}
         </div>
-      </div>);
-
+      </div>
+    );
   }
 
   return (
     <div id="categories-arena" className="scroll-mt-20">
       <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-        <motion.h2
+        <motion.h2 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} className="bg-clip-text text-transparent mb-2 px-3 py-2 text-2xl font-black sm:text-3xl lg:text-4xl xl:text-5xl sm:mb-3 lg:mb-4 sm:px-4 from-white to-slate-400">Pick a Category
-
-
-
+          viewport={{ once: true }}
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent"
+        >
+          Pick a Category
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 px-3 sm:px-4">
-
+          className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 px-3 sm:px-4"
+        >
           Pick a category, take your stance
         </motion.p>
       </div>
@@ -119,29 +119,29 @@ export default function CategoryArena({ debates, categoryCounts, isLoading }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="h-full">
-
+              className="h-full"
+            >
               <Link to={createPageUrl(`CategoryTopics?category=${categoryKey}`)} className="block h-full">
                 <div className={`group relative bg-gradient-to-r ${category.outlineGradient} p-[2px] rounded-xl sm:rounded-2xl ${category.hoverGlow} transition-all duration-300 h-full min-h-[280px]`}>
                   <div className="relative bg-white/90 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 h-full overflow-hidden flex flex-col">
                     {/* Animated icon/emoji */}
                     <motion.div
                       whileHover={category.iconAnimation}
-                      transition={{
+                      transition={{ 
                         duration: 1,
                         ease: "easeInOut"
                       }}
-                      className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl ${category.iconBg} backdrop-blur-sm flex items-center justify-center mb-3 sm:mb-4 lg:mb-6 cursor-pointer flex-shrink-0`}>
-
-                      {category.iconType === "image" ?
-                      <img
-                        src={category.iconUrl}
-                        alt={category.name}
-                        className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 object-contain" /> :
-
-
-                      <span className="text-xl sm:text-2xl lg:text-3xl">{category.emoji}</span>
-                      }
+                      className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl ${category.iconBg} backdrop-blur-sm flex items-center justify-center mb-3 sm:mb-4 lg:mb-6 cursor-pointer flex-shrink-0`}
+                    >
+                      {category.iconType === "image" ? (
+                        <img 
+                          src={category.iconUrl} 
+                          alt={category.name}
+                          className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 object-contain"
+                        />
+                      ) : (
+                        <span className="text-xl sm:text-2xl lg:text-3xl">{category.emoji}</span>
+                      )}
                     </motion.div>
 
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent mb-2 sm:mb-3 group-hover:from-blue-600 group-hover:to-black transition-all duration-300 flex-shrink-0">
@@ -167,10 +167,10 @@ export default function CategoryArena({ debates, categoryCounts, isLoading }) {
                   </div>
                 </div>
               </Link>
-            </motion.div>);
-
+            </motion.div>
+          );
         })}
       </div>
-    </div>);
-
+    </div>
+  );
 }

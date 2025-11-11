@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { motion } from "framer-motion";
@@ -32,7 +31,7 @@ export default function Home() {
   const [debateOfTheWeek, setDebateOfTheWeek] = useState(null);
 
   // Launch date: Saturday, October 25th, 2025 at 7:00 PM
-  const LAUNCH_DATE = new Date('2025-10-25T19:00:00'); // Updated launch date
+  const LAUNCH_DATE = new Date('2025-10-25T19:00:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {
@@ -302,7 +301,7 @@ export default function Home() {
   const uniqueDebaters = new Set(userStances.map(s => s.user_name)).size;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-800 overflow-x-hidden">
       <Dialog open={showAchievementDialog} onOpenChange={setShowAchievementDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -354,9 +353,9 @@ export default function Home() {
       </Dialog>
 
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-gray-300/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-gray-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-gray-200/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-0 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-pink-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="relative z-10">
@@ -371,10 +370,10 @@ export default function Home() {
             className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 pt-4 sm:pt-6"
           >
             <Link to={createPageUrl(`TakeStance?id=${debateOfTheWeek.id}`)}>
-              <div className="group relative bg-gradient-to-r from-gray-300 via-gray-200 to-white p-[2px] rounded-xl sm:rounded-2xl hover:shadow-[0_0_50px_rgba(0,0,0,0.2)] transition-all duration-300 cursor-pointer">
-                <div className="relative bg-white/95 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 overflow-hidden">
+              <div className="group relative bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 p-[2px] rounded-xl sm:rounded-2xl hover:shadow-[0_0_50px_rgba(6,182,212,0.3)] transition-all duration-300 cursor-pointer">
+                <div className="relative bg-slate-800/95 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 overflow-hidden">
                   {/* Animated background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-100/10 via-gray-200/10 to-gray-100/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                     {/* Trophy Icon */}
@@ -398,29 +397,29 @@ export default function Home() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs sm:text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">
+                        <span className="text-xs sm:text-sm font-bold uppercase tracking-wider bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">
                           🏆 Debate of the Week
                         </span>
-                        <div className="flex items-center gap-1 px-2 py-0.5 bg-gray-200/50 rounded-full">
-                          <Sparkles className="w-3 h-3 text-gray-600" />
-                          <span className="text-xs text-gray-700 font-semibold">Featured</span>
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-cyan-500/20 rounded-full">
+                          <Sparkles className="w-3 h-3 text-cyan-400" />
+                          <span className="text-xs text-cyan-300 font-semibold">Featured</span>
                         </div>
                       </div>
                       
-                      <h2 className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent mb-1 group-hover:from-blue-600 group-hover:to-black transition-colors">
+                      <h2 className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent mb-1 group-hover:from-cyan-400 group-hover:to-white transition-colors">
                         {debateOfTheWeek.title}
                       </h2>
                       
-                      <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-1 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-300 mb-2 line-clamp-1 leading-relaxed">
                         {debateOfTheWeek.description}
                       </p>
 
                       <div className="flex flex-wrap items-center gap-2">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                           <span className="font-medium">Live Now</span>
                         </div>
-                        <div className="px-2 py-0.5 bg-gray-100 rounded-full text-xs text-gray-600 font-medium">
+                        <div className="px-2 py-0.5 bg-slate-700 rounded-full text-xs text-slate-300 font-medium">
                           Politics
                         </div>
                       </div>
@@ -428,15 +427,15 @@ export default function Home() {
 
                     {/* CTA Arrow */}
                     <div className="flex-shrink-0 self-center">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200/50 flex items-center justify-center group-hover:bg-gray-300/50 transition-colors">
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:translate-x-1 transition-transform" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-700/50 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </div>
 
                   {/* Decorative elements */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gray-200/5 rounded-full blur-3xl" />
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gray-300/5 rounded-full blur-3xl" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-3xl" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/5 rounded-full blur-3xl" />
                 </div>
               </div>
             </Link>
@@ -449,9 +448,9 @@ export default function Home() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-6 text-center shadow-lg"
+              className="bg-red-900/50 border border-red-700 rounded-xl p-4 sm:p-6 text-center shadow-lg"
             >
-              <p className="text-red-600 text-sm sm:text-base lg:text-lg mb-3 sm:mb-4 font-semibold">{error}</p>
+              <p className="text-red-200 text-sm sm:text-base lg:text-lg mb-3 sm:mb-4 font-semibold">{error}</p>
               <Button 
                 onClick={loadData}
                 disabled={isLoading}
@@ -488,9 +487,9 @@ export default function Home() {
           />
         </div>
 
-        <footer className="relative z-10 mt-12 sm:mt-16 lg:mt-20 border-t border-gray-200 backdrop-blur-sm">
+        <footer className="relative z-10 mt-12 sm:mt-16 lg:mt-20 border-t border-slate-700 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-            <div className="text-center text-gray-500 text-xs sm:text-sm">
+            <div className="text-center text-slate-400 text-xs sm:text-sm">
               <p>2025 DebateMe • Live Video 1 on 1 Debates</p>
             </div>
           </div>

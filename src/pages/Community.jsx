@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
@@ -105,11 +106,11 @@ export default function Community() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
+    <div className="min-h-screen bg-slate-800 relative overflow-hidden">
       {/* Animated background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/3 w-64 h-64 sm:w-96 sm:h-96 bg-gray-300/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/3 w-64 h-64 sm:w-96 sm:h-96 bg-gray-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -124,11 +125,11 @@ export default function Community() {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
                 <Users className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent pb-2 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent pb-2 leading-tight">
                 Community Hub
               </h1>
             </div>
-            <p className="text-xl text-gray-600 ml-15 mb-6 sm:mb-8">
+            <p className="text-xl text-slate-300 ml-15 mb-6 sm:mb-8">
               Connect with others and build communities together
             </p>
 
@@ -158,13 +159,13 @@ export default function Community() {
           </div>
 
           {/* Leaderboard */}
-          <Card className="bg-white/80 backdrop-blur-md border-gray-200 overflow-hidden">
-            <CardHeader className="p-4 sm:p-6 border-b border-gray-200">
-              <CardTitle className="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-bold bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">
-                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+          <Card className="bg-slate-800/80 backdrop-blur-md border-slate-600 overflow-hidden">
+            <CardHeader className="p-4 sm:p-6 border-b border-slate-600">
+              <CardTitle className="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300" />
                 Top Debaters
               </CardTitle>
-              <p className="text-gray-600 text-sm sm:text-base mt-1">
+              <p className="text-slate-300 text-sm sm:text-base mt-1">
                 Ranked by total debate time and activity
               </p>
             </CardHeader>
@@ -173,25 +174,25 @@ export default function Community() {
               {isLoading ? (
                 <div className="p-6 space-y-4">
                   {Array(10).fill(0).map((_, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-gray-100/50 animate-pulse">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                    <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-slate-700/50 animate-pulse">
+                      <div className="w-12 h-12 bg-slate-600 rounded-full" />
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-gray-200 rounded w-1/3" />
-                        <div className="h-3 bg-gray-200 rounded w-1/4" />
+                        <div className="h-4 bg-slate-600 rounded w-1/3" />
+                        <div className="h-3 bg-slate-600 rounded w-1/4" />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : leaderboard.length === 0 ? (
                 <div className="p-8 sm:p-12 text-center">
-                  <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent mb-2">No Debaters Yet</h3>
-                  <p className="text-gray-600 text-sm sm:text-base">
+                  <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-slate-400 mx-auto mb-4" />
+                  <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent mb-2">No Debaters Yet</h3>
+                  <p className="text-slate-300 text-sm sm:text-base">
                     Be the first to join and make it to the leaderboard!
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-slate-600">
                   {leaderboard.map((user, index) => {
                     const position = index + 1;
                     const RankIcon = getRankIcon(user.level || 1);
@@ -204,8 +205,8 @@ export default function Community() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: index * 0.05 }}
-                        className={`p-3 sm:p-4 hover:bg-gray-100/50 transition-colors ${
-                          isCurrentUser ? 'bg-blue-50/50 border-l-4 border-blue-500' : ''
+                        className={`p-3 sm:p-4 hover:bg-slate-700/50 transition-colors ${
+                          isCurrentUser ? 'bg-cyan-900/30 border-l-4 border-cyan-500' : ''
                         }`}
                       >
                         <Link to={createPageUrl("UserStats", { username: user.username })} className="flex items-center gap-3 sm:gap-4">
@@ -215,7 +216,7 @@ export default function Community() {
                             </div>
                           ) : (
                             <div className="flex items-center gap-2 flex-shrink-0">
-                              <span className="text-gray-500 font-bold text-sm w-8 text-center">#{position}</span>
+                              <span className="text-slate-400 font-bold text-sm w-8 text-center">#{position}</span>
                             </div>
                           )}
 
@@ -233,14 +234,14 @@ export default function Community() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-base sm:text-lg font-bold bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent truncate">
+                              <h3 className="text-base sm:text-lg font-bold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent truncate">
                                 @{user.username}
                               </h3>
                               {isCurrentUser && (
-                                <Badge className="bg-blue-500 text-white text-xs">You</Badge>
+                                <Badge className="bg-cyan-500 text-white text-xs">You</Badge>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-gray-600 flex-wrap">
+                            <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-slate-300 flex-wrap">
                               <span>Level {user.level || 1}</span>
                               <span>•</span>
                               <span>{user.debates_completed || 0} debates</span>
@@ -248,13 +249,13 @@ export default function Community() {
                           </div>
 
                           <div className="flex-shrink-0 text-right">
-                            <div className="flex items-center gap-1 sm:gap-2 text-blue-600 mb-1">
+                            <div className="flex items-center gap-1 sm:gap-2 text-cyan-400 mb-1">
                               <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                               <span className="font-bold text-sm sm:text-base">
                                 {formatDebateTime(user.total_debate_time_minutes || 0)}
                               </span>
                             </div>
-                            <div className="text-[10px] sm:text-xs text-gray-500">
+                            <div className="text-[10px] sm:text-xs text-slate-400">
                               debate time
                             </div>
                           </div>
@@ -269,27 +270,27 @@ export default function Community() {
 
           {/* Coming Soon Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12">
-            <Card className="bg-white/80 backdrop-blur-md border-gray-200">
+            <Card className="bg-slate-800/80 backdrop-blur-md border-slate-600">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-3xl sm:text-4xl mb-3">👥</div>
-                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">Discussion Groups</h3>
-                <p className="text-gray-600 text-xs sm:text-sm">Join communities around your interests</p>
+                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">Discussion Groups</h3>
+                <p className="text-slate-300 text-xs sm:text-sm">Join communities around your interests</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-md border-gray-200">
+            <Card className="bg-slate-800/80 backdrop-blur-md border-slate-600">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-3xl sm:text-4xl mb-3">📊</div>
-                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">Global Stats</h3>
-                <p className="text-gray-600 text-xs sm:text-sm">View platform-wide debate statistics</p>
+                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">Global Stats</h3>
+                <p className="text-slate-300 text-xs sm:text-sm">View platform-wide debate statistics</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-md border-gray-200">
+            <Card className="bg-slate-800/80 backdrop-blur-md border-slate-600">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-3xl sm:text-4xl mb-3">🎯</div>
-                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">Achievements</h3>
-                <p className="text-gray-600 text-xs sm:text-sm">Earn badges for your debate skills</p>
+                <h3 className="font-semibold mb-2 text-sm sm:text-base bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">Achievements</h3>
+                <p className="text-slate-300 text-xs sm:text-sm">Earn badges for your debate skills</p>
               </CardContent>
             </Card>
           </div>

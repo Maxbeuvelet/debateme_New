@@ -1,17 +1,20 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Trophy, Star, Zap, Crown } from "lucide-react";
+import { Trophy, Star, Zap, Crown, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function CommunitySpotlight({ userStances, isLoading }) {
   if (isLoading) {
     return (
-      <div>
-        <div className="h-8 sm:h-10 w-48 sm:w-64 bg-gray-200 rounded mx-auto mb-6 sm:mb-8 animate-pulse" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          {Array(3).fill(0).map((_, i) => (
-            <div key={i} className="bg-white/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 h-[160px] sm:h-[180px] lg:h-[200px] animate-pulse" />
+      <div id="community-spotlight">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="h-8 sm:h-10 w-48 sm:w-64 bg-slate-700 rounded mx-auto mb-3 sm:mb-4 animate-pulse" />
+          <div className="h-4 sm:h-6 w-64 sm:w-96 bg-slate-700 rounded mx-auto animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {Array(3).fill(0).map((_, index) => (
+            <div key={index} className="bg-slate-700/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 h-[200px] animate-pulse" />
           ))}
         </div>
       </div>
@@ -30,73 +33,63 @@ export default function CommunitySpotlight({ userStances, isLoading }) {
 
   const highlights = [
     {
-      title: "🏆 Debater of the Week",
+      title: "Most Active",
       name: topDebaters[0]?.[0] || "Be the first!",
-      stat: topDebaters[0]?.[1] || 0,
-      statLabel: "debates joined",
-      gradient: "from-gray-600 via-gray-700 to-gray-800",
-      icon: Crown,
-      glow: "shadow-[0_0_30px_rgba(0,0,0,0.15)]",
-      iconBg: "bg-red-500/20",
-      emoji: "🏛️",
-      description: "Debate government policies, elections, and the balance of power in society",
-      iconAnimation: {
-        rotate: [0, -3, 3, -2, 2, 0],
-        y: [0, -2, 0, -1, 0]
+      stat: topDebaters[0] ? `${topDebaters[0][1]} debates` : "0 debates",
+      gradient: "from-purple-500 to-pink-500",
+      icon: Flame,
+      animation: {
+        rotate: [0, 5, -5, 0],
+        scale: [1, 1.1, 1]
       }
     },
     {
-      title: "⭐ Rising Star",
-      name: topDebaters[1]?.[0] || "",
-      stat: topDebaters[1]?.[1] || 0,
-      statLabel: "debates joined",
-      gradient: "from-gray-500 via-gray-600 to-gray-700",
-      icon: Star,
-      glow: "shadow-[0_0_30px_rgba(0,0,0,0.1)]",
-      iconBg: "bg-cyan-500/20",
-      emoji: "💻",
-      description: "Explore AI ethics, innovation impact, and the digital transformation of society",
-      iconAnimation: {
-        rotate: [0, 360],
-        scale: [1, 1.3, 1]
-      }
-    },
-    {
-      title: "⚡ Most Active",
-      name: topDebaters[2]?.[0] || "Join a debate",
-      stat: topDebaters[2]?.[1] || 0,
-      statLabel: "debates joined",
-      gradient: "from-blue-400 via-blue-500 to-blue-600",
+      title: "Rising Star",
+      name: topDebaters[1]?.[0] || "Start debating!",
+      stat: topDebaters[1] ? `${topDebaters[1][1]} debates` : "0 debates",
+      gradient: "from-cyan-500 to-blue-500",
       icon: Zap,
-      glow: "shadow-[0_0_30px_rgba(59,130,246,0.2)]",
-      iconBg: "bg-yellow-500/20",
-      emoji: "💰",
-      description: "Challenge views on markets, wealth distribution, and economic policies",
-      iconAnimation: {
-        y: [0, -15, 0],
-        rotate: [0, -10, 10, 0],
-        scale: [1, 1.2, 1]
+      animation: {
+        y: [0, -5, 0],
+        rotate: [0, 10, -10, 0]
+      }
+    },
+    {
+      title: "Champion",
+      name: topDebaters[2]?.[0] || "Join debates!",
+      stat: topDebaters[2] ? `${topDebaters[2][1]} debates` : "0 debates",
+      gradient: "from-amber-500 to-orange-500",
+      icon: Trophy,
+      animation: {
+        scale: [1, 1.05, 1],
+        rotate: [0, -5, 5, 0]
       }
     }
   ];
 
   return (
-    <div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-6 sm:mb-8 lg:mb-12"
-      >
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4">
-          🌟 Community <span className="bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">Spotlight</span>
-        </h2>
-        <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-600 px-3 sm:px-4">
-          Celebrating our most active and passionate debaters
-        </p>
-      </motion.div>
+    <div id="community-spotlight" className="scroll-mt-20">
+      <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4"
+        >
+          ⭐ <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Community Spotlight</span>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 px-3 sm:px-4"
+        >
+          Celebrating our most engaged community members
+        </motion.p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {highlights.map((highlight, index) => (
           <motion.div
             key={highlight.title}
@@ -105,37 +98,34 @@ export default function CommunitySpotlight({ userStances, isLoading }) {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             whileHover={{ scale: 1.02 }}
-            className={`group relative bg-gradient-to-br ${highlight.gradient} p-[2px] rounded-xl sm:rounded-2xl ${highlight.glow} transition-all duration-300 cursor-pointer`}
+            className={`relative p-px rounded-xl sm:rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group hover:shadow-xl hover:scale-[1.01] bg-gradient-to-br ${highlight.gradient}`}
           >
-            <div className="relative bg-white/90 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 h-full">
+            <div className="relative bg-slate-900/80 backdrop-blur-md rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 h-full flex flex-col justify-between">
               {/* Animated Icon */}
               <motion.div 
-                className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center mb-2 sm:mb-3 lg:mb-4`}
-                whileHover={highlight.iconAnimation}
+                className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br ${highlight.gradient} flex items-center justify-center mb-3 sm:mb-4 lg:mb-5`}
+                whileHover={highlight.animation}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
               >
-                <highlight.icon className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+                <highlight.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
               </motion.div>
 
               {/* Title */}
-              <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-700 mb-2 sm:mb-3">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-200 mb-2 sm:mb-3">
                 {highlight.title}
               </h3>
 
               {/* Debater name */}
-              <div className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent mb-1 sm:mb-2 truncate">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold bg-gradient-to-r ${highlight.gradient} bg-clip-text text-transparent mb-2 sm:mb-3 truncate">
                 {highlight.name}
               </div>
 
               {/* Stats */}
               <div className="flex items-center gap-2">
-                <Badge className={`bg-gradient-to-r ${highlight.gradient} text-white border-0 font-bold text-xs sm:text-sm`}>
-                  {highlight.stat} {highlight.statLabel}
+                <Badge className={`bg-slate-700 text-white border-0 font-semibold text-sm sm:text-base px-3 py-1 rounded-full`}>
+                  {highlight.stat}
                 </Badge>
               </div>
-
-              {/* Glow effect */}
-              <div className={`absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br ${highlight.gradient} opacity-0 group-hover:opacity-10 blur-2xl transition-all duration-300`} />
             </div>
           </motion.div>
         ))}

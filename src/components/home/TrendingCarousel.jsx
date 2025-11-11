@@ -22,52 +22,64 @@ export default function TrendingCarousel({ debates, userStances, isLoading }) {
 
   if (isLoading) {
     return (
-      <div>
-        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gray-200 rounded-lg animate-pulse" />
-          <div className="h-6 sm:h-8 w-32 sm:w-48 bg-gray-200 rounded animate-pulse" />
+      <div id="trending-carousel">
+        <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+          <div className="h-8 sm:h-10 w-48 sm:w-64 bg-slate-700 rounded mx-auto mb-3 sm:mb-4 animate-pulse" />
+          <div className="h-4 sm:h-6 w-64 sm:w-96 bg-slate-700 rounded mx-auto animate-pulse" />
         </div>
-        <div className="flex gap-3 sm:gap-4 overflow-hidden">
-          {Array(4).fill(0).map((_, i) => (
-            <div key={i} className="min-w-[280px] sm:min-w-[350px] h-[180px] sm:h-[200px] bg-white/50 rounded-xl sm:rounded-2xl animate-pulse" />
+        <div className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-hidden px-3 sm:px-4">
+          {Array(4).fill(0).map((_, index) => (
+            <div key={index} className="min-w-[280px] sm:min-w-[320px] lg:min-w-[360px] bg-slate-700/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 h-[280px] animate-pulse" />
           ))}
         </div>
       </div>
     );
   }
 
-  if (debates.length === 0) return null;
+  if (!debates || debates.length === 0) {
+    return null;
+  }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 sm:mb-6 px-1">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">
-            🔥 Trending
-          </h2>
-        </div>
+    <div id="trending-carousel" className="scroll-mt-20">
+      <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4"
+        >
+          🔥 <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Trending Now</span>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 px-3 sm:px-4"
+        >
+          Join the hottest debates happening right now
+        </motion.p>
+      </div>
 
-        <div className="hidden sm:flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => scroll('left')}
-            className="rounded-xl border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => scroll('right')}
-            className="rounded-xl border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
+      {/* Carousel navigation buttons */}
+      <div className="flex justify-end gap-2 mb-4 sm:mb-6 px-1 hidden sm:flex">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => scroll('left')}
+          className="rounded-xl border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => scroll('right')}
+          className="rounded-xl border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
       </div>
 
       <div 

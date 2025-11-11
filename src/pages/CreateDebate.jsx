@@ -285,7 +285,7 @@ export default function CreateDebate() {
                 onClick={() => setSelectedCategory(key)}
                 variant={selectedCategory === key ? "default" : "outline"}
                 className={selectedCategory === key 
-                  ? "bg-cyan-600 text-black hover:bg-cyan-700 border-cyan-600 font-bold" 
+                  ? "bg-cyan-600 text-black hover:bg-cyan-700 hover:text-black border-cyan-600 font-bold" 
                   : "border-slate-400 text-white hover:bg-slate-700 hover:border-cyan-500"
                 }
               >
@@ -409,7 +409,10 @@ export default function CreateDebate() {
                     type="button"
                     onClick={() => setCategory(key)}
                     variant={category === key ? "default" : "outline"}
-                    className={category === key ? "bg-cyan-600 text-black hover:bg-cyan-700 hover:text-black font-bold" : "border-slate-400 text-black hover:bg-slate-700 hover:text-black bg-slate-800"}
+                    className={category === key 
+                      ? "bg-cyan-600 text-black hover:bg-cyan-700 hover:text-black font-bold" 
+                      : "border-slate-400 text-black hover:bg-slate-700 hover:text-black bg-slate-800 font-medium"
+                    }
                   >
                     {label}
                   </Button>

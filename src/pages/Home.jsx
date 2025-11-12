@@ -83,10 +83,8 @@ export default function Home() {
       
       setDebates(debatesData);
       
-      // Find debate of the week - looking for the airports debate
-      const dotw = debatesData.find(d => 
-        d.title.toLowerCase().includes("airport") && d.title.toLowerCase().includes("private")
-      );
+      // Find debate of the week - looking for debate marked as debate of the week
+      const dotw = debatesData.find(d => d.is_debate_of_week === true);
       setDebateOfTheWeek(dotw);
       
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);

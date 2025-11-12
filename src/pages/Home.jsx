@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { motion } from "framer-motion";
@@ -82,9 +83,9 @@ export default function Home() {
       
       setDebates(debatesData);
       
-      // Find debate of the week - looking for the Sliwa/Mamdani debate
+      // Find debate of the week - looking for the airports debate
       const dotw = debatesData.find(d => 
-        d.title.toLowerCase().includes("sliwa") && d.title.toLowerCase().includes("mamdani")
+        d.title.toLowerCase().includes("airport") && d.title.toLowerCase().includes("private")
       );
       setDebateOfTheWeek(dotw);
       

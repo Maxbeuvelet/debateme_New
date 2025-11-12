@@ -157,7 +157,7 @@ export default function Community() {
               </a>
 
               <a
-                href="https://discord.gg/ppWNbVyt"
+                href="https://discord.gg/aXQevrYxBm"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group"

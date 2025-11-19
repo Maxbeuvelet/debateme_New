@@ -14,8 +14,8 @@ export default function Trending() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Launch date: Saturday, October 25th, 2025 at 7:00 PM
-  const LAUNCH_DATE = new Date('2025-10-25T19:00:00');
+  // Launch date: Thursday, November 28th, 2025
+  const LAUNCH_DATE = new Date('2025-11-28T00:00:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {

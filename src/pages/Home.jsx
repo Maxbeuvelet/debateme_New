@@ -226,21 +226,60 @@ export default function Home() {
               <LaunchCountdown launchDate={LAUNCH_DATE} />
             </motion.div>
 
-            {/* Launch Date Card */}
+            {/* Preview of Home Page */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="inline-block bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 mb-8 shadow-[0_0_50px_rgba(168,85,247,0.3)]"
+              className="mb-8 max-w-5xl mx-auto"
             >
-              <div className="flex items-center justify-center gap-6 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-white" />
+              <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] relative overflow-hidden">
+                {/* Overlay to indicate disabled */}
+                <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                  <div className="text-center">
+                    <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 animate-pulse" />
+                    <p className="text-xl font-bold text-white">Available November 28th</p>
                   </div>
-                  <div className="text-left">
-                    <div className="text-sm text-slate-400">Launch Date</div>
-                    <div className="text-xl font-bold text-white">Thursday, November 28th</div>
+                </div>
+
+                {/* Preview Content (disabled look) */}
+                <div className="space-y-6 opacity-50">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Trending Debates</h3>
+                  </div>
+
+                  {/* Mock debate cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-slate-800/80 border border-slate-600 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-bold text-cyan-400">Politics</span>
+                        <span className="text-xs text-slate-400">• 24 waiting</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">Should AI replace human jobs?</h4>
+                      <p className="text-sm text-slate-400">Discussing the future of automation and employment...</p>
+                    </div>
+                    
+                    <div className="bg-slate-800/80 border border-slate-600 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-bold text-blue-400">Technology</span>
+                        <span className="text-xs text-slate-400">• 18 waiting</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">Is social media harmful?</h4>
+                      <p className="text-sm text-slate-400">Exploring the impact of social platforms on society...</p>
+                    </div>
+                  </div>
+
+                  {/* Mock categories */}
+                  <div className="pt-4">
+                    <h3 className="text-xl font-bold text-white mb-4">Browse Categories</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['Politics', 'Technology', 'Environment', 'Economics'].map((cat) => (
+                        <div key={cat} className="bg-slate-800/80 border border-slate-600 rounded-lg p-3 text-center">
+                          <div className="text-2xl mb-1">🎯</div>
+                          <div className="text-sm font-bold text-white">{cat}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

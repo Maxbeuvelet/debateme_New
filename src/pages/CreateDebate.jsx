@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance, User } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -184,10 +183,34 @@ export default function CreateDebate() {
         status: "waiting"
       });
 
-      // Update user's debates_created count
-      await User.updateMyUserData({
-        debates_created: (currentUser.debates_created || 0) + 1
-      });
+      // Update user's debates_created count and award XP (50 XP for first debate created)
+      const debatesCreated = (currentUser.debates_created || 0) + 1;
+      const isFirstDebate = debatesCreated === 1;
+      
+      // Award XP if this is their first debate
+      if (isFirstDebate) {
+        const currentXp = currentUser.xp || 0;
+        const currentLevel = currentUser.level || 1;
+        let newXp = currentXp + 50; // Award 50 XP for creating first debate
+        let newLevel = currentLevel;
+        
+        // Check for level up
+        const xpForNextLevel = currentLevel * 100;
+        if (newXp >= xpForNextLevel) {
+          newLevel = currentLevel + 1;
+          newXp = newXp - xpForNextLevel;
+        }
+        
+        await User.updateMyUserData({
+          debates_created: debatesCreated,
+          xp: newXp,
+          level: newLevel
+        });
+      } else {
+        await User.updateMyUserData({
+          debates_created: debatesCreated
+        });
+      }
 
       // Reset form and close dialog
       setTitle("");

@@ -11,7 +11,7 @@ import UserStats from './pages/UserStats';
 import Ranked from './pages/Ranked';
 import Achievements from './pages/Achievements';
 import CreateDebate from './pages/CreateDebate';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -33,5 +33,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };

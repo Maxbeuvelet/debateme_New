@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance } from "@/entities/all";
 import { motion } from "framer-motion";
-import { TrendingUp, Users, Clock, ArrowRight, Sparkles, Calendar } from "lucide-react";
+import { TrendingUp, Users, Clock, ArrowRight, Sparkles, Calendar, Flame } from "lucide-react";
+import LaunchCountdown from "../components/home/LaunchCountdown";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
@@ -99,55 +100,113 @@ export default function Trending() {
               className="mb-8"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                Debates Launch This Saturday!
+                Launch Day: November 28th
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
-                Get ready to challenge perspectives and build understanding through<br className="hidden sm:block" />
-                <span className="text-purple-400 font-semibold"> real-time voice debates</span> that matter.
+                Get ready to discover the hottest debates and<br className="hidden sm:block" />
+                <span className="text-purple-400 font-semibold"> join the conversations that matter</span>
               </p>
             </motion.div>
 
-            {/* Launch Date Card */}
+            {/* Countdown Timer */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 }}
-              className="inline-block bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 mb-8 shadow-[0_0_50px_rgba(168,85,247,0.3)]"
+              transition={{ delay: 0.6 }}
+              className="mb-8"
             >
-              <div className="flex items-center justify-center gap-6 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm text-slate-400">Launch Date</div>
-                    <div className="text-xl font-bold text-white">Saturday, Oct 25th</div>
+              <LaunchCountdown launchDate={LAUNCH_DATE} />
+            </motion.div>
+
+            {/* Preview of Trending Debates */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="mb-8 max-w-3xl mx-auto"
+            >
+              <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] relative overflow-hidden">
+                {/* Overlay to indicate disabled */}
+                <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                  <div className="text-center">
+                    <Flame className="w-16 h-16 text-orange-400 mx-auto mb-4 animate-pulse" />
+                    <p className="text-xl font-bold text-white">Available November 28th</p>
                   </div>
                 </div>
-                
-                <div className="h-12 w-px bg-slate-700 hidden sm:block" />
-                
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-white" />
+
+                {/* Preview Cards (disabled look) */}
+                <div className="space-y-4 opacity-50">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                      <TrendingUp className="w-8 h-8 text-orange-400" />
+                      Trending Debates
+                    </h3>
                   </div>
-                  <div className="text-left">
-                    <div className="text-sm text-slate-400">Launch Time</div>
-                    <div className="text-xl font-bold text-white">7:00 PM</div>
-                  </div>
+
+                  {/* Mock debate cards */}
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-slate-800/80 border border-slate-600 rounded-xl p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center font-bold text-white">
+                          #{i}
+                        </div>
+                        <div className="flex-1">
+                          <div className="h-5 bg-slate-700 rounded w-2/3 mb-2"></div>
+                          <div className="h-4 bg-slate-700 rounded w-full mb-2"></div>
+                          <div className="flex gap-3 text-xs text-slate-400">
+                            <div className="flex items-center gap-1">
+                              <Users className="w-3 h-3" />
+                              <span>12 participants</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>Active</span>
+                            </div>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-slate-600" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            </motion.div>
+
+            {/* Discord Button */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.0 }}
+              className="mb-6"
+            >
+              <a
+                href="https://discord.gg/aXQevrYxBm"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-block"
+              >
+                <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+                  </svg>
+                  Join Our Discord Community
+                </button>
+              </a>
             </motion.div>
 
             {/* Footer text */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
+              transition={{ delay: 1.1 }}
               className="text-slate-500 text-sm"
             >
               <p>
-                Check back Saturday evening to start your first debate!
+                Join our community and be ready to explore trending debates on launch day!
               </p>
             </motion.div>
 

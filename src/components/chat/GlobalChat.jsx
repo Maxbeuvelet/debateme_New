@@ -5,6 +5,17 @@ import { Input } from "@/components/ui/input";
 import { MessageCircle, X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const inappropriateWords = [
+  'ass', 'damn', 'hell', 'crap', 'dick', 'pussy', 'cock',
+  'nigga', 'nigger', 'fag', 'faggot', 'whore', 'slut', 'bastard', 'piss', 'cunt'
+];
+
+const containsInappropriateContent = (text) => {
+  if (!text) return false;
+  const lowerText = text.toLowerCase();
+  return inappropriateWords.some(word => lowerText.includes(word));
+};
+
 export default function GlobalChat({ currentUser }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -41,6 +52,11 @@ export default function GlobalChat({ currentUser }) {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !currentUser) return;
+
+    if (containsInappropriateContent(newMessage)) {
+      alert("Please use appropriate language in the chat.");
+      return;
+    }
 
     setIsSending(true);
     try {

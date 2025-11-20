@@ -12,8 +12,21 @@ const inappropriateWords = [
 
 const containsInappropriateContent = (text) => {
   if (!text) return false;
-  const lowerText = text.toLowerCase();
-  return inappropriateWords.some(word => lowerText.includes(word));
+  
+  // Normalize text to handle leetspeak and symbol substitutions
+  const normalized = text.toLowerCase()
+    .replace(/0/g, 'o')
+    .replace(/1/g, 'i')
+    .replace(/3/g, 'e')
+    .replace(/4/g, 'a')
+    .replace(/5/g, 's')
+    .replace(/7/g, 't')
+    .replace(/8/g, 'b')
+    .replace(/@/g, 'a')
+    .replace(/\$/g, 's')
+    .replace(/\+/g, 't');
+  
+  return inappropriateWords.some(word => normalized.includes(word));
 };
 
 export default function GlobalChat({ currentUser }) {

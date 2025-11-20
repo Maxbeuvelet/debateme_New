@@ -11,6 +11,7 @@ export default function GlobalChat({ currentUser }) {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,6 +51,7 @@ export default function GlobalChat({ currentUser }) {
       });
       setNewMessage("");
       await loadMessages();
+      inputRef.current?.focus();
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -135,6 +137,7 @@ export default function GlobalChat({ currentUser }) {
               {currentUser ? (
                 <div className="flex gap-2">
                   <Input
+                    ref={inputRef}
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type a message..."

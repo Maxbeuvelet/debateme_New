@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -6,6 +5,7 @@ import { Home, TrendingUp, LayoutGrid, Users, Gavel, Trophy, Hexagon, Shield, Za
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import GlobalChat from "@/components/chat/GlobalChat";
 import {
   Dialog,
   DialogContent,
@@ -560,6 +560,9 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </main>
       </div>
+
+      {/* Global Chat */}
+      <GlobalChat currentUser={user} />
 
       {/* Bug Report Dialog */}
       <Dialog open={showBugDialog} onOpenChange={setShowBugDialog}>

@@ -21,6 +21,7 @@ export default function GlobalChat({ currentUser }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [hasInappropriateContent, setHasInappropriateContent] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -51,12 +52,7 @@ export default function GlobalChat({ currentUser }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !currentUser) return;
-
-    if (containsInappropriateContent(newMessage)) {
-      alert("Please use appropriate language in the chat.");
-      return;
-    }
+    if (!newMessage.trim() || !currentUser || hasInappropriateContent) return;
 
     setIsSending(true);
     try {
@@ -155,15 +151,23 @@ export default function GlobalChat({ currentUser }) {
                   <Input
                     ref={inputRef}
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewMessage(value);
+                      setHasInappropriateContent(containsInappropriateContent(value));
+                    }}
                     placeholder="Type a message..."
-                    className="flex-1 bg-slate-800 border-slate-600 text-white placeholder:text-slate-400"
+                    className={`flex-1 bg-slate-800 text-white placeholder:text-slate-400 ${
+                      hasInappropriateContent 
+                        ? "border-2 border-red-500 focus:border-red-500 focus:ring-red-500" 
+                        : "border-slate-600"
+                    }`}
                     disabled={isSending}
                     maxLength={500}
                   />
                   <Button
                     type="submit"
-                    disabled={!newMessage.trim() || isSending}
+                    disabled={!newMessage.trim() || isSending || hasInappropriateContent}
                     className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                     size="icon"
                   >

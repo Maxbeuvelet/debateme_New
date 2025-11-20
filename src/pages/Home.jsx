@@ -211,8 +211,7 @@ export default function Home() {
                 Launching November 28th!
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
-                Get ready to challenge perspectives and build understanding through<br className="hidden sm:block" />
-                <span className="text-purple-400 font-semibold"> live video debates</span> that matter.
+                Get ready to join the only live video debate site. Create, join and discuss all the best debates.
               </p>
             </motion.div>
 

@@ -82,11 +82,7 @@ Deno.serve(async (req) => {
       
       <p>Mark your calendar for <strong>November 28th</strong> and be ready to join the debate!</p>
       
-      <p style="text-align: center; margin-top: 30px;">
-        <a href="https://debateme.app" style="display: inline-block;">
-          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68da9d2bed6a011bee1c2750/2561910e0_image.png" alt="DebateMe" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-        </a>
-      </p>
+
       
       <p style="text-align: center; margin-top: 20px;">
         <a href="https://discord.gg/aXQevrYxBm" style="display: inline-block; padding: 16px 32px; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; font-weight: 600; border-radius: 12px; text-decoration: none; font-size: 16px;">

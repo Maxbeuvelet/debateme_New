@@ -76,14 +76,16 @@ Deno.serve(async (req) => {
         </div>
         <div class="feature">
           <span class="feature-icon">⚡</span>
-          <span class="feature-text"><strong>Instant Matching</strong> - Find opponents who disagree with you</span>
+          <span class="feature-text"><strong>Create Your Own Debate</strong> - Start discussions on topics you care about</span>
         </div>
       </div>
       
       <p>Mark your calendar for <strong>November 28th</strong> and be ready to join the debate!</p>
       
       <p style="text-align: center; margin-top: 30px;">
-        <a href="https://debateme.app" class="cta-button">Visit DebateMe</a>
+        <a href="https://debateme.app" style="display: inline-block;">
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68da9d2bed6a011bee1c2750/2561910e0_image.png" alt="DebateMe" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+        </a>
       </p>
       
       <p style="text-align: center; margin-top: 20px;">

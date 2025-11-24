@@ -561,8 +561,8 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
 
-      {/* Global Chat */}
-      <GlobalChat currentUser={user} />
+      {/* Global Chat - Hidden for now */}
+              {/* <GlobalChat currentUser={user} /> */}
 
       {/* Bug Report Dialog */}
       <Dialog open={showBugDialog} onOpenChange={setShowBugDialog}>

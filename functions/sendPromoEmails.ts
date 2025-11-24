@@ -35,7 +35,8 @@ Deno.serve(async (req) => {
     .feature { display: flex; align-items: center; margin-bottom: 15px; }
     .feature-icon { font-size: 24px; margin-right: 15px; }
     .feature-text { color: #475569; }
-    .cta-button { display: inline-block; background: linear-gradient(135deg, #475569 0%, #334155 100%); color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+    .cta-button { display: inline-block; background-color: #1e40af; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+    .discord-button { display: inline-block; background-color: #5865F2; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; margin-left: 10px; }
     .footer { background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 14px; }
   </style>
 </head>
@@ -83,9 +84,10 @@ Deno.serve(async (req) => {
       
       <p style="text-align: center; margin-top: 30px;">
         <a href="https://debateme.app" class="cta-button">Visit DebateMe</a>
+        <a href="https://discord.gg/aXQevrYxBm" class="discord-button">Join Our Discord</a>
       </p>
       
-      <p style="margin-top: 30px;">See you in the arena!</p>
+      <p style="margin-top: 30px;">See you there!</p>
       <p><strong>The DebateMe Team</strong></p>
     </div>
     

@@ -109,37 +109,23 @@ Deno.serve(async (req) => {
     let errorCount = 0;
     const errors = [];
 
-    // TEST MODE: Send email only to the current admin user
-    try {
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: currentUser.email,
-        subject: emailSubject,
-        body: emailBody,
-        from_name: "DebateMe"
-      });
-      sentCount++;
-    } catch (emailError) {
-      errorCount++;
-      errors.push({ email: currentUser.email, error: emailError.message });
+    // Send email to all users
+    for (const user of users) {
+      if (user.email) {
+        try {
+          await base44.asServiceRole.integrations.Core.SendEmail({
+            to: user.email,
+            subject: emailSubject,
+            body: emailBody,
+            from_name: "DebateMe"
+          });
+          sentCount++;
+        } catch (emailError) {
+          errorCount++;
+          errors.push({ email: user.email, error: emailError.message });
+        }
+      }
     }
-
-    // PRODUCTION MODE: Uncomment below and remove test mode above to send to all users
-    // for (const user of users) {
-    //   if (user.email) {
-    //     try {
-    //       await base44.asServiceRole.integrations.Core.SendEmail({
-    //         to: user.email,
-    //         subject: emailSubject,
-    //         body: emailBody,
-    //         from_name: "DebateMe"
-    //       });
-    //       sentCount++;
-    //     } catch (emailError) {
-    //       errorCount++;
-    //       errors.push({ email: user.email, error: emailError.message });
-    //     }
-    //   }
-    // }
 
     return Response.json({
       success: true,

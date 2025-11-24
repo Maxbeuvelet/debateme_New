@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
     .feature-icon { font-size: 24px; margin-right: 15px; }
     .feature-text { color: #475569; }
     .cta-button { display: inline-block; background-color: #000000; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
-    .discord-button { display: inline-block; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; }
+    .discord-button { display: inline-block; background: #5865F2; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; }
     .footer { background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 14px; }
   </style>
 </head>

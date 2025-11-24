@@ -35,8 +35,8 @@ Deno.serve(async (req) => {
     .feature { display: flex; align-items: center; margin-bottom: 15px; }
     .feature-icon { font-size: 24px; margin-right: 15px; }
     .feature-text { color: #475569; }
-    .cta-button { display: inline-block; background-color: #1e40af; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
-    .discord-button { display: inline-block; background-color: #5865F2; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 16px; }
+    .cta-button { display: inline-block; background-color: #000000; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+    .discord-button { display: inline-block; background-color: #000000; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 16px; }
     .footer { background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 14px; }
   </style>
 </head>

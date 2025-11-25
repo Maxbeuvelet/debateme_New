@@ -104,8 +104,8 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // Filter users with valid emails
-    const usersWithEmail = users.filter(user => user.email);
+    // TEST MODE: Only send to admin for testing
+    const usersWithEmail = users.filter(user => user.email === currentUser.email);
     
     let sentCount = 0;
     let errorCount = 0;

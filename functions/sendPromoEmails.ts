@@ -109,18 +109,42 @@ Deno.serve(async (req) => {
     let errorCount = 0;
     const errors = [];
 
-    // TEST MODE: Send only to the current admin user
-    try {
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: currentUser.email,
-        subject: emailSubject,
-        body: emailBody,
-        from_name: "DebateMe"
-      });
-      sentCount++;
-    } catch (emailError) {
-      errorCount++;
-      errors.push({ email: currentUser.email, error: emailError.message });
+    // Batching config: send emails in batches with delays to avoid rate limits
+    const BATCH_SIZE = 10;
+    const DELAY_BETWEEN_BATCHES_MS = 2000; // 2 seconds between batches
+    const DELAY_BETWEEN_EMAILS_MS = 200; // 200ms between individual emails
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Filter users with valid emails
+    const usersWithEmail = users.filter(user => user.email);
+
+    // Process in batches
+    for (let i = 0; i < usersWithEmail.length; i += BATCH_SIZE) {
+      const batch = usersWithEmail.slice(i, i + BATCH_SIZE);
+      
+      for (const user of batch) {
+        try {
+          await base44.asServiceRole.integrations.Core.SendEmail({
+            to: user.email,
+            subject: emailSubject,
+            body: emailBody,
+            from_name: "DebateMe"
+          });
+          sentCount++;
+        } catch (emailError) {
+          errorCount++;
+          errors.push({ email: user.email, error: emailError.message });
+        }
+        
+        // Small delay between individual emails
+        await sleep(DELAY_BETWEEN_EMAILS_MS);
+      }
+      
+      // Longer delay between batches (skip delay after last batch)
+      if (i + BATCH_SIZE < usersWithEmail.length) {
+        await sleep(DELAY_BETWEEN_BATCHES_MS);
+      }
     }
 
     return Response.json({

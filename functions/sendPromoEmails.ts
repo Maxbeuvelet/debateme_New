@@ -112,28 +112,42 @@ Deno.serve(async (req) => {
     let errorCount = 0;
     const errors = [];
 
-    // Send emails using SendGrid (can handle bulk sending efficiently)
-    for (const user of usersWithEmail) {
-      try {
-        await sgMail.send({
-          to: user.email,
-          from: {
-            email: 'noreply@debateme.me',
-            name: 'DebateMe'
-          },
-          subject: emailSubject,
-          html: emailBody
-        });
-        
-        // Mark user as having received the promo email
-        await base44.asServiceRole.entities.User.update(user.id, {
-          promo_email_sent: true
-        });
-        
-        sentCount++;
-      } catch (emailError) {
-        errorCount++;
-        errors.push({ email: user.email, error: emailError.message });
+    // Send emails in smaller batches to avoid timeout
+    const batchSize = 10;
+    
+    for (let i = 0; i < usersWithEmail.length; i += batchSize) {
+      const batch = usersWithEmail.slice(i, i + batchSize);
+      
+      // Send batch in parallel
+      const results = await Promise.allSettled(
+        batch.map(async (user) => {
+          await sgMail.send({
+            to: user.email,
+            from: {
+              email: 'noreply@debateme.me',
+              name: 'DebateMe'
+            },
+            subject: emailSubject,
+            html: emailBody
+          });
+          
+          // Mark user as having received the promo email
+          await base44.asServiceRole.entities.User.update(user.id, {
+            promo_email_sent: true
+          });
+          
+          return user.email;
+        })
+      );
+      
+      // Count successes and failures
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          sentCount++;
+        } else {
+          errorCount++;
+          errors.push({ error: result.reason?.message });
+        }
       }
     }
 

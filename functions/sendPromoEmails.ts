@@ -52,12 +52,12 @@ Deno.serve(async (req) => {
       
       <p>Hey there!</p>
       
-      <p>We're thrilled to let you know that <strong>DebateMe is launching in just 3 days</strong> on November 28th!</p>
+      <p>We're thrilled to let you know that <strong>DebateMe is launching in just 2 days</strong> on November 28th!</p>
       
       <div class="countdown">
-        <div class="days">3</div>
-        <div class="label">Days Until Launch</div>
-      </div>
+              <div class="days">2</div>
+              <div class="label">Days Until Launch</div>
+            </div>
       
       <p>As one of our early members, you'll be among the first to experience:</p>
       
@@ -109,9 +109,21 @@ Deno.serve(async (req) => {
     let errorCount = 0;
     const errors = [];
 
-    // Send email to all users
-    for (const user of users) {
-      if (user.email) {
+    // Batching config: send emails in batches with delays to avoid rate limits
+    const BATCH_SIZE = 10;
+    const DELAY_BETWEEN_BATCHES_MS = 2000; // 2 seconds between batches
+    const DELAY_BETWEEN_EMAILS_MS = 200; // 200ms between individual emails
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Filter users with valid emails
+    const usersWithEmail = users.filter(user => user.email);
+
+    // Process in batches
+    for (let i = 0; i < usersWithEmail.length; i += BATCH_SIZE) {
+      const batch = usersWithEmail.slice(i, i + BATCH_SIZE);
+      
+      for (const user of batch) {
         try {
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: user.email,
@@ -124,6 +136,14 @@ Deno.serve(async (req) => {
           errorCount++;
           errors.push({ email: user.email, error: emailError.message });
         }
+        
+        // Small delay between individual emails
+        await sleep(DELAY_BETWEEN_EMAILS_MS);
+      }
+      
+      // Longer delay between batches (skip delay after last batch)
+      if (i + BATCH_SIZE < usersWithEmail.length) {
+        await sleep(DELAY_BETWEEN_BATCHES_MS);
       }
     }
 

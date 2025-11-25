@@ -104,8 +104,8 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // TEST MODE: Only send to admin for testing
-    const usersWithEmail = users.filter(user => user.email === currentUser.email);
+    // Filter users with valid emails who haven't received the promo email yet
+    const usersWithEmail = users.filter(user => user.email && !user.promo_email_sent);
     
     let sentCount = 0;
     let errorCount = 0;
@@ -123,6 +123,12 @@ Deno.serve(async (req) => {
           subject: emailSubject,
           html: emailBody
         });
+        
+        // Mark user as having received the promo email
+        await base44.asServiceRole.entities.User.update(user.id, {
+          promo_email_sent: true
+        });
+        
         sentCount++;
       } catch (emailError) {
         errorCount++;

@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
     // Get all users
     const users = await base44.asServiceRole.entities.User.list();
     
-    const emailSubject = "🎉 DebateMe Launches in 3 Days!";
+    const emailSubject = "🎉 DebateMe Launches in 2 Days!";
     
     const emailBody = `
 <!DOCTYPE html>

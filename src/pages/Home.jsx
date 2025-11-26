@@ -32,7 +32,7 @@ export default function Home() {
 
   // Launch date: Thursday, November 28th, 2025
   const LAUNCH_DATE = new Date('2025-11-28T00:00:00');
-  const isLaunched = new Date() >= LAUNCH_DATE;
+  const isLaunched = true; // Temporarily enabled for testing
 
   useEffect(() => {
     if (isLaunched) {

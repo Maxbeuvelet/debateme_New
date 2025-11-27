@@ -30,8 +30,8 @@ export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
   const [debateOfTheWeek, setDebateOfTheWeek] = useState(null);
 
-  // Launch date: Thursday, November 28th, 2025
-  const LAUNCH_DATE = new Date('2025-11-28T00:00:00');
+  // Launch date: Thursday, November 28th, 2025 at 7pm EST
+  const LAUNCH_DATE = new Date('2025-11-28T19:00:00-05:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {

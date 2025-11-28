@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     // Get all users
     const users = await base44.asServiceRole.entities.User.list();
     
-    const emailSubject = "🎉 DebateMe Launches in 2 Days!";
+    const emailSubject = "🚀 DebateMe is LIVE - Launch Day is Here!";
     
     const emailBody = `
 <!DOCTYPE html>
@@ -31,9 +31,9 @@ Deno.serve(async (req) => {
     .content { padding: 40px 30px; }
     .content h2 { color: #0f172a; font-size: 24px; margin-bottom: 20px; }
     .content p { color: #475569; font-size: 16px; line-height: 1.6; }
-    .countdown { background: linear-gradient(135deg, #06b6d4 0%, #1e40af 100%); color: white; text-align: center; padding: 30px; border-radius: 12px; margin: 30px 0; }
-    .countdown .days { font-size: 48px; font-weight: bold; }
-    .countdown .label { font-size: 18px; opacity: 0.9; }
+    .launch-banner { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-align: center; padding: 30px; border-radius: 12px; margin: 30px 0; }
+    .launch-banner .title { font-size: 36px; font-weight: bold; margin-bottom: 10px; }
+    .launch-banner .subtitle { font-size: 18px; opacity: 0.9; }
     .features { margin: 30px 0; }
     .feature { display: flex; align-items: center; margin-bottom: 15px; }
     .feature-icon { font-size: 24px; margin-right: 15px; }
@@ -51,18 +51,18 @@ Deno.serve(async (req) => {
     </div>
     
     <div class="content">
-      <h2>Get Ready - We're Almost Live!</h2>
+      <h2>🎉 The Wait is Over!</h2>
       
       <p>Hey there!</p>
       
-      <p>We're thrilled to let you know that <strong>DebateMe is launching in just 2 days</strong> on November 28th!</p>
+      <p>The moment we've all been waiting for is finally here - <strong>DebateMe is NOW LIVE!</strong></p>
       
-      <div class="countdown">
-              <div class="days">2</div>
-              <div class="label">Days Until Launch</div>
-            </div>
+      <div class="launch-banner">
+        <div class="title">🚀 WE'RE LIVE!</div>
+        <div class="subtitle">Join the debate today at 7pm EST</div>
+      </div>
       
-      <p>As one of our early members, you'll be among the first to experience:</p>
+      <p>As one of our early members, you're among the first to experience:</p>
       
       <div class="features">
         <div class="feature">
@@ -83,16 +83,19 @@ Deno.serve(async (req) => {
         </div>
       </div>
       
-      <p>Mark your calendar for <strong>November 28th</strong> and be ready to join the debate!</p>
+      <p style="text-align: center; margin-top: 30px;">
+        <a href="https://debateme.me" style="display: inline-block; padding: 18px 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; border-radius: 12px; text-decoration: none; font-size: 18px;">
+          🎯 Start Debating Now
+        </a>
+      </p>
 
-      
       <p style="text-align: center; margin-top: 20px;">
-        <a href="https://discord.gg/aXQevrYxBm" style="display: inline-block; padding: 16px 32px; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; font-weight: 600; border-radius: 12px; text-decoration: none; font-size: 16px;">
+        <a href="https://discord.gg/aXQevrYxBm" style="display: inline-block; padding: 14px 28px; background: linear-gradient(to right, #6366f1, #8b5cf6); color: #ffffff; font-weight: 600; border-radius: 12px; text-decoration: none; font-size: 14px;">
           Join Our Discord Community
         </a>
       </p>
       
-      <p style="margin-top: 30px;">See you there!</p>
+      <p style="margin-top: 30px;">Let's debate!</p>
       <p><strong>The DebateMe Team</strong></p>
     </div>
     

@@ -107,8 +107,9 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // TEST MODE: Only send to admin for preview
-    const usersWithEmail = users.filter(user => user.email === currentUser.email).slice(0, 1);
+    // Filter users with valid emails who haven't received the promo email yet
+    // Limit to 100 due to SendGrid free tier limit
+    const usersWithEmail = users.filter(user => user.email && !user.promo_email_sent).slice(0, 100);
     
     let sentCount = 0;
     let errorCount = 0;

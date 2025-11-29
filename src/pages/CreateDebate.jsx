@@ -571,44 +571,34 @@ export default function CreateDebate() {
                   >
                     <Card className="group bg-slate-800/80 backdrop-blur-md border-slate-600 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20">
                       <CardContent className="p-4">
-                        <div className="flex items-center gap-4">
-                          {/* Debate Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg font-bold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent truncate">
-                                {debate.title}
-                              </h3>
-                              <Badge variant="outline" className="border-slate-500 text-slate-300 flex-shrink-0">
-                                {categoryLabels[debate.category]}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-slate-300 line-clamp-1 mb-2">
-                              {debate.description}
-                            </p>
-                            <div className="flex items-center gap-4 text-sm text-slate-400">
-                              {creator && (
-                                <span className="font-medium">
-                                  Created by @{creator.user_name}
-                                </span>
-                              )}
-                              <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4" />
-                                <span>{waiting} waiting</span>
+                        <div className="flex flex-col gap-4">
+                          {/* Header Row: Title + Category + Join Button */}
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2 mb-2">
+                                <h3 className="text-lg font-bold bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">
+                                  {debate.title}
+                                </h3>
+                                <Badge variant="outline" className="border-slate-500 text-slate-300 flex-shrink-0">
+                                  {categoryLabels[debate.category]}
+                                </Badge>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
-                                <span>Active</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Stance Preview and Join Button */}
-                          <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0 text-right">
-                              <div className="bg-emerald-900/40 border border-emerald-700/50 rounded-lg px-4 py-2 min-w-[200px]">
-                                <div className="text-xs text-emerald-400 mb-1">Creator's Stance</div>
-                                <div className="text-sm font-medium text-emerald-200 line-clamp-2">
-                                  {debate.position_a}
+                              <p className="text-sm text-slate-300 mb-2">
+                                {debate.description}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+                                {creator && (
+                                  <span className="font-medium">
+                                    Created by @{creator.user_name}
+                                  </span>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <Users className="w-4 h-4" />
+                                  <span>{waiting} waiting</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Clock className="w-4 h-4" />
+                                  <span>Active</span>
                                 </div>
                               </div>
                             </div>
@@ -618,10 +608,18 @@ export default function CreateDebate() {
                                 e.preventDefault();
                                 handleJoinDebate(debate);
                               }}
-                              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg"
+                              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg flex-shrink-0"
                             >
                               Join Debate
                             </Button>
+                          </div>
+
+                          {/* Creator's Stance */}
+                          <div className="bg-emerald-900/40 border border-emerald-700/50 rounded-lg px-4 py-3">
+                            <div className="text-xs text-emerald-400 mb-1">Creator's Stance</div>
+                            <div className="text-sm font-medium text-emerald-200">
+                              {debate.position_a}
+                            </div>
                           </div>
                         </div>
                       </CardContent>

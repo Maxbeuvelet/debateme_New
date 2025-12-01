@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -31,6 +30,10 @@ export default function CategoryTopics() {
   const [debates, setDebates] = useState([]);
   const [userStances, setUserStances] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (category) {

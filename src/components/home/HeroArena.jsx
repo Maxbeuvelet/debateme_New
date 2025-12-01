@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { motion } from "framer-motion";
+/* eslint-disable no-unused-vars */
 import * as THREE from "three";
 
 

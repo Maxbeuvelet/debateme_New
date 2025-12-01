@@ -58,7 +58,7 @@ export default function HeroArena() {
   };
 
   return (
-    <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#23153c' }}>
+    <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#fafafa' }}>
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-start justify-center px-4 sm:px-8 lg:px-12" style={{ minHeight: '750px' }}>

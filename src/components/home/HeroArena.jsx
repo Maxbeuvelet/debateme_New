@@ -169,6 +169,47 @@ function RainbowRevealText({ text = "DebateMe" }) {
 }
 
 export default function HeroArena() {
+  const vantaRef = useRef(null);
+  const vantaEffect = useRef(null);
+
+  useEffect(() => {
+    const loadVanta = async () => {
+      // Load Vanta Globe script
+      const vantaScript = document.createElement('script');
+      vantaScript.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js';
+      vantaScript.async = true;
+      
+      vantaScript.onload = () => {
+        if (vantaRef.current && window.VANTA) {
+          vantaEffect.current = window.VANTA.GLOBE({
+            el: vantaRef.current,
+            THREE: THREE,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3f3fff,
+            color2: 0xffffff,
+            backgroundColor: 0x23153c
+          });
+        }
+      };
+      
+      document.head.appendChild(vantaScript);
+    };
+
+    loadVanta();
+
+    return () => {
+      if (vantaEffect.current) {
+        vantaEffect.current.destroy();
+      }
+    };
+  }, []);
+
   const scrollToCategories = () => {
     const section = document.getElementById('categories-arena');
     if (section) {
@@ -177,25 +218,7 @@ export default function HeroArena() {
   };
 
   return (
-    <div className="relative overflow-hidden bg-black" style={{ minHeight: '750px' }}>
-      {/* Subtle glow effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[120px] opacity-30"
-          style={{
-            background: "linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0099ff, #0000ff, #9400d3)",
-          }}
-          animate={{
-            opacity: [0.2, 0.4, 0.2],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </div>
+    <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#23153c' }}>
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-4" style={{ minHeight: '750px' }}>

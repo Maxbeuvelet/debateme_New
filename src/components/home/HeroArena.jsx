@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
@@ -68,7 +67,7 @@ export default function HeroArena() {
   const scrollToCategories = () => {
     const section = document.getElementById('categories-arena');
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 

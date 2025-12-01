@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -86,7 +85,7 @@ export default function CategoryArena({ debates, categoryCounts, isLoading }) {
   }
 
   return (
-    <div id="categories-arena" className="scroll-mt-20">
+    <div id="categories-arena" className="scroll-mt-4">
       <div className="text-center mb-6 sm:mb-8 lg:mb-12">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}

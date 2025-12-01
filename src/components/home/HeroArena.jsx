@@ -59,9 +59,11 @@ export default function HeroArena() {
     <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#23153c' }}>
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4" style={{ minHeight: '750px' }}>
-        {/* Rainbow Reveal Text */}
-        <RainbowRevealText text="DebateMe" />
+      <div className="relative z-10 flex flex-col items-start justify-center px-8 sm:px-16 lg:px-24" style={{ minHeight: '750px' }}>
+        {/* DebateMe Title */}
+        <h1 className="text-[60px] sm:text-[100px] md:text-[140px] lg:text-[180px] font-black text-white select-none leading-none">
+          DebateMe
+        </h1>
 
         {/* Subtitle */}
         <motion.p

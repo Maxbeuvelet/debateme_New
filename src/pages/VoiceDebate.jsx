@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DebateSession, Debate, UserStance, PublicMessage, User } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -278,14 +277,6 @@ export default function VoiceDebate() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleEndDebate}
-              className="rounded-full border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{debate?.title || "Loading..."}</h1>
               <p className="text-gray-600 text-sm">Live Video Debate • {currentUser} vs {opponent?.user_name || "Opponent"}</p>

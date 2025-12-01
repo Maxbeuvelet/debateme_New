@@ -4,6 +4,8 @@ import { Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function HeroArena() {
+  const text = "DebateMe";
+  
   const scrollToCategories = () => {
     const section = document.getElementById('categories-arena');
     if (section) {
@@ -13,94 +15,44 @@ export default function HeroArena() {
 
   return (
     <div className="relative overflow-hidden bg-black" style={{ minHeight: '750px' }}>
-      <style>{`
-        @keyframes rainbowWave {
-          0% {
-            background-position: -200% 0;
-          }
-          100% {
-            background-position: 200% 0;
-          }
-        }
-        
-        .rainbow-text-reveal {
-          font-size: clamp(4rem, 15vw, 12rem);
-          font-weight: 900;
-          letter-spacing: -0.02em;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            transparent 35%,
-            #ff0000 40%,
-            #ff7f00 45%,
-            #ffff00 50%,
-            #00ff00 55%,
-            #0000ff 60%,
-            #4b0082 65%,
-            #9400d3 70%,
-            transparent 75%,
-            transparent 100%
-          );
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: rainbowWave 4s linear infinite;
-          text-shadow: none;
-        }
-        
-        .glow-effect {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            transparent 35%,
-            rgba(255, 0, 0, 0.3) 40%,
-            rgba(255, 127, 0, 0.3) 45%,
-            rgba(255, 255, 0, 0.3) 50%,
-            rgba(0, 255, 0, 0.3) 55%,
-            rgba(0, 0, 255, 0.3) 60%,
-            rgba(75, 0, 130, 0.3) 65%,
-            rgba(148, 0, 211, 0.3) 70%,
-            transparent 75%,
-            transparent 100%
-          );
-          background-size: 200% 100%;
-          animation: rainbowWave 4s linear infinite;
-          filter: blur(80px);
-          pointer-events: none;
-          z-index: 0;
-        }
-      `}</style>
-
-      {/* Animated glow effect behind text */}
-      <div className="glow-effect" />
-
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center" style={{ minHeight: '750px' }}>
-        {/* DebateMe text with rainbow reveal */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8"
-        >
-          <h1 className="rainbow-text-reveal select-none">
-            DebateMe
+        {/* Rainbow Reveal Text Section */}
+        <div className="relative w-full flex items-center justify-center overflow-hidden mb-4">
+          {/* Animated Rainbow Layer */}
+          <motion.div
+            className="absolute inset-0 bg-[url('https://i.imgur.com/CSqG6bP.png')] bg-cover bg-[length:400%_400%]"
+            initial={{ x: "-200%" }}
+            animate={{ x: "200%" }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            style={{
+              WebkitMaskImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><text x="50%" y="55%" font-size="200" font-weight="900" text-anchor="middle" fill="white" font-family="Arial Black">${text}</text></svg>')`,
+              WebkitMaskRepeat: "no-repeat",
+              maskImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><text x="50%" y="55%" font-size="200" font-weight="900" text-anchor="middle" fill="white" font-family="Arial Black">${text}</text></svg>')`,
+              maskRepeat: "no-repeat",
+              backgroundBlendMode: "screen"
+            }}
+          />
+
+          {/* Invisible Text Placeholder for Layout */}
+          <h1 className="text-transparent text-[80px] sm:text-[120px] md:text-[160px] font-extrabold select-none">
+            {text}
           </h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-slate-500 text-lg sm:text-xl md:text-2xl mt-4 font-medium"
-          >
-            Where Ideas Collide
-          </motion.p>
-        </motion.div>
+        </div>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="text-slate-500 text-lg sm:text-xl md:text-2xl mb-8 font-medium"
+        >
+          Where Ideas Collide
+        </motion.p>
 
         {/* CTA Button */}
         <motion.div

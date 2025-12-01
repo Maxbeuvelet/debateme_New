@@ -69,8 +69,8 @@ Deno.serve(async (req) => {
                             start_video_off: false,
                             start_audio_off: false,
                             enable_prejoin_ui: false,
-                            enable_network_ui: true,
-                            enable_people_ui: true,
+                            enable_network_ui: false,
+                            enable_people_ui: false,
                             exp: Math.floor(Date.now() / 1000) + (60 * 60 * 3) // 3 hour expiry
                         }
                     })

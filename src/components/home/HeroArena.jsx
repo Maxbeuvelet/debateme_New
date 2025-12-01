@@ -6,41 +6,44 @@ import { motion } from "framer-motion";
 function RainbowRevealText({ text = "DebateMe" }) {
   return (
     <div className="relative overflow-hidden">
-      {/* The text with animated gradient background clipped to text */}
-      <motion.h1
-        className="text-[60px] sm:text-[100px] md:text-[140px] lg:text-[180px] font-black select-none leading-none"
-        style={{
-          background: `linear-gradient(
-            90deg,
-            transparent 0%,
-            #ff0000 10%,
-            #ff7f00 20%,
-            #ffff00 30%,
-            #00ff00 40%,
-            #0099ff 50%,
-            #0000ff 60%,
-            #4b0082 70%,
-            #9400d3 80%,
-            transparent 90%,
-            transparent 100%
-          )`,
-          backgroundSize: "300% 100%",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          color: "transparent",
-        }}
-        animate={{
-          backgroundPosition: ["200% 0%", "-200% 0%"],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      >
+      <style>{`
+        @keyframes stripeMove {
+          0% { background-position: 0% 0%; }
+          100% { background-position: 200% 0%; }
+        }
+        
+        .rainbow-stripes-text {
+          background: repeating-linear-gradient(
+            75deg,
+            #ff0000 0px,
+            #ff0000 8px,
+            #ff7f00 8px,
+            #ff7f00 16px,
+            #ffff00 16px,
+            #ffff00 24px,
+            #00ff00 24px,
+            #00ff00 32px,
+            #00ccff 32px,
+            #00ccff 40px,
+            #0066ff 40px,
+            #0066ff 48px,
+            #9900ff 48px,
+            #9900ff 56px,
+            #ff00ff 56px,
+            #ff00ff 64px
+          );
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: transparent;
+          animation: stripeMove 3s linear infinite;
+        }
+      `}</style>
+      
+      <h1 className="rainbow-stripes-text text-[60px] sm:text-[100px] md:text-[140px] lg:text-[180px] font-black select-none leading-none">
         {text}
-      </motion.h1>
+      </h1>
     </div>
   );
 }

@@ -1,69 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Embedded animation data
-const speechBubbleAnimation = { "v": "5.9.6", "fr": 30, "ip": 100, "op": 300, "w": 512, "h": 512, "nm": "Speech_Bubble", "ddd": 0, "assets": [{ "id": "comp_0", "nm": "Bubble R", "fr": 30, "layers": [{ "ddd": 0, "ind": 1, "ty": 4, "nm": "Lines", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 0, "k": [0, -11.422, 0], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [324.932, 187.472, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[-24.894, 0], [24.894, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 70, "s": [0] }, { "t": 90, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.505, 0.603, 0.995, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 233.157], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 1", "np": 3, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }, { "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[-68.66, 0], [68.66, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 68, "s": [0] }, { "t": 88, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.4229, 0.5377, 0.9971, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 187.472], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 2", "np": 3, "cix": 2, "bm": 0, "ix": 2, "mn": "ADBE Vector Group", "hd": false }, { "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[-24.894, 0], [24.894, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 66, "s": [0] }, { "t": 86, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.3234, 0.458, 0.9966, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 141.787], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 3", "np": 3, "cix": 2, "bm": 0, "ix": 3, "mn": "ADBE Vector Group", "hd": false }], "ip": 66, "op": 216, "st": 66, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 2, "ty": 4, "nm": "Dot 3", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 19, "s": [45.303, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 29, "s": [45.303, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 39, "s": [45.303, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 49, "s": [45.303, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 59, "s": [45.303, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "o": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "v": [[0, -11.421], [-11.421, 0], [0, 11.421], [11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "gf", "o": { "a": 0, "k": 100, "ix": 10 }, "r": 1, "bm": 0, "g": { "p": 3, "k": { "a": 0, "k": [0, 0.2278, 0.3807, 0.9922, 0.5, 0.4428, 0.5537, 0.9972, 1, 0.56, 0.648, 1], "ix": 9 } }, "s": { "a": 0, "k": [-0.236, -45.472], "ix": 5 }, "e": { "a": 0, "k": [-0.236, 51.188], "ix": 6 }, "t": 1, "nm": "Gradient Fill 1", "mn": "ADBE Vector Graphic - G-Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 3, "ty": 4, "nm": "Dot 2", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 17, "s": [-0.382, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 27, "s": [-0.382, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 37, "s": [-0.382, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 47, "s": [-0.382, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 57, "s": [-0.382, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "o": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "v": [[0, -11.421], [-11.421, 0], [0, 11.421], [11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "gf", "o": { "a": 0, "k": 100, "ix": 10 }, "r": 1, "bm": 0, "g": { "p": 3, "k": { "a": 0, "k": [0, 0.2278, 0.3807, 0.9922, 0.5, 0.4428, 0.5537, 0.9972, 1, 0.56, 0.648, 1], "ix": 9 } }, "s": { "a": 0, "k": [-0.55, -45.472], "ix": 5 }, "e": { "a": 0, "k": [-0.55, 51.188], "ix": 6 }, "t": 1, "nm": "Gradient Fill 1", "mn": "ADBE Vector Graphic - G-Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 4, "ty": 4, "nm": "Dot", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 15, "s": [-46.067, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 25, "s": [-46.067, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 35, "s": [-46.067, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 45, "s": [-46.067, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 55, "s": [-46.067, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "o": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "v": [[0, 11.421], [11.421, 0], [0, -11.421], [-11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "gf", "o": { "a": 0, "k": 100, "ix": 10 }, "r": 1, "bm": 0, "g": { "p": 3, "k": { "a": 0, "k": [0, 0.2278, 0.3807, 0.9922, 0.5, 0.4428, 0.5537, 0.9972, 1, 0.56, 0.648, 1], "ix": 9 } }, "s": { "a": 0, "k": [-0.865, -45.472], "ix": 5 }, "e": { "a": 0, "k": [-0.865, 51.188], "ix": 6 }, "t": 1, "nm": "Gradient Fill 1", "mn": "ADBE Vector Graphic - G-Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 5, "ty": 4, "nm": "Bubble R", "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 0, "s": [-120] }, { "t": 15, "s": [0] }], "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 100, "s": [450.947, 429.106, 0], "to": [0, -19.333, 0], "ti": [0, 19.333, 0] }, { "t": 115, "s": [450.947, 313.106, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [126.015, 114.213, 0], "ix": 1, "l": 2 }, "s": { "a": 1, "k": [{ "i": { "x": [0, 0, 0], "y": [1, 1, 1] }, "o": { "x": [0.333, 0.333, 0.333], "y": [0, 0, 0] }, "t": 0, "s": [0, 0, 100] }, { "t": 15, "s": [100, 100, 100] }], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [6.793, 13.329], [0, 27.359], [69.275, 0], [0, -56.682], [-1.383, -3.858], [-11.842, -6.795], [-34.717, -1.032], [-9.395, 2.431], [-28.286, 0], [-1.227, 5.142], [4.718, 2.386]], "o": [[-13.607, -6.882], [23.969, -19.43], [0, -56.682], [-69.275, 0], [0, 13.023], [11.812, 32.964], [5.196, 2.981], [16.791, 0.499], [22.742, 17.723], [5.287, 0], [1.225, -5.141], [0, 0]], "v": [[119.746, 92.597], [87.71, 61.512], [126.015, -11.421], [-0.381, -114.213], [-126.015, -11.421], [-120.762, 18.047], [-69.294, 73.766], [-4.963, 91.313], [35.077, 86.797], [114.594, 114.213], [125.703, 105.446], [119.746, 92.597]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "fl", "c": { "a": 0, "k": [0.86, 0.888, 1, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 1", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 217, "st": 0, "ct": 1, "bm": 0 }] }, { "id": "comp_1", "nm": "Bubble L", "fr": 30, "layers": [{ "ddd": 0, "ind": 1, "ty": 4, "nm": "Lines", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 0, "k": [0, -11.422, 0], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [324.932, 187.472, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[24.894, 0], [-24.894, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 70, "s": [0] }, { "t": 90, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.9, 0.92, 1, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 233.157], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 1", "np": 3, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }, { "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[68.66, 0], [-68.66, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 68, "s": [0] }, { "t": 88, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.86, 0.888, 1, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 187.472], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 2", "np": 3, "cix": 2, "bm": 0, "ix": 2, "mn": "ADBE Vector Group", "hd": false }, { "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]], "v": [[24.894, 0], [-24.894, 0]], "c": false }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "tm", "s": { "a": 0, "k": 0, "ix": 1 }, "e": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 66, "s": [0] }, { "t": 86, "s": [100] }], "ix": 2 }, "o": { "a": 0, "k": 0, "ix": 3 }, "m": 1, "ix": 2, "nm": "Trim Paths 1", "mn": "ADBE Vector Filter - Trim", "hd": false }, { "ty": "st", "c": { "a": 0, "k": [0.5725, 0.6549, 0.9961, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 22, "ix": 5 }, "lc": 2, "lj": 1, "ml": 10, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [324.932, 141.787], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 3", "np": 3, "cix": 2, "bm": 0, "ix": 3, "mn": "ADBE Vector Group", "hd": false }], "ip": 66, "op": 216, "st": 66, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 2, "ty": 4, "nm": "Dot 3", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 15, "s": [45.303, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 25, "s": [45.303, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 35, "s": [45.303, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 45, "s": [45.303, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 55, "s": [45.303, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "o": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "v": [[0, -11.421], [-11.421, 0], [0, 11.421], [11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "fl", "c": { "a": 0, "k": [0.86, 0.888, 1, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 3, "ty": 4, "nm": "Dot 2", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 17, "s": [-0.382, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 27, "s": [-0.382, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 37, "s": [-0.382, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 47, "s": [-0.382, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 57, "s": [-0.382, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "o": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "v": [[0, -11.421], [-11.421, 0], [0, 11.421], [11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "fl", "c": { "a": 0, "k": [0.86, 0.888, 1, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 4, "ty": 4, "nm": "Dot", "parent": 5, "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 19, "s": [-46.067, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 29, "s": [-46.067, 7.578, 0], "to": [0, 0, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 39, "s": [-46.067, -11.422, 0], "to": [0, 3.167, 0], "ti": [0, 0, 0] }, { "i": { "x": 0.667, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 49, "s": [-46.067, 7.578, 0], "to": [0, 0, 0], "ti": [0, 3.167, 0] }, { "t": 59, "s": [-46.067, -11.422, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [0, 0, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[-6.308, 0], [0, 6.308], [6.308, 0], [0, -6.308]], "o": [[6.308, 0], [0, -6.308], [-6.308, 0], [0, 6.308]], "v": [[0, 11.421], [11.421, 0], [0, -11.421], [-11.421, 0]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "fl", "c": { "a": 0, "k": [0.86, 0.888, 1, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Dot", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 67, "st": 0, "ct": 1, "bm": 0 }, { "ddd": 0, "ind": 5, "ty": 4, "nm": "Bubble R", "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 0, "s": [-120] }, { "t": 15, "s": [0] }], "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 100, "s": [450.947, 429.106, 0], "to": [0, -19.333, 0], "ti": [0, 19.333, 0] }, { "t": 115, "s": [450.947, 313.106, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [126.015, 114.213, 0], "ix": 1, "l": 2 }, "s": { "a": 1, "k": [{ "i": { "x": [0, 0, 0], "y": [1, 1, 1] }, "o": { "x": [0.333, 0.333, 0.333], "y": [0, 0, 0] }, "t": 0, "s": [0, 0, 100] }, { "t": 15, "s": [100, 100, 100] }], "ix": 6, "l": 2 } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ind": 0, "ty": "sh", "ix": 1, "ks": { "a": 0, "k": { "i": [[0, 0], [6.793, 13.329], [0, 27.359], [69.275, 0], [0, -56.682], [-1.383, -3.858], [-11.842, -6.795], [-34.717, -1.032], [-9.395, 2.431], [-28.286, 0], [-1.227, 5.142], [4.718, 2.386]], "o": [[-13.607, -6.882], [23.969, -19.43], [0, -56.682], [-69.275, 0], [0, 13.023], [11.812, 32.964], [5.196, 2.981], [16.791, 0.499], [22.742, 17.723], [5.287, 0], [1.225, -5.141], [0, 0]], "v": [[119.746, 92.597], [87.71, 61.512], [126.015, -11.421], [-0.381, -114.213], [-126.015, -11.421], [-120.762, 18.047], [-69.294, 73.766], [-4.963, 91.313], [35.077, 86.797], [114.594, 114.213], [125.703, 105.446], [119.746, 92.597]], "c": true }, "ix": 2 }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false }, { "ty": "gf", "o": { "a": 0, "k": 100, "ix": 10 }, "r": 1, "bm": 0, "g": { "p": 3, "k": { "a": 0, "k": [0, 0.2278, 0.3807, 0.9922, 0.5, 0.4428, 0.5537, 0.9972, 1, 0.56, 0.648, 1], "ix": 9 } }, "s": { "a": 0, "k": [0.068, -113.106], "ix": 5 }, "e": { "a": 0, "k": [1.594, 115.319], "ix": 6 }, "t": 1, "nm": "Gradient Fill 1", "mn": "ADBE Vector Graphic - G-Fill", "hd": false }, { "ty": "tr", "p": { "a": 0, "k": [0, 0], "ix": 2 }, "a": { "a": 0, "k": [0, 0], "ix": 1 }, "s": { "a": 0, "k": [100, 100], "ix": 3 }, "r": { "a": 0, "k": 0, "ix": 6 }, "o": { "a": 0, "k": 100, "ix": 7 }, "sk": { "a": 0, "k": 0, "ix": 4 }, "sa": { "a": 0, "k": 0, "ix": 5 }, "nm": "Transform" }], "nm": "Group 1", "np": 2, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false }], "ip": 0, "op": 216, "st": 0, "ct": 1, "bm": 0 }] }], "layers": [{ "ddd": 0, "ind": 6, "ty": 0, "nm": "Bubble R", "refId": "comp_0", "sr": 1, "ks": { "o": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 400, "s": [100] }, { "t": 415, "s": [0] }], "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 400, "s": [256, 256, 0], "to": [0, -14.167, 0], "ti": [0, 14.167, 0] }, { "t": 415, "s": [256, 171, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [256, 256, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "w": 512, "h": 512, "ip": 200, "op": 416, "st": 200, "bm": 0 }, { "ddd": 0, "ind": 7, "ty": 0, "nm": "Bubble L", "refId": "comp_1", "sr": 1, "ks": { "o": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 300, "s": [100] }, { "t": 315, "s": [0] }], "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 300, "s": [256, 256, 0], "to": [0, -14.167, 0], "ti": [0, 14.167, 0] }, { "t": 315, "s": [256, 171, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [256, 256, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [-100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "w": 512, "h": 512, "ip": 100, "op": 316, "st": 100, "bm": 0 }, { "ddd": 0, "ind": 8, "ty": 0, "nm": "Bubble R", "refId": "comp_0", "sr": 1, "ks": { "o": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 200, "s": [100] }, { "t": 215, "s": [0] }], "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 200, "s": [256, 256, 0], "to": [0, -14.167, 0], "ti": [0, 14.167, 0] }, { "t": 215, "s": [256, 171, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [256, 256, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "w": 512, "h": 512, "ip": 0, "op": 216, "st": 0, "bm": 0 }, { "ddd": 0, "ind": 9, "ty": 0, "nm": "Bubble L", "refId": "comp_1", "sr": 1, "ks": { "o": { "a": 1, "k": [{ "i": { "x": [0], "y": [1] }, "o": { "x": [0.333], "y": [0] }, "t": 100, "s": [100] }, { "t": 115, "s": [0] }], "ix": 11 }, "r": { "a": 0, "k": 0, "ix": 10 }, "p": { "a": 1, "k": [{ "i": { "x": 0, "y": 1 }, "o": { "x": 0.333, "y": 0 }, "t": 100, "s": [256, 256, 0], "to": [0, -14.167, 0], "ti": [0, 14.167, 0] }, { "t": 115, "s": [256, 171, 0] }], "ix": 2, "l": 2 }, "a": { "a": 0, "k": [256, 256, 0], "ix": 1, "l": 2 }, "s": { "a": 0, "k": [-100, 100, 100], "ix": 6, "l": 2 } }, "ao": 0, "w": 512, "h": 512, "ip": -100, "op": 116, "st": -100, "bm": 0 }], "markers": [] };
-
 export default function HeroArena() {
-  const lottieContainerRef = useRef(null);
-  const animationRef = useRef(null);
-  const [lottieLoaded, setLottieLoaded] = useState(false);
-
-  useEffect(() => {
-    // Dynamically load lottie-web
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js';
-    script.async = true;
-    script.onload = () => {
-      setLottieLoaded(true);
-    };
-    script.onerror = () => {
-      console.error('Failed to load Lottie library');
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    // This effect should only run if lottieLoaded is true AND the container ref is available.
-    // Since the lottie animation div is removed from JSX, lottieContainerRef.current will always be null,
-    // so the loadAnimation call will be skipped. The cleanup will still run safely.
-    if (lottieLoaded && lottieContainerRef.current && window.lottie) {
-      try {
-        // Destroy previous animation if exists
-        if (animationRef.current) {
-          animationRef.current.destroy();
-        }
-
-        // Create new animation
-        animationRef.current = window.lottie.loadAnimation({
-          container: lottieContainerRef.current,
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          animationData: speechBubbleAnimation
-        });
-
-        console.log('Speech bubble animation loaded successfully');
-      } catch (error) {
-        console.error('Error loading animation:', error);
-      }
-    }
-
-    return () => {
-      if (animationRef.current) {
-        animationRef.current.destroy();
-      }
-    };
-  }, [lottieLoaded]);
-
   const scrollToCategories = () => {
     const section = document.getElementById('categories-arena');
     if (section) {
@@ -72,47 +12,112 @@ export default function HeroArena() {
   };
 
   return (
-    <div className="relative overflow-hidden" style={{ minHeight: '750px' }}>
-      {/* Background Video - 4K High Quality via Cloudinary */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{
-          pointerEvents: 'none',
-          imageRendering: '-webkit-optimize-contrast',
-          backfaceVisibility: 'hidden',
-          transform: 'translateZ(0)',
-          willChange: 'transform'
-        }}>
+    <div className="relative overflow-hidden bg-black" style={{ minHeight: '750px' }}>
+      <style>{`
+        @keyframes rainbowWave {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        
+        .rainbow-text-reveal {
+          font-size: clamp(4rem, 15vw, 12rem);
+          font-weight: 900;
+          letter-spacing: -0.02em;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 35%,
+            #ff0000 40%,
+            #ff7f00 45%,
+            #ffff00 50%,
+            #00ff00 55%,
+            #0000ff 60%,
+            #4b0082 65%,
+            #9400d3 70%,
+            transparent 75%,
+            transparent 100%
+          );
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: rainbowWave 4s linear infinite;
+          text-shadow: none;
+        }
+        
+        .glow-effect {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 35%,
+            rgba(255, 0, 0, 0.3) 40%,
+            rgba(255, 127, 0, 0.3) 45%,
+            rgba(255, 255, 0, 0.3) 50%,
+            rgba(0, 255, 0, 0.3) 55%,
+            rgba(0, 0, 255, 0.3) 60%,
+            rgba(75, 0, 130, 0.3) 65%,
+            rgba(148, 0, 211, 0.3) 70%,
+            transparent 75%,
+            transparent 100%
+          );
+          background-size: 200% 100%;
+          animation: rainbowWave 4s linear infinite;
+          filter: blur(80px);
+          pointer-events: none;
+          z-index: 0;
+        }
+      `}</style>
 
-        <source src="https://res.cloudinary.com/dyhdqkhfw/video/upload/v1761838003/Good_things_3_bx8pz9.mp4" type="video/mp4" />
-      </video>
+      {/* Animated glow effect behind text */}
+      <div className="glow-effect" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex items-end" style={{ minHeight: '750px', paddingBottom: '50px' }}>
-        {/* Button - Centered */}
+      {/* Main content */}
+      <div className="relative z-10 flex flex-col items-center justify-center" style={{ minHeight: '750px' }}>
+        {/* DebateMe text with rainbow reveal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-8"
+        >
+          <h1 className="rainbow-text-reveal select-none">
+            DebateMe
+          </h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-slate-500 text-lg sm:text-xl md:text-2xl mt-4 font-medium"
+          >
+            Where Ideas Collide
+          </motion.p>
+        </motion.div>
+
+        {/* CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex items-center justify-center w-full">
-
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
           <Button
             onClick={scrollToCategories}
-            size="lg" className="bg-gradient-to-r text-primary-foreground px-12 py-6 text-lg font-bold rounded-xl inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-primary/90 h-11 from-gray-400 via-gray-200 to-white hover:from-gray-300 hover:via-gray-100 hover:to-white shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:shadow-[0_0_50px_rgba(0,0,0,0.4)] transition-all duration-300"
-
-            style={{ paddingLeft: '28px' }}>
-
-            <Zap className="w-5 h-5 mr-2 bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent" style={{ WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
-            <span className="bg-gradient-to-r from-black to-blue-600 bg-clip-text text-transparent">
-              Start a Debate
-            </span>
+            size="lg"
+            className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-10 py-6 text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all duration-300"
+          >
+            <Zap className="w-5 h-5 mr-2" />
+            Start a Debate
           </Button>
         </motion.div>
       </div>
-    </div>);
-
+    </div>
+  );
 }

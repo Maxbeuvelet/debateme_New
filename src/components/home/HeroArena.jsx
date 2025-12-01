@@ -67,15 +67,7 @@ export default function HeroArena() {
           DebateMe
         </h1>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-slate-500 text-lg sm:text-xl md:text-2xl mt-4 mb-8 font-medium"
-        >
-          Where Ideas Collide
-        </motion.p>
+
 
         {/* CTA Button */}
         <motion.div

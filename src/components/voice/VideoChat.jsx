@@ -14,7 +14,7 @@ export default function VideoChat({ roomUrl, token, userName }) {
       return;
     }
 
-    const videoUrl = `${roomUrl}?t=${token}`;
+    const videoUrl = `${roomUrl}?t=${token}&showLeaveButton=false`;
     
     if (iframeRef.current) {
       iframeRef.current.src = videoUrl;

@@ -63,7 +63,7 @@ export default function HeroArena() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-start justify-center px-4 sm:px-8 lg:px-12" style={{ minHeight: '750px' }}>
         {/* DebateMe Title */}
-        <h1 className="text-[40px] sm:text-[60px] md:text-[80px] lg:text-[100px] font-black text-white select-none leading-none">
+        <h1 className="text-[40px] sm:text-[60px] md:text-[80px] lg:text-[100px] font-bold text-white select-none leading-none">
           DebateMe
         </h1>
 

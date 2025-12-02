@@ -30,10 +30,10 @@ export default function HeroArena() {
             minWidth: 200.00,
             scale: 1.00,
             scaleMobile: 1.00,
-            color: 0x3f8eff,
-            color2: 0x0,
+            color: 0xff3b81,
+            color2: 0xffffff,
             size: 1,
-            backgroundColor: 0xfafafa
+            backgroundColor: 0x23153c
           });
         }
       };
@@ -58,12 +58,12 @@ export default function HeroArena() {
   };
 
   return (
-    <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#fafafa' }}>
+    <div ref={vantaRef} className="relative overflow-hidden" style={{ minHeight: '750px', backgroundColor: '#23153c' }}>
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-start justify-center px-4 sm:px-8 lg:px-12" style={{ minHeight: '750px' }}>
         {/* DebateMe Title */}
-        <h1 className="text-[40px] sm:text-[60px] md:text-[80px] lg:text-[100px] font-light text-black select-none leading-none">
+        <h1 className="text-[40px] sm:text-[60px] md:text-[80px] lg:text-[100px] font-black text-white select-none leading-none">
           DebateMe
         </h1>
 
@@ -78,7 +78,7 @@ export default function HeroArena() {
           <Button
             onClick={scrollToCategories}
             size="lg"
-            className="bg-black/10 backdrop-blur-sm border border-black/20 text-black px-10 py-6 text-lg font-bold rounded-xl hover:bg-black/20 hover:border-black/40 shadow-[0_0_30px_rgba(0,0,0,0.1)] hover:shadow-[0_0_50px_rgba(0,0,0,0.2)] transition-all duration-300"
+            className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-10 py-6 text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all duration-300"
           >
             <Zap className="w-5 h-5 mr-2" />
             Start a Debate

@@ -96,21 +96,56 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // TEST MODE: Only send to the admin user
-    await sgMail.send({
-      to: currentUser.email,
-      from: {
-        email: 'noreply@debateme.me',
-        name: 'DebateMe'
-      },
-      subject: emailSubject,
-      html: emailBody
-    });
+    // Get all users
+    const users = await base44.asServiceRole.entities.User.list();
+    
+    // Filter users with valid emails who haven't unsubscribed
+    const usersWithEmail = users.filter(user => user.email && !user.unsubscribed);
+    
+    let sentCount = 0;
+    let errorCount = 0;
+    const errors = [];
+
+    // Send emails in smaller batches to avoid timeout
+    const batchSize = 10;
+    
+    for (let i = 0; i < usersWithEmail.length; i += batchSize) {
+      const batch = usersWithEmail.slice(i, i + batchSize);
+      
+      // Send batch in parallel
+      const results = await Promise.allSettled(
+        batch.map(async (user) => {
+          await sgMail.send({
+            to: user.email,
+            from: {
+              email: 'noreply@debateme.me',
+              name: 'DebateMe'
+            },
+            subject: emailSubject,
+            html: emailBody
+          });
+          
+          return user.email;
+        })
+      );
+      
+      // Count successes and failures
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          sentCount++;
+        } else {
+          errorCount++;
+          errors.push({ error: result.reason?.message });
+        }
+      }
+    }
 
     return Response.json({
       success: true,
-      message: 'Test email sent to admin only',
-      sentTo: currentUser.email
+      totalUsers: users.length,
+      emailsSent: sentCount,
+      errors: errorCount,
+      errorDetails: errors
     });
 
   } catch (error) {

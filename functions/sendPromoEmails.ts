@@ -101,15 +101,16 @@ Deno.serve(async (req) => {
     
     <div class="footer">
       <p>© 2025 DebateMe • Live Video Debates</p>
+      <p><a href="https://debateme.me/PrivacyPolicy" style="color: #64748b; text-decoration: underline;">Privacy Policy</a> • <a href="https://debateme.me/Unsubscribe" style="color: #64748b; text-decoration: underline;">Unsubscribe</a></p>
+      <p style="margin-top: 10px; font-size: 12px;">DebateMe, 123 Main Street, New York, NY 10001</p>
     </div>
   </div>
 </body>
 </html>
     `;
 
-    // Filter users with valid emails who haven't received the promo email yet
-    // Limit to 100 due to SendGrid free tier limit
-    const usersWithEmail = users.filter(user => user.email && !user.promo_email_sent).slice(0, 100);
+    // TEST MODE: Only send to the admin user for testing
+    const usersWithEmail = [currentUser];
     
     let sentCount = 0;
     let errorCount = 0;

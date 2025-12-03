@@ -109,8 +109,8 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // TEST MODE: Only send to the admin user for testing
-    const usersWithEmail = [currentUser];
+    // Filter users with valid emails who haven't received the promo email yet and haven't unsubscribed
+    const usersWithEmail = users.filter(user => user.email && !user.promo_email_sent && !user.unsubscribed);
     
     let sentCount = 0;
     let errorCount = 0;

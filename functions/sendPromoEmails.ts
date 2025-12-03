@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
     <div class="footer">
       <p>© 2025 DebateMe • Live Video Debates</p>
       <p><a href="https://debateme.me/PrivacyPolicy" style="color: #64748b; text-decoration: underline;">Privacy Policy</a> • <a href="https://debateme.me/Unsubscribe" style="color: #64748b; text-decoration: underline;">Unsubscribe</a></p>
-      <p style="margin-top: 10px; font-size: 12px;">DebateMe, 123 Main Street, New York, NY 10001</p>
+      
     </div>
   </div>
 </body>

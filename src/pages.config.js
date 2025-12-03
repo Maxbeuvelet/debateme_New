@@ -11,6 +11,7 @@ import UserStats from './pages/UserStats';
 import Ranked from './pages/Ranked';
 import Achievements from './pages/Achievements';
 import CreateDebate from './pages/CreateDebate';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Ranked": Ranked,
     "Achievements": Achievements,
     "CreateDebate": CreateDebate,
+    "PrivacyPolicy": PrivacyPolicy,
 }
 
 export const pagesConfig = {

@@ -530,7 +530,7 @@ export default function Home() {
         <footer className="relative z-10 mt-12 sm:mt-16 lg:mt-20 border-t border-slate-700 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
             <div className="text-center text-slate-400 text-xs sm:text-sm">
-              <p>2025 DebateMe • Live Video 1 on 1 Debates</p>
+              <p>2025 DebateMe • Live Video 1 on 1 Debates • <Link to={createPageUrl("PrivacyPolicy")} className="underline hover:text-slate-200">Privacy Policy</Link></p>
             </div>
           </div>
         </footer>

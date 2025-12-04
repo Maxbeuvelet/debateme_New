@@ -140,17 +140,35 @@ export default function Home() {
         );
       }
       
-      const [freshStances] = await Promise.all([
-        UserStance.list("-created_date")
+      const [freshStances, freshSessions] = await Promise.all([
+        UserStance.list("-created_date"),
+        DebateSession.list()
       ]);
       
+      // Count active sessions (debates happening now)
+      const activeSessionCount = freshSessions.filter(s => s.status === "active").length;
+      
+      // Get matched stances that are in active sessions for unique debaters count
+      const matchedStances = freshStances.filter(stance => 
+        stance.status === "matched" && stance.session_id
+      );
+      const activeMatchedStances = matchedStances.filter(stance => {
+        const session = freshSessions.find(s => s.id === stance.session_id);
+        return session && session.status === "active";
+      });
+      
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-      const recentStances = freshStances.filter(stance => 
+      const waitingStances = freshStances.filter(stance => 
         stance.status === "waiting" &&
         new Date(stance.created_date) > tenMinutesAgo
       );
       
-      setUserStances(recentStances);
+      // Combine waiting stances with active session info for stats
+      setUserStances({
+        waiting: waitingStances,
+        activeDebates: activeSessionCount,
+        activeDebaters: new Set(activeMatchedStances.map(s => s.user_name)).size
+      });
     } catch (err) {
       console.error("Error loading data:", err);
       setError("Failed to load debates. Please try again.");

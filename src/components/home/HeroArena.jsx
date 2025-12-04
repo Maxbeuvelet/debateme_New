@@ -92,10 +92,9 @@ export default function HeroArena() {
           <Link to={createPageUrl("CreateDebate")}>
             <Button
               size="lg"
-              variant="ghost"
-              className="w-full text-white/80 hover:text-white hover:bg-white/10 px-8 py-4 text-base font-medium rounded-xl transition-all duration-300"
+              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white px-10 py-6 text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all duration-300"
             >
-              <PlusCircle className="w-4 h-4 mr-2" />
+              <PlusCircle className="w-5 h-5 mr-2" />
               Create a Debate
             </Button>
           </Link>

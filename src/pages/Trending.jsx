@@ -280,9 +280,6 @@ export default function Trending() {
           {/* Header */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
               <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent pb-2 leading-tight flex items-center gap-2">
                 <span className="inline-block w-10 h-10 sm:w-12 sm:h-12">
                   <dotlottie-wc 

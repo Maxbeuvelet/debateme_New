@@ -86,7 +86,7 @@ export default function CommunitySpotlight({ userStances, isLoading }) {
           viewport={{ once: true }}
           className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4"
         >
-          <span className="inline-block w-14 h-14 sm:w-16 sm:h-16 align-middle">
+          <span className="inline-block w-20 h-20 sm:w-24 sm:h-24 align-middle">
             <dotlottie-wc 
               src="https://lottie.host/97fe061f-9ad2-4f3a-bd76-a296c0f78ce0/owZOGY9iIX.lottie" 
               style={{ width: '100%', height: '100%' }} 

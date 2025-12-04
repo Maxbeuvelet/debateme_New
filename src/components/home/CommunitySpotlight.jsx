@@ -1,10 +1,20 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Star, Zap, Crown, Flame } from "lucide-react";
+import { Trophy, Zap, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function CommunitySpotlight({ userStances, isLoading }) {
+  // Load Lottie script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js';
+    script.type = 'module';
+    document.head.appendChild(script);
+    return () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div id="community-spotlight">
@@ -76,7 +86,15 @@ export default function CommunitySpotlight({ userStances, isLoading }) {
           viewport={{ once: true }}
           className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4"
         >
-          ⭐ <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Community Spotlight</span>
+          <span className="inline-block w-10 h-10 sm:w-12 sm:h-12 align-middle">
+            <dotlottie-wc 
+              src="https://lottie.host/97fe061f-9ad2-4f3a-bd76-a296c0f78ce0/owZOGY9iIX.lottie" 
+              style={{ width: '100%', height: '100%' }} 
+              autoplay 
+              loop
+            />
+          </span>
+          <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Community Spotlight</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}

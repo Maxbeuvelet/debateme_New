@@ -91,7 +91,7 @@ export default function CategoryArena({ debates, categoryCounts, isLoading }) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent"
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight pb-1 mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent"
         >
           Pick a Category
         </motion.h2>

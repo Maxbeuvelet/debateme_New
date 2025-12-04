@@ -96,8 +96,20 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // Get all users
-    const users = await base44.asServiceRole.entities.User.list();
+    // Get all users with pagination to ensure we get everyone
+    let allUsers = [];
+    let skip = 0;
+    const pageSize = 100;
+    
+    while (true) {
+      const batch = await base44.asServiceRole.entities.User.list('-created_date', pageSize, skip);
+      if (!batch || batch.length === 0) break;
+      allUsers = allUsers.concat(batch);
+      if (batch.length < pageSize) break;
+      skip += pageSize;
+    }
+    
+    const users = allUsers;
     
     // Filter users with valid emails who haven't unsubscribed
     const usersWithEmail = users.filter(user => user.email && !user.unsubscribed);

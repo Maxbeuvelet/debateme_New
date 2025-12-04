@@ -57,7 +57,7 @@ export default function TrendingCarousel({ debates, userStances, isLoading }) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 flex items-center justify-center gap-2"
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight pb-1 mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 flex items-center justify-center gap-2"
         >
           <span className="inline-block w-10 h-10 sm:w-12 sm:h-12">
             <dotlottie-wc 

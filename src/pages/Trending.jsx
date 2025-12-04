@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Debate, UserStance } from "@/entities/all";
 import { motion } from "framer-motion";
-import { TrendingUp, Users, Clock, ArrowRight, Sparkles, Calendar, Flame } from "lucide-react";
+import { TrendingUp, Users, Clock, Sparkles, Flame } from "lucide-react";
 import LaunchCountdown from "../components/home/LaunchCountdown";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -18,6 +18,17 @@ export default function Trending() {
   // Launch date: Thursday, November 28th, 2025
   const LAUNCH_DATE = new Date('2025-11-28T00:00:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
+
+  // Load Lottie script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js';
+    script.type = 'module';
+    document.head.appendChild(script);
+    return () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     if (isLaunched) {
@@ -272,8 +283,16 @@ export default function Trending() {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent pb-2 leading-tight">
-                🔥 Trending Debates
+              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent pb-2 leading-tight flex items-center gap-2">
+                <span className="inline-block w-10 h-10 sm:w-12 sm:h-12">
+                  <dotlottie-wc 
+                    src="https://lottie.host/f7d4fc6c-db73-4ef5-aa6b-ec8eead0056f/miZ4thZDaW.lottie" 
+                    style={{ width: '100%', height: '100%' }} 
+                    autoplay 
+                    loop
+                  />
+                </span>
+                Trending Debates
               </h1>
             </div>
             <p className="text-xl text-slate-300 ml-15">
@@ -370,15 +389,23 @@ export default function Trending() {
 
                               {debate.trendingScore > 5 && (
                                 <Badge 
-                                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 font-bold"
+                                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 font-bold flex items-center gap-1"
                                 >
-                                  🔥 HOT
+                                  <span className="inline-block w-4 h-4">
+                                    <dotlottie-wc 
+                                      src="https://lottie.host/f7d4fc6c-db73-4ef5-aa6b-ec8eead0056f/miZ4thZDaW.lottie" 
+                                      style={{ width: '100%', height: '100%' }} 
+                                      autoplay 
+                                      loop
+                                    />
+                                  </span>
+                                  HOT
                                 </Badge>
                               )}
                             </div>
                           </div>
 
-                          <ArrowRight className="w-6 h-6 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0" />
+                          
                         </div>
                       </CardContent>
                     </Card>

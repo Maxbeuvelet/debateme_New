@@ -353,10 +353,10 @@ export default function Home() {
     return acc;
   }, {});
 
-  const activeSessions = userStances.filter(s => s.status === "matched").length / 2;
-  const activeDebates = Math.floor(activeSessions);
-  const totalArguments = userStances.length;
-  const uniqueDebaters = new Set(userStances.map(s => s.user_name)).size;
+  // Extract stats from userStances object
+  const activeDebates = userStances?.activeDebates || 0;
+  const totalArguments = userStances?.waiting?.length || 0;
+  const uniqueDebaters = userStances?.activeDebaters || 0;
 
   return (
     <div className="min-h-screen bg-slate-800 overflow-x-hidden">

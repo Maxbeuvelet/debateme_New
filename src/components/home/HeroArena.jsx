@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
+import { Zap, PlusCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 /* eslint-disable no-unused-vars */
 import * as THREE from "three";
@@ -72,11 +74,12 @@ export default function HeroArena() {
 
 
 
-        {/* CTA Button */}
+        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex flex-col gap-3"
         >
           <Button
             onClick={scrollToCategories}
@@ -86,6 +89,16 @@ export default function HeroArena() {
             <Zap className="w-5 h-5 mr-2" />
             Start a Debate
           </Button>
+          <Link to={createPageUrl("CreateDebate")}>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="w-full text-white/80 hover:text-white hover:bg-white/10 px-8 py-4 text-base font-medium rounded-xl transition-all duration-300"
+            >
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Create a Debate
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </div>

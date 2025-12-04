@@ -1,5 +1,4 @@
-
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +8,17 @@ import { createPageUrl } from "@/utils";
 
 export default function TrendingCarousel({ debates, userStances, isLoading }) {
   const scrollRef = useRef(null);
+
+  // Load Lottie script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js';
+    script.type = 'module';
+    document.head.appendChild(script);
+    return () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -47,9 +57,17 @@ export default function TrendingCarousel({ debates, userStances, isLoading }) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4"
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 sm:mb-3 lg:mb-4 px-3 sm:px-4 flex items-center justify-center gap-2"
         >
-          🔥 <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Trending Now</span>
+          <span className="inline-block w-10 h-10 sm:w-12 sm:h-12">
+            <dotlottie-wc 
+              src="https://lottie.host/f7d4fc6c-db73-4ef5-aa6b-ec8eead0056f/miZ4thZDaW.lottie" 
+              style={{ width: '100%', height: '100%' }} 
+              autoplay 
+              loop
+            />
+          </span>
+          <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Trending Now</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}

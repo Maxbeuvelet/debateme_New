@@ -540,7 +540,7 @@ export default function Home() {
           />
 
           <CommunitySpotlight 
-            userStances={userStances}
+            userStances={userStances?.waiting || []}
             isLoading={isLoading}
           />
         </div>

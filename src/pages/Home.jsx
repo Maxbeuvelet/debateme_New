@@ -521,7 +521,7 @@ export default function Home() {
 
           <LiveStats 
             activeTopics={debates.length}
-            activeDebates={Math.floor(activeSessions)}
+            activeDebates={activeDebates}
             totalArguments={totalArguments}
             uniqueDebaters={uniqueDebaters}
             isLoading={isLoading}
@@ -529,7 +529,7 @@ export default function Home() {
 
           <TrendingCarousel 
             debates={debates.slice(0, 8)}
-            userStances={userStances}
+            userStances={userStances?.waiting || []}
             isLoading={isLoading}
           />
 

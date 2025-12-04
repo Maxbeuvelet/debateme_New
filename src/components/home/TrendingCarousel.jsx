@@ -67,7 +67,7 @@ export default function TrendingCarousel({ debates, userStances, isLoading }) {
               loop
             />
           </span>
-          <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Trending Now</span>
+          <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent pb-2">Trending Now</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}

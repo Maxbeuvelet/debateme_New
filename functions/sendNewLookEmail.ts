@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
       // Send batch in parallel
       const results = await Promise.allSettled(
         batch.map(async (user) => {
-          await sgMail.send({
+          const result = await sgMail.send({
             to: user.email,
             from: {
               email: 'noreply@debateme.me',
@@ -137,6 +137,7 @@ Deno.serve(async (req) => {
             html: emailBody
           });
           
+          console.log(`Sent to ${user.email}:`, result[0].statusCode);
           return user.email;
         })
       );
@@ -147,7 +148,10 @@ Deno.serve(async (req) => {
           sentCount++;
         } else {
           errorCount++;
-          errors.push({ error: result.reason?.message });
+          errors.push({ 
+            error: result.reason?.message || result.reason?.toString(),
+            details: result.reason
+          });
         }
       }
     }

@@ -13,6 +13,7 @@ import Achievements from './pages/Achievements';
 import CreateDebate from './pages/CreateDebate';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Unsubscribe from './pages/Unsubscribe';
+import AdminDashboard from './pages/AdminDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "CreateDebate": CreateDebate,
     "PrivacyPolicy": PrivacyPolicy,
     "Unsubscribe": Unsubscribe,
+    "AdminDashboard": AdminDashboard,
 }
 
 export const pagesConfig = {

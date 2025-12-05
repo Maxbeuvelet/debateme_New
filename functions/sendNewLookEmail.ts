@@ -124,9 +124,10 @@ Deno.serve(async (req) => {
     for (let i = 0; i < usersWithEmail.length; i += batchSize) {
       const batch = usersWithEmail.slice(i, i + batchSize);
       
-      // Send batch in parallel
-      const results = await Promise.allSettled(
-        batch.map(async (user) => {
+      // Send batch sequentially with delay to avoid rate limits
+      const results = [];
+      for (const user of batch) {
+        try {
           const result = await sgMail.send({
             to: user.email,
             from: {
@@ -137,10 +138,16 @@ Deno.serve(async (req) => {
             html: emailBody
           });
           
-          console.log(`Sent to ${user.email}:`, result[0].statusCode);
-          return user.email;
-        })
-      );
+          console.log(`✓ Sent to ${user.email}:`, result[0].statusCode);
+          results.push({ status: 'fulfilled', value: user.email });
+          
+          // Small delay between sends
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (error) {
+          console.error(`✗ Failed to send to ${user.email}:`, error.message, error.response?.body);
+          results.push({ status: 'rejected', reason: error });
+        }
+      }
       
       // Count successes and failures
       for (const result of results) {

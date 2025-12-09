@@ -13,10 +13,12 @@ import {
   Clock, 
   RefreshCw,
   UserCheck,
-  TrendingUp
+  TrendingUp,
+  Download
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ export default function AdminDashboard() {
     waitingUsers: 0,
     recentUsers: []
   });
+  const [isExporting, setIsExporting] = useState(false);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -135,6 +138,26 @@ export default function AdminDashboard() {
     return `${hours}h ago`;
   };
 
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    try {
+      const response = await base44.functions.invoke('exportUsersCsv', {});
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'debateme_users.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      alert("Failed to export CSV. Please try again.");
+    }
+    setIsExporting(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
@@ -169,14 +192,24 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
             <p className="text-slate-600 mt-1">Real-time user activity monitoring</p>
           </div>
-          <Button 
-            onClick={loadData}
-            variant="outline"
-            className="gap-2"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleExportCsv}
+              disabled={isExporting}
+              className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Download className="w-4 h-4" />
+              {isExporting ? 'Exporting...' : 'Export CSV'}
+            </Button>
+            <Button 
+              onClick={loadData}
+              variant="outline"
+              className="gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}

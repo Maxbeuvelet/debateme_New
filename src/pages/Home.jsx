@@ -30,8 +30,8 @@ export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
   const [debateOfTheWeek, setDebateOfTheWeek] = useState(null);
 
-  // Launch date: Thursday, November 28th, 2025 at 7pm EST
-  const LAUNCH_DATE = new Date('2025-11-28T19:00:00-05:00');
+  // Launch date: Friday, January 3rd, 2026 at 7pm EST
+  const LAUNCH_DATE = new Date('2026-01-03T19:00:00-05:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function Home() {
               className="mb-8"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                Launching November 28th!
+                Launching January 3rd!
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
                 Get ready to join the only live video debate site. Create, join and discuss all the best debates.
@@ -279,10 +279,10 @@ export default function Home() {
               <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] relative overflow-hidden">
                 {/* Overlay to indicate disabled */}
                 <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
-                  <div className="text-center">
-                    <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 animate-pulse" />
-                    <p className="text-xl font-bold text-white">Available November 28th</p>
-                  </div>
+                <div className="text-center">
+                  <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 animate-pulse" />
+                  <p className="text-xl font-bold text-white">Available January 3rd</p>
+                </div>
                 </div>
 
                 {/* Preview Content (disabled look) */}

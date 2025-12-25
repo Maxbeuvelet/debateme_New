@@ -1,39 +1,39 @@
-import Home from './pages/Home';
-import DebateDetails from './pages/DebateDetails';
-import CategoryTopics from './pages/CategoryTopics';
-import TakeStance from './pages/TakeStance';
-import VoiceDebate from './pages/VoiceDebate';
-import Trending from './pages/Trending';
-import Categories from './pages/Categories';
-import Community from './pages/Community';
-import SetupProfile from './pages/SetupProfile';
-import UserStats from './pages/UserStats';
-import Ranked from './pages/Ranked';
 import Achievements from './pages/Achievements';
-import CreateDebate from './pages/CreateDebate';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import Unsubscribe from './pages/Unsubscribe';
 import AdminDashboard from './pages/AdminDashboard';
+import Categories from './pages/Categories';
+import CategoryTopics from './pages/CategoryTopics';
+import Community from './pages/Community';
+import CreateDebate from './pages/CreateDebate';
+import DebateDetails from './pages/DebateDetails';
+import Home from './pages/Home';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Ranked from './pages/Ranked';
+import SetupProfile from './pages/SetupProfile';
+import TakeStance from './pages/TakeStance';
+import Trending from './pages/Trending';
+import Unsubscribe from './pages/Unsubscribe';
+import UserStats from './pages/UserStats';
+import VoiceDebate from './pages/VoiceDebate';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "DebateDetails": DebateDetails,
-    "CategoryTopics": CategoryTopics,
-    "TakeStance": TakeStance,
-    "VoiceDebate": VoiceDebate,
-    "Trending": Trending,
-    "Categories": Categories,
-    "Community": Community,
-    "SetupProfile": SetupProfile,
-    "UserStats": UserStats,
-    "Ranked": Ranked,
     "Achievements": Achievements,
-    "CreateDebate": CreateDebate,
-    "PrivacyPolicy": PrivacyPolicy,
-    "Unsubscribe": Unsubscribe,
     "AdminDashboard": AdminDashboard,
+    "Categories": Categories,
+    "CategoryTopics": CategoryTopics,
+    "Community": Community,
+    "CreateDebate": CreateDebate,
+    "DebateDetails": DebateDetails,
+    "Home": Home,
+    "PrivacyPolicy": PrivacyPolicy,
+    "Ranked": Ranked,
+    "SetupProfile": SetupProfile,
+    "TakeStance": TakeStance,
+    "Trending": Trending,
+    "Unsubscribe": Unsubscribe,
+    "UserStats": UserStats,
+    "VoiceDebate": VoiceDebate,
 }
 
 export const pagesConfig = {

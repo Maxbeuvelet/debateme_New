@@ -539,9 +539,7 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : (
                   <Button
-                    onClick={async () => {
-                      await User.loginWithRedirect(window.location.href);
-                    }}
+                    onClick={() => base44.auth.redirectToLogin(window.location.href)}
                     size="sm"
                     className="w-full bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-white font-semibold shadow-lg text-xs"
                   >

@@ -113,7 +113,7 @@ export default function CreateDebate() {
     setIsLoading(true);
     try {
       const user = await User.me();
-      if (!user.username) {
+      if (user && !user.username) {
         navigate(createPageUrl("SetupProfile"));
         return;
       }
@@ -135,7 +135,7 @@ export default function CreateDebate() {
       
       setUserStances(recentStances);
     } catch (error) {
-      await User.loginWithRedirect(window.location.href);
+      console.error("Error loading data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -244,7 +244,7 @@ export default function CreateDebate() {
 
   const handleJoinDebate = async (debate) => {
     if (!currentUser) {
-      await User.loginWithRedirect(window.location.href);
+      alert("Please log in to join a debate");
       return;
     }
 
@@ -488,7 +488,13 @@ export default function CreateDebate() {
             </div>
             
             <Button
-              onClick={() => setShowCreateDialog(true)}
+              onClick={() => {
+                if (!currentUser) {
+                  alert("Please log in to create a debate");
+                  return;
+                }
+                setShowCreateDialog(true);
+              }}
               className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white font-semibold text-lg py-6 px-8 rounded-lg shadow-lg"
             >
               <PlusCircle className="w-5 h-5 mr-2" />
@@ -551,7 +557,16 @@ export default function CreateDebate() {
                       : `Be the first to create a ${categoryLabels[selectedCategory].toLowerCase()} debate!`
                     }
                   </p>
-                  <Button onClick={() => setShowCreateDialog(true)} className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700">
+                  <Button 
+                    onClick={() => {
+                      if (!currentUser) {
+                        alert("Please log in to create a debate");
+                        return;
+                      }
+                      setShowCreateDialog(true);
+                    }}
+                    className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700"
+                  >
                     Create Debate
                   </Button>
                 </CardContent>

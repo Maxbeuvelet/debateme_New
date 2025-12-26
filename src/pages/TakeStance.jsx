@@ -25,24 +25,28 @@ export default function TakeStance() {
 
   const loadDebateData = useCallback(async () => {
     setIsLoading(true);
+    
+    // Check if user is logged in first
+    let user;
     try {
-      // Check if user is logged in
-      const user = await User.me();
-      
-      // If user doesn't have a username, redirect to setup
-      if (user && !user.username) {
-        navigate(createPageUrl("SetupProfile"));
-        return;
-      }
-      
-      // If no user logged in, show alert
-      if (!user) {
-        alert("Please log in to join a debate");
-        navigate(createPageUrl("Home"));
-        return;
-      }
-      
-      setCurrentUser(user);
+      user = await User.me();
+    } catch (error) {
+      // User not logged in
+      setIsLoading(false);
+      alert("Please log in to join a debate");
+      navigate(createPageUrl("Home"));
+      return;
+    }
+    
+    // If user doesn't have a username, redirect to setup
+    if (user && !user.username) {
+      navigate(createPageUrl("SetupProfile"));
+      return;
+    }
+    
+    setCurrentUser(user);
+    
+    try {
       
       const [debateData, allStances, allSessions] = await Promise.all([
         Debate.list().then(debates => debates.find(d => d.id === debateId)),
@@ -102,9 +106,10 @@ export default function TakeStance() {
       setUserStances(recentOtherUserWaitingStances);
       
     } catch (error) {
-      console.error("Error loading debate:", error);
+      console.error("Error loading debate data:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, [debateId, navigate]);
 
   useEffect(() => {

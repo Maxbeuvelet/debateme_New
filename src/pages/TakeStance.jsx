@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -31,8 +30,15 @@ export default function TakeStance() {
       const user = await User.me();
       
       // If user doesn't have a username, redirect to setup
-      if (!user.username) {
+      if (user && !user.username) {
         navigate(createPageUrl("SetupProfile"));
+        return;
+      }
+      
+      // If no user logged in, show alert
+      if (!user) {
+        alert("Please log in to join a debate");
+        navigate(createPageUrl("Home"));
         return;
       }
       
@@ -97,8 +103,6 @@ export default function TakeStance() {
       
     } catch (error) {
       console.error("Error loading debate:", error);
-      // User not logged in, redirect to login
-      await User.loginWithRedirect(window.location.href);
     }
     setIsLoading(false);
   }, [debateId, navigate]);

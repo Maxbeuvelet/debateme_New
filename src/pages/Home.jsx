@@ -222,7 +222,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 backdrop-blur-sm mb-8"
               >
                 <Sparkles className="w-5 h-5 text-cyan-400" />
-                <span className="text-cyan-300 text-lg font-semibold">Launching Friday, Jan 3rd at 7pm</span>
+                <span className="text-cyan-300 text-lg font-semibold">Launching Friday, Jan 3rd at 6pm</span>
               </motion.div>
             </motion.div>
 

@@ -368,7 +368,7 @@ export default function CreateDebate() {
                 <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
                   <div className="text-center">
                     <Calendar className="w-16 h-16 text-cyan-400 mx-auto mb-4 animate-pulse" />
-                    <p className="text-xl font-bold text-white">Available Jan 3rd at 7pm</p>
+                    <p className="text-xl font-bold text-white">Available Jan 3rd at 6pm</p>
                   </div>
                 </div>
 

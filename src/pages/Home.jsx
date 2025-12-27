@@ -18,8 +18,12 @@ import LiveStats from "../components/home/LiveStats";
 import TrendingCarousel from "../components/home/TrendingCarousel";
 import CategoryArena from "../components/home/CategoryArena";
 import CommunitySpotlight from "../components/home/CommunitySpotlight";
+import LaunchCountdown from "../components/home/LaunchCountdown";
 
 export default function Home() {
+  // Launch date: Friday, January 3rd, 2026 at 7pm
+  const LAUNCH_DATE = new Date('2026-01-03T19:00:00');
+  const isLaunched = new Date() >= LAUNCH_DATE;
   const [debates, setDebates] = useState([]);
   const [userStances, setUserStances] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,9 +34,11 @@ export default function Home() {
   const [debateOfTheWeek, setDebateOfTheWeek] = useState(null);
 
   useEffect(() => {
-    loadData();
-    checkForNewAchievements();
-  }, []);
+    if (isLaunched) {
+      loadData();
+      checkForNewAchievements();
+    }
+  }, [isLaunched]);
 
   const checkForNewAchievements = async () => {
     try {
@@ -62,6 +68,7 @@ export default function Home() {
   };
 
   const loadData = async () => {
+    if (!isLaunched) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -178,6 +185,151 @@ export default function Home() {
   const activeDebates = userStances?.activeDebates || 0;
   const totalArguments = userStances?.waiting?.length || 0;
   const uniqueDebaters = userStances?.activeDebaters || 0;
+
+  // Coming Soon Page
+  if (!isLaunched) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+        {/* Animated background effects */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
+
+        <div className="relative z-10 px-4 py-12">
+          <div className="max-w-6xl mx-auto">
+            {/* Logo and Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-12"
+            >
+              <h1 className="text-6xl sm:text-7xl md:text-8xl font-black mb-4 leading-tight">
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                  DebateMe
+                </span>
+              </h1>
+              <p className="text-xl sm:text-2xl text-slate-300 mb-8">
+                Live Video 1 on 1 Debates
+              </p>
+              
+              {/* Launch Info */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 backdrop-blur-sm mb-8"
+              >
+                <Sparkles className="w-5 h-5 text-cyan-400" />
+                <span className="text-cyan-300 text-lg font-semibold">Launching Friday, Jan 3rd at 7pm</span>
+              </motion.div>
+            </motion.div>
+
+            {/* Countdown Timer */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mb-12"
+            >
+              <LaunchCountdown launchDate={LAUNCH_DATE} />
+            </motion.div>
+
+            {/* Preview Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="mb-8"
+            >
+              <h2 className="text-2xl sm:text-3xl font-bold text-center text-white mb-6">
+                Preview: What's Coming
+              </h2>
+              
+              {/* Preview Container */}
+              <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-[0_0_50px_rgba(168,85,247,0.2)] overflow-hidden">
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] z-10" />
+                
+                {/* Preview Content */}
+                <div className="relative opacity-60">
+                  {/* Mock Hero Section */}
+                  <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 mb-6 text-center">
+                    <h3 className="text-4xl font-black text-white mb-4">Join Live Debates</h3>
+                    <p className="text-slate-300 mb-4">Connect face-to-face with people who think differently</p>
+                    <div className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-bold">
+                      Start Debating
+                    </div>
+                  </div>
+
+                  {/* Mock Stats */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-slate-800 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-cyan-400">20+</div>
+                      <div className="text-sm text-slate-400">Active Topics</div>
+                    </div>
+                    <div className="bg-slate-800 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-purple-400">15</div>
+                      <div className="text-sm text-slate-400">Live Debates</div>
+                    </div>
+                    <div className="bg-slate-800 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-pink-400">30+</div>
+                      <div className="text-sm text-slate-400">Debaters</div>
+                    </div>
+                    <div className="bg-slate-800 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-yellow-400">50+</div>
+                      <div className="text-sm text-slate-400">Arguments</div>
+                    </div>
+                  </div>
+
+                  {/* Mock Trending Topics */}
+                  <div>
+                    <h4 className="text-xl font-bold text-white mb-4">Trending Topics</h4>
+                    <div className="grid gap-3">
+                      <div className="bg-slate-800 rounded-lg p-4">
+                        <div className="text-lg font-bold text-white mb-2">Should AI replace human workers?</div>
+                        <div className="text-sm text-slate-400">Technology • 12 debaters waiting</div>
+                      </div>
+                      <div className="bg-slate-800 rounded-lg p-4">
+                        <div className="text-lg font-bold text-white mb-2">Universal Basic Income: Yes or No?</div>
+                        <div className="text-sm text-slate-400">Economics • 8 debaters waiting</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* CTA */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="text-center"
+            >
+              <p className="text-slate-400 mb-4">
+                Get ready to engage in meaningful discussions
+              </p>
+              <a
+                href="https://discord.gg/aXQevrYxBm"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+              >
+                <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 mx-auto">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+                  </svg>
+                  Join Discord Community
+                </button>
+              </a>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-800 overflow-x-hidden">

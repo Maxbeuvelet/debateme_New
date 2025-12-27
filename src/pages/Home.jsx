@@ -21,8 +21,8 @@ import CommunitySpotlight from "../components/home/CommunitySpotlight";
 import LaunchCountdown from "../components/home/LaunchCountdown";
 
 export default function Home() {
-  // Launch date: Friday, January 3rd, 2026 at 7pm (local time)
-  const LAUNCH_DATE = new Date(2026, 0, 3, 19, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
+  // Launch date: Friday, January 3rd, 2026 at 6pm
+  const LAUNCH_DATE = new Date(2026, 0, 3, 18, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
   const isLaunched = new Date().getTime() >= LAUNCH_DATE;
   const [debates, setDebates] = useState([]);
   const [userStances, setUserStances] = useState([]);

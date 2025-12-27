@@ -67,8 +67,8 @@ export default function CreateDebate() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Launch date: Friday, January 3rd, 2026 at 7pm (next Friday at 7pm)
-  const LAUNCH_DATE = new Date('2026-01-03T19:00:00');
+  // Launch date: Friday, January 3rd, 2026 at 7pm (local time)
+  const LAUNCH_DATE = new Date(2026, 0, 3, 19, 0, 0); // year, month (0=Jan), day, hour, min, sec
   const isLaunched = new Date() >= LAUNCH_DATE;
   
   // Form state

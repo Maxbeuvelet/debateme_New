@@ -11,7 +11,8 @@ export default function LaunchCountdown({ launchDate }) {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = new Date(launchDate) - new Date();
+      const targetTime = typeof launchDate === 'number' ? launchDate : new Date(launchDate).getTime();
+      const difference = targetTime - new Date().getTime();
       
       if (difference > 0) {
         setTimeLeft({

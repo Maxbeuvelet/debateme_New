@@ -85,8 +85,8 @@ export default function Achievements() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Launch date: Thursday, November 28th, 2025
-  const LAUNCH_DATE = new Date('2025-11-28T00:00:00');
+  // Launch date: Friday, January 3rd, 2026 at 7pm
+  const LAUNCH_DATE = new Date('2026-01-03T19:00:00');
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {

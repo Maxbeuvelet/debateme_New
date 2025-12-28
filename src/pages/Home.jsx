@@ -21,8 +21,8 @@ import CommunitySpotlight from "../components/home/CommunitySpotlight";
 
 
 export default function Home() {
-  // Launch date: Saturday, January 4th, 2026 at 6pm
-  const LAUNCH_DATE = new Date(2026, 0, 4, 18, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
+  // Launch date: Friday, January 2nd, 2026 at 6pm
+  const LAUNCH_DATE = new Date(2026, 0, 2, 18, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
   const isLaunched = new Date().getTime() >= LAUNCH_DATE;
   const [debates, setDebates] = useState([]);
   const [userStances, setUserStances] = useState([]);
@@ -222,7 +222,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 backdrop-blur-sm mb-8"
               >
                 <Sparkles className="w-5 h-5 text-cyan-400" />
-                <span className="text-cyan-300 text-lg font-semibold">Launching Saturday, Jan 4th at 6pm</span>
+                <span className="text-cyan-300 text-lg font-semibold">Launching Friday, Jan 2nd at 6pm</span>
               </motion.div>
             </motion.div>
 

@@ -3,34 +3,11 @@ import { motion } from "framer-motion";
 
 export default function LaunchCountdown({ launchDate }) {
   const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
+    days: 5,
+    hours: 12,
+    minutes: 30,
+    seconds: 45
   });
-
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const targetTime = typeof launchDate === 'number' ? launchDate : new Date(launchDate).getTime();
-      const difference = targetTime - new Date().getTime();
-      
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        });
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      }
-    };
-
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(timer);
-  }, [launchDate]);
 
   const timeUnits = [
     { label: "Days", value: timeLeft.days },

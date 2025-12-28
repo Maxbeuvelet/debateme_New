@@ -51,8 +51,8 @@ export default function Community() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Launch date: Friday, January 3rd, 2026 at 6pm
-  const LAUNCH_DATE = new Date(2026, 0, 3, 18, 0, 0); // year, month (0=Jan), day, hour, min, sec
+  // Launch date: Saturday, January 4th, 2026 at 6pm
+  const LAUNCH_DATE = new Date(2026, 0, 4, 18, 0, 0); // year, month (0=Jan), day, hour, min, sec
   const isLaunched = new Date() >= LAUNCH_DATE;
 
   useEffect(() => {

@@ -67,8 +67,8 @@ export default function CreateDebate() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Launch date: Friday, January 3rd, 2026 at 6pm
-  const LAUNCH_DATE = new Date(2026, 0, 3, 18, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
+  // Launch date: Saturday, January 4th, 2026 at 6pm
+  const LAUNCH_DATE = new Date(2026, 0, 4, 18, 0, 0).getTime(); // year, month (0=Jan), day, hour, min, sec
   const isLaunched = new Date().getTime() >= LAUNCH_DATE;
   
   // Form state
@@ -338,7 +338,7 @@ export default function CreateDebate() {
               className="mb-8"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                Launch Day: Friday, January 3rd at 7pm
+                Launch Day: Saturday, January 4th at 6pm
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
                 Soon you'll be able to create your own debate topics and<br className="hidden sm:block" />
@@ -368,7 +368,7 @@ export default function CreateDebate() {
                 <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
                   <div className="text-center">
                     <Calendar className="w-16 h-16 text-cyan-400 mx-auto mb-4 animate-pulse" />
-                    <p className="text-xl font-bold text-white">Available Jan 3rd at 6pm</p>
+                    <p className="text-xl font-bold text-white">Available Jan 4th at 6pm</p>
                   </div>
                 </div>
 

@@ -17,7 +17,7 @@ import { motion } from "framer-motion";
 import { PlusCircle, AlertCircle, Users, Clock, Filter, Sparkles, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 
 // List of inappropriate words to filter
 const inappropriateWords = [
@@ -346,15 +346,7 @@ export default function CreateDebate() {
               </p>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview of Create Debate Form */}
             <motion.div

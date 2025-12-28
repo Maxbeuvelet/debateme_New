@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Debate, User } from "@/entities/all";
 import { motion } from "framer-motion";
 import { LayoutGrid, Landmark, Cpu, Leaf, DollarSign, Sparkles, Calendar, Clock, ArrowRight } from "lucide-react";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
@@ -155,15 +155,7 @@ export default function Categories() {
               </p>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview of Categories */}
             <motion.div

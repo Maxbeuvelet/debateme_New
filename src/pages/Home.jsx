@@ -18,7 +18,7 @@ import LiveStats from "../components/home/LiveStats";
 import TrendingCarousel from "../components/home/TrendingCarousel";
 import CategoryArena from "../components/home/CategoryArena";
 import CommunitySpotlight from "../components/home/CommunitySpotlight";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 
 export default function Home() {
   // Launch date: Saturday, January 4th, 2026 at 6pm
@@ -226,15 +226,7 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mb-12"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview Section */}
             <motion.div

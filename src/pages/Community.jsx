@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { Users, Sparkles, Trophy, Clock, Crown, Medal, Award, ExternalLink, Flame, Eye, Gem, Star, Zap, Shield, Hexagon, Calendar } from "lucide-react";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -169,15 +169,7 @@ export default function Community() {
               </p>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview of Leaderboard */}
             <motion.div

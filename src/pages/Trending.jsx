@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Debate, UserStance } from "@/entities/all";
 import { motion } from "framer-motion";
 import { TrendingUp, Users, Clock, Sparkles, Flame } from "lucide-react";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
@@ -119,15 +119,7 @@ export default function Trending() {
               </p>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview of Trending Debates */}
             <motion.div

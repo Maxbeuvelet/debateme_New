@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { motion } from "framer-motion";
 import { Star, Trophy, Lock, CheckCircle2, Award, Zap, Sparkles, Calendar } from "lucide-react";
-import LaunchCountdown from "../components/home/LaunchCountdown";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -192,15 +192,7 @@ export default function Achievements() {
               </p>
             </motion.div>
 
-            {/* Countdown Timer */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <LaunchCountdown launchDate={LAUNCH_DATE} />
-            </motion.div>
+
 
             {/* Preview of Achievements */}
             <motion.div

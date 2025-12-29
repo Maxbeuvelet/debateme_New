@@ -111,7 +111,7 @@ export default function Trending() {
               className="mb-8"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                Launch Day: Friday, January 2nd at 6pm
+                Launch Day: Friday, January 2nd at 7pm EST
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
                 Get ready to discover the hottest debates and<br className="hidden sm:block" />
@@ -133,7 +133,7 @@ export default function Trending() {
                 <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
                   <div className="text-center">
                     <Flame className="w-16 h-16 text-orange-400 mx-auto mb-4 animate-pulse" />
-                    <p className="text-xl font-bold text-white">Available Jan 2nd at 6pm</p>
+                    <p className="text-xl font-bold text-white">Available Jan 2nd at 7pm EST</p>
                   </div>
                 </div>
 

@@ -161,7 +161,7 @@ export default function Community() {
               className="mb-8"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
-                Launch Day: Friday, January 2nd at 6pm
+                Launch Day: Friday, January 2nd at 7pm EST
               </h2>
               <p className="text-lg sm:text-xl text-slate-300 mb-6 leading-relaxed">
                 Connect with debaters, climb the leaderboards, and<br className="hidden sm:block" />

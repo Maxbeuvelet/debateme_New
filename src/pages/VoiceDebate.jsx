@@ -138,11 +138,30 @@ export default function VoiceDebate() {
       }
       
       await setupVideoRoom();
+
+      // Send AI greeting if this is an AI debate and no messages exist yet
+      if (isAiDebate && msgs.length === 0 && userStance && debateData) {
+        const aiStance = participantStances.find(s => s.user_id === "ai_debater");
+        const userPosition = userStance.position === "position_a" ? debateData.position_a : debateData.position_b;
+        
+        if (aiStance) {
+          await PublicMessage.create({
+            session_id: sessionId,
+            sender_name: "AI Debater",
+            sender_position: aiStance.position,
+            content: `Hello ${userName}! I see you've chosen "${userPosition}". Let's have a thoughtful debate on this topic. I'm ready when you are!`
+          });
+          
+          // Reload messages to show the greeting
+          const updatedMsgs = await PublicMessage.filter({ session_id: sessionId }, "created_date");
+          setPublicMessages(updatedMsgs);
+        }
+      }
     } catch (error) {
       console.error("Error loading data:", error);
     }
     setIsLoading(false);
-  }, [sessionId, userName, navigate, setupVideoRoom]);
+  }, [sessionId, userName, navigate, setupVideoRoom, isAiDebate]);
 
   useEffect(() => {
     if (sessionId) loadData();

@@ -44,36 +44,34 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       
       lastMessageIdRef.current = latestMessage.id;
       
-      // Use Web Speech API
-      const utterance = new SpeechSynthesisUtterance(latestMessage.content);
-      
-      // Select a natural-sounding voice
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => 
-        voice.name.includes('Google') || 
-        voice.name.includes('Natural') ||
-        voice.name.includes('Premium')
-      ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
-      utterance.rate = 1.0; // Normal speed
-      utterance.pitch = 1.0; // Normal pitch
-      utterance.volume = 1.0;
-      
-      // Cancel any ongoing speech
+      // Cancel any ongoing speech before starting new one
       window.speechSynthesis.cancel();
       
-      // Speak the message
-      window.speechSynthesis.speak(utterance);
+      // Small delay to ensure cancel completes
+      setTimeout(() => {
+        // Use Web Speech API
+        const utterance = new SpeechSynthesisUtterance(latestMessage.content);
+        
+        // Select a natural-sounding voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(voice => 
+          voice.name.includes('Google') || 
+          voice.name.includes('Natural') ||
+          voice.name.includes('Premium')
+        ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+        
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+        
+        utterance.rate = 0.95; // Slightly slower for clarity
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Speak the message
+        window.speechSynthesis.speak(utterance);
+      }, 100);
     }
-    
-    // Cleanup: cancel speech when component unmounts or messages change
-    return () => {
-      window.speechSynthesis.cancel();
-    };
   }, [messages]);
 
   // Speech recognition for AI debates

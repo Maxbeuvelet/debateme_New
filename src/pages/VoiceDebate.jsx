@@ -180,10 +180,18 @@ export default function VoiceDebate() {
   }, [sessionId, isLoading, loadMessages, checkStatus]);
 
   const handleSendMessage = async (content) => {
-    if (!currentUser || !sessionId) return;
+    if (!currentUser || !sessionId) {
+      console.log("Missing currentUser or sessionId");
+      return;
+    }
 
     const participant = participants.find(p => p.user_name === currentUser);
-    if (!participant) return;
+    if (!participant) {
+      console.log("No participant found for currentUser:", currentUser);
+      return;
+    }
+    
+    console.log("Sending message:", content);
     
     try {
       await PublicMessage.create({
@@ -193,40 +201,66 @@ export default function VoiceDebate() {
         content: content
       });
 
+      console.log("Message created, reloading messages immediately");
+      await loadMessages();
+
       // If AI debate, trigger AI response
       if (isAiDebate) {
+        console.log("AI debate detected, generating AI response...");
         const aiStance = participants.find(s => s.user_id === "ai_debater");
-        if (aiStance && debate) {
-          try {
-            // Get fresh conversation history including the message we just sent
-            const freshMessages = await PublicMessage.filter({ session_id: sessionId }, "created_date");
-            const conversationHistory = freshMessages.map(msg => ({
-              sender: msg.sender_name,
-              content: msg.content
-            }));
+        
+        if (!aiStance) {
+          console.error("AI stance not found in participants:", participants);
+          return;
+        }
+        
+        if (!debate) {
+          console.error("Debate data not loaded");
+          return;
+        }
+        
+        try {
+          // Get fresh conversation history including the message we just sent
+          const freshMessages = await PublicMessage.filter({ session_id: sessionId }, "created_date");
+          console.log("Got fresh messages:", freshMessages.length);
+          
+          const conversationHistory = freshMessages.map(msg => ({
+            sender: msg.sender_name,
+            content: msg.content
+          }));
 
-            const response = await base44.functions.invoke('generateAiDebateResponse', {
-              debateTopic: debate.title,
-              debateDescription: debate.description,
-              aiStance: aiStance.position === "position_a" ? debate.position_a : debate.position_b,
-              conversationHistory: conversationHistory
+          console.log("Calling generateAiDebateResponse...");
+          const response = await base44.functions.invoke('generateAiDebateResponse', {
+            debateTopic: debate.title,
+            debateDescription: debate.description,
+            aiStance: aiStance.position === "position_a" ? debate.position_a : debate.position_b,
+            conversationHistory: conversationHistory
+          });
+
+          console.log("AI response received:", response.data);
+
+          if (response.data && response.data.aiResponse) {
+            console.log("Creating AI message in database...");
+            await PublicMessage.create({
+              session_id: sessionId,
+              sender_name: "AI Debater",
+              sender_position: aiStance.position,
+              content: response.data.aiResponse
             });
-
-            if (response.data && response.data.aiResponse) {
-              await PublicMessage.create({
-                session_id: sessionId,
-                sender_name: "AI Debater",
-                sender_position: aiStance.position,
-                content: response.data.aiResponse
-              });
-            }
-          } catch (error) {
-            console.error("Error getting AI response:", error);
+            
+            console.log("AI message created, reloading messages");
+            await loadMessages();
+          } else {
+            console.error("No aiResponse in response data:", response.data);
+          }
+        } catch (error) {
+          console.error("Error getting AI response:", error);
+          if (error.response) {
+            console.error("Response data:", error.response.data);
+            console.error("Response status:", error.response.status);
           }
         }
       }
-      
-      await loadMessages();
     } catch (error) {
       console.error("Error sending message:", error);
     }

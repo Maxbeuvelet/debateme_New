@@ -57,7 +57,7 @@ export default function StanceSelector({ debate, participantCounts, userName, on
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Opponent Type Selection */}
             <div className="space-y-4">
-              <Label className="text-base sm:text-lg font-semibold text-slate-900">Choose Your Opponent</Label>
+              <Label className="text-base sm:text-lg font-semibold text-slate-900">Choose Your Opponent Type</Label>
               <div className="grid grid-cols-2 gap-4">
                 <motion.div
                   whileHover={{ scale: 1.02 }}

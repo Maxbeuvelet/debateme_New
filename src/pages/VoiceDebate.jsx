@@ -193,6 +193,34 @@ export default function VoiceDebate() {
         content: content
       });
       await loadMessages();
+
+      // If AI debate, trigger AI response
+      if (isAiDebate) {
+        const aiStance = participants.find(s => s.user_id === "ai_debater");
+        if (aiStance && debate) {
+          try {
+            const response = await base44.functions.invoke('generateAiDebateResponse', {
+              debateTitle: debate.title,
+              debateDescription: debate.description,
+              userMessage: content,
+              userPosition: participant.position === "position_a" ? debate.position_a : debate.position_b,
+              aiPosition: aiStance.position === "position_a" ? debate.position_a : debate.position_b
+            });
+
+            if (response.data && response.data.response) {
+              await PublicMessage.create({
+                session_id: sessionId,
+                sender_name: "AI Debater",
+                sender_position: aiStance.position,
+                content: response.data.response
+              });
+              await loadMessages();
+            }
+          } catch (error) {
+            console.error("Error getting AI response:", error);
+          }
+        }
+      }
     } catch (error) {
       console.error("Error sending message:", error);
     }

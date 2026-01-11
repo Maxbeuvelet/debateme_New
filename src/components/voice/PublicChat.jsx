@@ -6,10 +6,12 @@ import { Send, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 
-export default function PublicChat({ messages, onSendMessage, currentUser, participants }) {
+export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
   const lastMessageIdRef = useRef(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -54,6 +56,62 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       window.speechSynthesis.speak(utterance);
     }
   }, [messages]);
+
+  // Speech recognition for AI debates
+  React.useEffect(() => {
+    if (!isAiDebate) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.error("Speech recognition not supported");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      if (lastResult.isFinal) {
+        const transcript = lastResult[0].transcript.trim();
+        if (transcript) {
+          onSendMessage(transcript);
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      if (event.error === 'no-speech') {
+        // Restart if no speech detected
+        recognition.start();
+      }
+    };
+
+    recognition.onend = () => {
+      if (isListening) {
+        recognition.start();
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    // Auto-start for AI debates
+    try {
+      recognition.start();
+      setIsListening(true);
+    } catch (error) {
+      console.error("Error starting recognition:", error);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [isAiDebate, onSendMessage, isListening]);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">

@@ -358,6 +358,7 @@ export default function VoiceDebate() {
               onSendMessage={handleSendMessage}
               currentUser={currentUser}
               participants={participants}
+              isAiDebate={isAiDebate}
             />
           </div>
 

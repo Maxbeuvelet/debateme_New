@@ -12,6 +12,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
   const lastMessageIdRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
+  const restartTimeoutRef = useRef(null);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -81,14 +82,32 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     }
 
     let isActive = true;
+    let isRestarting = false;
+    
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
+    const startRecognition = () => {
+      if (!isActive || isRestarting) return;
+      
+      try {
+        recognition.start();
+        isRestarting = false;
+      } catch (error) {
+        if (error.name === 'InvalidStateError') {
+          // Already running, ignore
+          return;
+        }
+        console.error("Error starting recognition:", error);
+      }
+    };
+
     recognition.onstart = () => {
       console.log("Speech recognition started");
       setIsListening(true);
+      isRestarting = false;
     };
 
     recognition.onresult = (event) => {
@@ -104,38 +123,47 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
     recognition.onerror = (event) => {
       console.error("Speech recognition error:", event.error);
+      
+      if (event.error === 'aborted') {
+        // Don't restart on aborted
+        return;
+      }
+      
+      if (event.error === 'no-speech') {
+        // Just continue, will restart on end
+        return;
+      }
     };
 
     recognition.onend = () => {
       console.log("Speech recognition ended");
-      if (isActive) {
-        setTimeout(() => {
-          try {
-            recognition.start();
-          } catch (error) {
-            console.error("Error restarting recognition:", error);
-          }
-        }, 500);
+      setIsListening(false);
+      
+      if (isActive && !isRestarting) {
+        isRestarting = true;
+        if (restartTimeoutRef.current) {
+          clearTimeout(restartTimeoutRef.current);
+        }
+        restartTimeoutRef.current = setTimeout(() => {
+          startRecognition();
+        }, 1000);
       }
     };
 
     recognitionRef.current = recognition;
-
-    // Auto-start for AI debates
-    try {
-      recognition.start();
-    } catch (error) {
-      console.error("Error starting recognition:", error);
-    }
+    startRecognition();
 
     return () => {
       isActive = false;
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+      }
       if (recognitionRef.current) {
         try {
-          recognitionRef.current.stop();
+          recognitionRef.current.abort();
           setIsListening(false);
         } catch (error) {
-          console.error("Error stopping recognition:", error);
+          // Ignore cleanup errors
         }
       }
     };

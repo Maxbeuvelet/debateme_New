@@ -69,6 +69,11 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       // Speak the message
       window.speechSynthesis.speak(utterance);
     }
+    
+    // Cleanup: cancel speech when component unmounts or messages change
+    return () => {
+      window.speechSynthesis.cancel();
+    };
   }, [messages]);
 
   // Speech recognition for AI debates

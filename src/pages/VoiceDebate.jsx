@@ -268,6 +268,9 @@ export default function VoiceDebate() {
 
   const handleEndDebate = async () => {
     try {
+      // Stop speech synthesis and speech recognition immediately
+      window.speechSynthesis.cancel();
+      
       // Show loading state
       setIsLoading(true);
       

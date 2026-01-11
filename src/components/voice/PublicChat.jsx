@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, MessageSquare } from "lucide-react";
+import { Send, MessageSquare, Mic, MicOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 
@@ -85,10 +85,16 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
+    recognition.onstart = () => {
+      console.log("Speech recognition started");
+      setIsListening(true);
+    };
+
     recognition.onresult = (event) => {
       const lastResult = event.results[event.results.length - 1];
       if (lastResult.isFinal) {
         const transcript = lastResult[0].transcript.trim();
+        console.log("Recognized speech:", transcript);
         if (transcript) {
           onSendMessage(transcript);
         }
@@ -97,16 +103,20 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
     recognition.onerror = (event) => {
       console.error("Speech recognition error:", event.error);
-      if (event.error === 'no-speech') {
-        // Restart if no speech detected
-        recognition.start();
+      if (event.error !== 'aborted' && event.error !== 'no-speech') {
+        setIsListening(false);
       }
     };
 
     recognition.onend = () => {
-      if (isListening) {
-        recognition.start();
-      }
+      console.log("Speech recognition ended, restarting...");
+      setTimeout(() => {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error("Error restarting recognition:", error);
+        }
+      }, 100);
     };
 
     recognitionRef.current = recognition;
@@ -114,17 +124,20 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     // Auto-start for AI debates
     try {
       recognition.start();
-      setIsListening(true);
     } catch (error) {
       console.error("Error starting recognition:", error);
     }
 
     return () => {
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try {
+          recognitionRef.current.stop();
+        } catch (error) {
+          console.error("Error stopping recognition:", error);
+        }
       }
     };
-  }, [isAiDebate, onSendMessage, isListening]);
+  }, [isAiDebate, onSendMessage]);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
@@ -186,11 +199,26 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         </div>
 
         <div className="p-3 border-t border-slate-100">
+          {isAiDebate && (
+            <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 bg-slate-50 rounded-lg px-3 py-2">
+              {isListening ? (
+                <>
+                  <Mic className="w-4 h-4 text-green-600 animate-pulse" />
+                  <span className="text-green-600 font-medium">Listening to your voice...</span>
+                </>
+              ) : (
+                <>
+                  <MicOff className="w-4 h-4 text-slate-400" />
+                  <span>Microphone inactive</span>
+                </>
+              )}
+            </div>
+          )}
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={isAiDebate ? "Or type your message..." : "Type your message..."}
               className="flex-1 border-slate-300 focus:border-slate-500 text-sm"
               maxLength={500}
             />

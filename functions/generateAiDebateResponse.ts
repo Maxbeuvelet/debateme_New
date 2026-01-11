@@ -44,7 +44,7 @@ Your response:`;
         // Call the AI integration
         const response = await base44.integrations.Core.InvokeLLM({
             prompt: prompt,
-            add_context_from_internet: true // Get real-time info if needed
+            add_context_from_internet: false
         });
 
         return Response.json({ 

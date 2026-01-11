@@ -80,6 +80,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       return;
     }
 
+    let isActive = true;
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = false;
@@ -103,20 +104,19 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
     recognition.onerror = (event) => {
       console.error("Speech recognition error:", event.error);
-      if (event.error !== 'aborted' && event.error !== 'no-speech') {
-        setIsListening(false);
-      }
     };
 
     recognition.onend = () => {
-      console.log("Speech recognition ended, restarting...");
-      setTimeout(() => {
-        try {
-          recognition.start();
-        } catch (error) {
-          console.error("Error restarting recognition:", error);
-        }
-      }, 100);
+      console.log("Speech recognition ended");
+      if (isActive) {
+        setTimeout(() => {
+          try {
+            recognition.start();
+          } catch (error) {
+            console.error("Error restarting recognition:", error);
+          }
+        }, 500);
+      }
     };
 
     recognitionRef.current = recognition;
@@ -129,9 +129,11 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     }
 
     return () => {
+      isActive = false;
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
+          setIsListening(false);
         } catch (error) {
           console.error("Error stopping recognition:", error);
         }

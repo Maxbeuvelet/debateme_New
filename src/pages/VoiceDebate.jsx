@@ -199,20 +199,25 @@ export default function VoiceDebate() {
         const aiStance = participants.find(s => s.user_id === "ai_debater");
         if (aiStance && debate) {
           try {
+            // Get conversation history for context
+            const conversationHistory = publicMessages.map(msg => ({
+              sender: msg.sender_name,
+              content: msg.content
+            }));
+
             const response = await base44.functions.invoke('generateAiDebateResponse', {
-              debateTitle: debate.title,
+              debateTopic: debate.title,
               debateDescription: debate.description,
-              userMessage: content,
-              userPosition: participant.position === "position_a" ? debate.position_a : debate.position_b,
-              aiPosition: aiStance.position === "position_a" ? debate.position_a : debate.position_b
+              aiStance: aiStance.position === "position_a" ? debate.position_a : debate.position_b,
+              conversationHistory: conversationHistory
             });
 
-            if (response.data && response.data.response) {
+            if (response.data && response.data.aiResponse) {
               await PublicMessage.create({
                 session_id: sessionId,
                 sender_name: "AI Debater",
                 sender_position: aiStance.position,
-                content: response.data.response
+                content: response.data.aiResponse
               });
               await loadMessages();
             }

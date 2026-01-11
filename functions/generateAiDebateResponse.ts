@@ -32,10 +32,10 @@ Your Stance: ${aiStance}
 
 ${conversationContext}
 
-Generate a thoughtful, persuasive argument for your stance. Keep your response:
+Generate a thoughtful, persuasive response that directly addresses what was just said. Keep your response:
 - Conversational and natural (as if speaking in a live debate)
-- Between 2-4 sentences
-- Focused and on-topic
+- Between 3-5 sentences (give a complete thought)
+- Directly respond to the previous point made
 - Respectful but assertive
 - Use facts, logic, or examples to support your position
 

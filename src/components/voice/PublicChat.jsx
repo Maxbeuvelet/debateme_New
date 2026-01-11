@@ -9,6 +9,7 @@ import { format } from "date-fns";
 export default function PublicChat({ messages, onSendMessage, currentUser, participants }) {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
+  const lastMessageIdRef = useRef(null);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -27,6 +28,32 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       ? "bg-blue-100 text-blue-800" 
       : "bg-red-100 text-red-800";
   };
+
+  // Text-to-speech for AI messages
+  React.useEffect(() => {
+    if (messages.length === 0) return;
+    
+    const latestMessage = messages[messages.length - 1];
+    
+    // Only speak if it's a new AI message
+    if (latestMessage.id !== lastMessageIdRef.current && 
+        latestMessage.sender_name === "AI Debater") {
+      
+      lastMessageIdRef.current = latestMessage.id;
+      
+      // Use Web Speech API
+      const utterance = new SpeechSynthesisUtterance(latestMessage.content);
+      utterance.rate = 0.9; // Slightly slower for clarity
+      utterance.pitch = 1.1; // Slightly higher pitch for AI
+      utterance.volume = 1.0;
+      
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      // Speak the message
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [messages]);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">

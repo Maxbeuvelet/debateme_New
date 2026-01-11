@@ -192,15 +192,15 @@ export default function VoiceDebate() {
         sender_position: participant.position,
         content: content
       });
-      await loadMessages();
 
       // If AI debate, trigger AI response
       if (isAiDebate) {
         const aiStance = participants.find(s => s.user_id === "ai_debater");
         if (aiStance && debate) {
           try {
-            // Get conversation history for context
-            const conversationHistory = publicMessages.map(msg => ({
+            // Get fresh conversation history including the message we just sent
+            const freshMessages = await PublicMessage.filter({ session_id: sessionId }, "created_date");
+            const conversationHistory = freshMessages.map(msg => ({
               sender: msg.sender_name,
               content: msg.content
             }));
@@ -219,13 +219,14 @@ export default function VoiceDebate() {
                 sender_position: aiStance.position,
                 content: response.data.aiResponse
               });
-              await loadMessages();
             }
           } catch (error) {
             console.error("Error getting AI response:", error);
           }
         }
       }
+      
+      await loadMessages();
     } catch (error) {
       console.error("Error sending message:", error);
     }

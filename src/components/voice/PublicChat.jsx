@@ -114,9 +114,15 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     };
 
     recognition.onresult = (event) => {
+      // Get all results and concatenate them
+      let fullTranscript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        fullTranscript += event.results[i][0].transcript;
+      }
+      
       const lastResult = event.results[event.results.length - 1];
       if (lastResult.isFinal) {
-        const transcript = lastResult[0].transcript.trim();
+        const transcript = fullTranscript.trim();
         console.log("Recognized speech:", transcript);
         if (transcript) {
           onSendMessage(transcript);

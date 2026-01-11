@@ -26,6 +26,7 @@ export default function VoiceDebate() {
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('id');
   const userName = urlParams.get('user');
+  const isAiDebate = urlParams.get('ai') === 'true';
   
   const [session, setSession] = useState(null);
   const [debate, setDebate] = useState(null);
@@ -301,6 +302,8 @@ export default function VoiceDebate() {
               roomUrl={videoRoomUrl}
               token={videoToken}
               userName={currentUser}
+              isAiDebate={isAiDebate}
+              opponentName={opponent?.user_name}
             />
             
             <PublicChat 

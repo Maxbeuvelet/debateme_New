@@ -86,6 +86,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
     let isActive = true;
     let isRestarting = false;
+    let processedResultsCount = 0;
     
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
@@ -98,6 +99,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       try {
         recognition.start();
         isRestarting = false;
+        processedResultsCount = 0;
       } catch (error) {
         if (error.name === 'InvalidStateError') {
           // Already running, ignore
@@ -114,19 +116,19 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     };
 
     recognition.onresult = (event) => {
-      // Get all results and concatenate them
-      let fullTranscript = '';
-      for (let i = 0; i < event.results.length; i++) {
-        fullTranscript += event.results[i][0].transcript;
+      // Only process new results that we haven't seen yet
+      let newTranscript = '';
+      for (let i = processedResultsCount; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          newTranscript += event.results[i][0].transcript + ' ';
+          processedResultsCount = i + 1;
+        }
       }
       
-      const lastResult = event.results[event.results.length - 1];
-      if (lastResult.isFinal) {
-        const transcript = fullTranscript.trim();
+      if (newTranscript.trim()) {
+        const transcript = newTranscript.trim();
         console.log("Recognized speech:", transcript);
-        if (transcript) {
-          onSendMessage(transcript);
-        }
+        onSendMessage(transcript);
       }
     };
 

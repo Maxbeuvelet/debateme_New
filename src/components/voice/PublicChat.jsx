@@ -45,8 +45,21 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       
       // Use Web Speech API
       const utterance = new SpeechSynthesisUtterance(latestMessage.content);
-      utterance.rate = 0.9; // Slightly slower for clarity
-      utterance.pitch = 1.1; // Slightly higher pitch for AI
+      
+      // Select a natural-sounding voice
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Google') || 
+        voice.name.includes('Natural') ||
+        voice.name.includes('Premium')
+      ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      utterance.rate = 1.0; // Normal speed
+      utterance.pitch = 1.0; // Normal pitch
       utterance.volume = 1.0;
       
       // Cancel any ongoing speech

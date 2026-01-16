@@ -114,10 +114,12 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     let isActive = true;
     let isRestarting = false;
     let processedResultsCount = 0;
-    
+    let silenceTimeout = null;
+    let accumulatedTranscript = '';
+
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = 'en-US';
 
     const startRecognition = () => {
@@ -143,20 +145,29 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     };
 
     recognition.onresult = (event) => {
-      // Only process new results that we haven't seen yet
-      let newTranscript = '';
-      for (let i = processedResultsCount; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          newTranscript += event.results[i][0].transcript + ' ';
-          processedResultsCount = i + 1;
+      // Clear any existing silence timeout
+      if (silenceTimeout) {
+        clearTimeout(silenceTimeout);
+      }
+
+      // Accumulate transcript from all results
+      let currentTranscript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        currentTranscript += event.results[i][0].transcript + ' ';
+      }
+
+      accumulatedTranscript = currentTranscript.trim();
+      console.log("Current speech:", accumulatedTranscript);
+
+      // Set timeout to send message after 2 seconds of silence
+      silenceTimeout = setTimeout(() => {
+        if (accumulatedTranscript.trim()) {
+          console.log("Sending after silence:", accumulatedTranscript);
+          onSendMessage(accumulatedTranscript);
+          accumulatedTranscript = '';
+          processedResultsCount = event.results.length;
         }
-      }
-      
-      if (newTranscript.trim()) {
-        const transcript = newTranscript.trim();
-        console.log("Recognized speech:", transcript);
-        onSendMessage(transcript);
-      }
+      }, 2000);
     };
 
     recognition.onerror = (event) => {
@@ -196,6 +207,9 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       console.log("Cleaning up speech recognition");
       isActive = false;
       isRestarting = true;
+      if (silenceTimeout) {
+        clearTimeout(silenceTimeout);
+      }
       if (restartTimeoutRef.current) {
         clearTimeout(restartTimeoutRef.current);
         restartTimeoutRef.current = null;

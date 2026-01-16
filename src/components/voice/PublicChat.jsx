@@ -160,31 +160,32 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     };
 
     recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-      
-      if (event.error === 'aborted') {
-        // Don't restart on aborted
+      console.log("Speech recognition error:", event.error);
+
+      // Don't restart on these errors
+      if (event.error === 'aborted' || event.error === 'not-allowed') {
+        isActive = false;
+        setIsListening(false);
         return;
       }
-      
-      if (event.error === 'no-speech') {
-        // Just continue, will restart on end
-        return;
-      }
+
+      // Allow restart on other errors
     };
 
     recognition.onend = () => {
-      console.log("Speech recognition ended");
+      console.log("Speech recognition ended, isActive:", isActive);
       setIsListening(false);
-      
+
       if (isActive && !isRestarting) {
         isRestarting = true;
         if (restartTimeoutRef.current) {
           clearTimeout(restartTimeoutRef.current);
         }
         restartTimeoutRef.current = setTimeout(() => {
-          startRecognition();
-        }, 1000);
+          if (isActive) {
+            startRecognition();
+          }
+        }, 500);
       }
     };
 
@@ -192,16 +193,19 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
     startRecognition();
 
     return () => {
+      console.log("Cleaning up speech recognition");
       isActive = false;
+      isRestarting = true;
       if (restartTimeoutRef.current) {
         clearTimeout(restartTimeoutRef.current);
+        restartTimeoutRef.current = null;
       }
       if (recognitionRef.current) {
         try {
-          recognitionRef.current.abort();
+          recognitionRef.current.stop();
           setIsListening(false);
         } catch (error) {
-          // Ignore cleanup errors
+          console.log("Cleanup error:", error);
         }
       }
     };

@@ -52,16 +52,30 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         // Use Web Speech API
         const utterance = new SpeechSynthesisUtterance(latestMessage.content);
         
-        // Select a natural-sounding voice
+        // Select voice in priority order
         const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = voices.find(voice => 
-          voice.name.includes('Google') || 
-          voice.name.includes('Natural') ||
-          voice.name.includes('Premium')
-        ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+        const voicePriority = [
+          'Microsoft Aria Online (Natural)',
+          'Microsoft Jenny Online (Natural)',
+          'Microsoft Guy Online (Natural)',
+          'Google US English',
+          'Samantha',
+          'Alex'
+        ];
         
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
+        let selectedVoice = null;
+        for (const voiceName of voicePriority) {
+          selectedVoice = voices.find(v => v.name === voiceName);
+          if (selectedVoice) break;
+        }
+        
+        // Fallback to any English voice if priority voices not found
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+        }
+        
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
         }
         
         utterance.rate = 0.95; // Slightly slower for clarity

@@ -55,9 +55,9 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         // Select voice in priority order
         const voices = window.speechSynthesis.getVoices();
         const voicePriority = [
+          'Microsoft Guy Online (Natural)',
           'Microsoft Aria Online (Natural)',
           'Microsoft Jenny Online (Natural)',
-          'Microsoft Guy Online (Natural)',
           'Google US English',
           'Samantha',
           'Alex'

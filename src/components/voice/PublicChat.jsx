@@ -35,25 +35,28 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
   // Text-to-speech for AI messages
   React.useEffect(() => {
     if (messages.length === 0) return;
-    
+
     const latestMessage = messages[messages.length - 1];
-    
+
     // Only speak if it's a new AI message
     if (latestMessage.id !== lastMessageIdRef.current && 
         latestMessage.sender_name === "AI Debater") {
-      
+
       lastMessageIdRef.current = latestMessage.id;
-      
+
       // Cancel any ongoing speech before starting new one
       window.speechSynthesis.cancel();
-      
-      // Small delay to ensure cancel completes
-      setTimeout(() => {
-        // Use Web Speech API
+
+      // Function to speak with voice selection
+      const speakMessage = () => {
         const utterance = new SpeechSynthesisUtterance(latestMessage.content);
-        
-        // Select voice in priority order
+
+        // Get available voices
         const voices = window.speechSynthesis.getVoices();
+
+        // Log available voices for debugging
+        console.log('Available voices:', voices.map(v => v.name));
+
         const voicePriority = [
           'Microsoft Guy Online (Natural)',
           'Microsoft Aria Online (Natural)',
@@ -62,29 +65,39 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
           'Samantha',
           'Alex'
         ];
-        
+
         let selectedVoice = null;
         for (const voiceName of voicePriority) {
           selectedVoice = voices.find(v => v.name === voiceName);
-          if (selectedVoice) break;
+          if (selectedVoice) {
+            console.log('Selected voice:', selectedVoice.name);
+            break;
+          }
         }
-        
+
         // Fallback to any English voice if priority voices not found
         if (!selectedVoice) {
           selectedVoice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+          console.log('Fallback voice:', selectedVoice?.name);
         }
-        
+
         if (selectedVoice) {
           utterance.voice = selectedVoice;
         }
-        
-        utterance.rate = 0.95; // Slightly slower for clarity
+
+        utterance.rate = 0.95;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
-        
-        // Speak the message
+
         window.speechSynthesis.speak(utterance);
-      }, 100);
+      };
+
+      // Wait for voices to load if needed
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.addEventListener('voiceschanged', speakMessage, { once: true });
+      } else {
+        setTimeout(speakMessage, 100);
+      }
     }
   }, [messages]);
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Send, MessageSquare, Mic, MicOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { generateVoiceAudio } from "@/functions/generateVoiceAudio";
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
   const [newMessage, setNewMessage] = useState("");
@@ -13,6 +14,9 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
   const restartTimeoutRef = useRef(null);
+  const audioRef = useRef(null);
+  const audioQueueRef = useRef([]);
+  const isPlayingRef = useRef(false);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -32,7 +36,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       : "bg-red-100 text-red-800";
   };
 
-  // Text-to-speech for AI messages
+  // Neural TTS for AI messages using OpenAI
   React.useEffect(() => {
     if (messages.length === 0) return;
 
@@ -44,62 +48,42 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
       lastMessageIdRef.current = latestMessage.id;
 
-      // Cancel any ongoing speech before starting new one
-      window.speechSynthesis.cancel();
+      // Add to audio queue
+      const playAudio = async () => {
+        try {
+          console.log('Generating AI voice for:', latestMessage.content);
 
-      // Function to speak with voice selection
-      const speakMessage = () => {
-        const utterance = new SpeechSynthesisUtterance(latestMessage.content);
+          // Call backend to generate audio
+          const response = await generateVoiceAudio({ text: latestMessage.content });
 
-        // Get available voices
-        const voices = window.speechSynthesis.getVoices();
+          // Create blob URL from audio data
+          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+          const audioUrl = URL.createObjectURL(audioBlob);
 
-        // Log available voices for debugging
-        console.log('Available voices:', voices.map(v => v.name));
-
-        const voicePriority = [
-          'Microsoft Guy Online (Natural)',
-          'Microsoft Aria Online (Natural)',
-          'Microsoft Jenny Online (Natural)',
-          'Google US English',
-          'Samantha',
-          'Alex'
-        ];
-
-        let selectedVoice = null;
-        for (const voiceName of voicePriority) {
-          selectedVoice = voices.find(v => v.name === voiceName);
-          if (selectedVoice) {
-            console.log('Selected voice:', selectedVoice.name);
-            break;
+          // Play audio
+          if (audioRef.current) {
+            audioRef.current.src = audioUrl;
+            await audioRef.current.play();
+            console.log('Playing AI voice');
           }
+        } catch (error) {
+          console.error('Error playing AI voice:', error);
         }
-
-        // Fallback to any English voice if priority voices not found
-        if (!selectedVoice) {
-          selectedVoice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
-          console.log('Fallback voice:', selectedVoice?.name);
-        }
-
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-
-        utterance.rate = 0.95;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-
-        window.speechSynthesis.speak(utterance);
       };
 
-      // Wait for voices to load if needed
-      if (window.speechSynthesis.getVoices().length === 0) {
-        window.speechSynthesis.addEventListener('voiceschanged', speakMessage, { once: true });
-      } else {
-        setTimeout(speakMessage, 100);
-      }
+      playAudio();
     }
   }, [messages]);
+
+  // Cleanup audio on unmount
+  React.useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
+    };
+  }, []);
 
   // Speech recognition for AI debates
   React.useEffect(() => {
@@ -227,6 +211,9 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
+      {/* Hidden audio element for AI voice playback */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
+      
       <CardHeader className="p-3 border-b border-slate-100">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
           <MessageSquare className="w-4 h-4" />

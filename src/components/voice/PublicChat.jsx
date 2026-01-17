@@ -55,19 +55,29 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
           // Call backend to generate audio
           const response = await generateVoiceAudio({ text: latestMessage.content });
+          console.log('Voice response received:', response);
 
-          // Create blob URL from audio data
+          // The response.data is already binary audio data
           const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
           const audioUrl = URL.createObjectURL(audioBlob);
+          console.log('Audio URL created:', audioUrl);
 
-          // Play audio
+          // Play audio with user interaction fallback
           if (audioRef.current) {
             audioRef.current.src = audioUrl;
-            await audioRef.current.play();
-            console.log('Playing AI voice');
+            try {
+              await audioRef.current.play();
+              console.log('✅ AI voice playing successfully');
+            } catch (playError) {
+              console.error('Autoplay blocked. Trying with user interaction...', playError);
+              // Browser blocked autoplay - need user interaction first
+              alert('Click OK to enable AI voice');
+              await audioRef.current.play();
+            }
           }
         } catch (error) {
           console.error('Error playing AI voice:', error);
+          console.error('Error details:', error.message, error.stack);
         }
       };
 

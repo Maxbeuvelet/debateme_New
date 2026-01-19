@@ -51,28 +51,43 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       // Play AI voice
       const playAudio = async () => {
         try {
-          const { data } = await generateVoiceAudio({ text: latestMessage.content });
+          console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          // Create audio from raw binary data
-          const audioBlob = new Blob([data], { type: 'audio/mpeg' });
+          const response = await generateVoiceAudio({ text: latestMessage.content });
+          console.log('📦 Response type:', typeof response.data);
+          console.log('📦 Response data:', response.data);
+          
+          // Check if data is already a Blob
+          let audioBlob;
+          if (response.data instanceof Blob) {
+            audioBlob = response.data;
+          } else if (response.data instanceof ArrayBuffer) {
+            audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+          } else {
+            // Try to convert to Blob
+            audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+          }
+          
+          console.log('🔊 Blob created, size:', audioBlob.size, 'bytes');
           const audioUrl = URL.createObjectURL(audioBlob);
+          console.log('🎵 Audio URL:', audioUrl);
 
           if (audioRef.current) {
             audioRef.current.src = audioUrl;
             audioRef.current.volume = 1.0;
-            audioRef.current.load();
+            
             const playPromise = audioRef.current.play();
             
             if (playPromise !== undefined) {
               playPromise.then(() => {
-                console.log('✅ AI voice playing');
+                console.log('✅ AI VOICE IS PLAYING!');
               }).catch(error => {
-                console.error('Playback error:', error);
+                console.error('❌ Playback failed:', error.name, error.message);
               });
             }
           }
         } catch (error) {
-          console.error('Voice generation error:', error);
+          console.error('❌ Voice error:', error.name, error.message, error);
         }
       };
 

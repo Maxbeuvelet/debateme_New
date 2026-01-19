@@ -48,36 +48,19 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
       lastMessageIdRef.current = latestMessage.id;
 
-      // Add to audio queue
+      // Play AI voice
       const playAudio = async () => {
         try {
-          console.log('Generating AI voice for:', latestMessage.content);
-
-          // Call backend to generate audio
           const response = await generateVoiceAudio({ text: latestMessage.content });
-          console.log('Voice response received:', response);
-
-          // The response.data is already binary audio data
           const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
           const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('Audio URL created:', audioUrl);
 
-          // Play audio with user interaction fallback
           if (audioRef.current) {
             audioRef.current.src = audioUrl;
-            try {
-              await audioRef.current.play();
-              console.log('✅ AI voice playing successfully');
-            } catch (playError) {
-              console.error('Autoplay blocked. Trying with user interaction...', playError);
-              // Browser blocked autoplay - need user interaction first
-              alert('Click OK to enable AI voice');
-              await audioRef.current.play();
-            }
+            audioRef.current.play().catch(e => console.error('Audio play failed:', e));
           }
         } catch (error) {
-          console.error('Error playing AI voice:', error);
-          console.error('Error details:', error.message, error.stack);
+          console.error('Voice generation error:', error);
         }
       };
 
@@ -222,7 +205,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
       {/* Hidden audio element for AI voice playback */}
-      <audio ref={audioRef} style={{ display: 'none' }} />
+      <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
       
       <CardHeader className="p-3 border-b border-slate-100">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">

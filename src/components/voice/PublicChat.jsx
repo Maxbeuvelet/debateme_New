@@ -53,41 +53,31 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         try {
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          const response = await generateVoiceAudio({ text: latestMessage.content });
-          console.log('📦 Response type:', typeof response.data);
-          console.log('📦 Response data:', response.data);
+          // Use fetch directly to get raw binary
+          const { data } = await generateVoiceAudio({ text: latestMessage.content });
           
-          // Check if data is already a Blob
-          let audioBlob;
-          if (response.data instanceof Blob) {
-            audioBlob = response.data;
-          } else if (response.data instanceof ArrayBuffer) {
-            audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
-          } else {
-            // Try to convert to Blob
-            audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
-          }
+          console.log('📦 Response data type:', data instanceof Blob ? 'Blob' : typeof data);
           
-          console.log('🔊 Blob created, size:', audioBlob.size, 'bytes');
+          // The SDK returns a Blob for binary responses
+          const audioBlob = data instanceof Blob ? data : new Blob([data], { type: 'audio/mpeg' });
+          
+          console.log('🔊 Blob size:', audioBlob.size, 'type:', audioBlob.type);
+          
+          // Create object URL and play
           const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('🎵 Audio URL:', audioUrl);
+          console.log('🎵 Created audio URL:', audioUrl);
 
           if (audioRef.current) {
+            audioRef.current.pause();
             audioRef.current.src = audioUrl;
-            audioRef.current.volume = 1.0;
+            audioRef.current.load();
             
-            const playPromise = audioRef.current.play();
-            
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                console.log('✅ AI VOICE IS PLAYING!');
-              }).catch(error => {
-                console.error('❌ Playback failed:', error.name, error.message);
-              });
-            }
+            audioRef.current.play()
+              .then(() => console.log('✅ AI VOICE PLAYING'))
+              .catch(error => console.error('❌ Play error:', error));
           }
         } catch (error) {
-          console.error('❌ Voice error:', error.name, error.message, error);
+          console.error('❌ Voice generation error:', error);
         }
       };
 

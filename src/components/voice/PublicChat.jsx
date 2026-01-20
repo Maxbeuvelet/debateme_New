@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Send, MessageSquare, Volume2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { generateVoiceAudio } from "@/functions/generateVoiceAudio";
 
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
@@ -50,11 +49,21 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
           setIsGeneratingVoice(true);
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          const response = await generateVoiceAudio({ text: latestMessage.content });
+          // Use direct fetch to get binary audio data
+          const response = await fetch('https://api.base44.app/v1/functions/generateVoiceAudio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: latestMessage.content })
+          });
           
-          // response.data is the raw audio buffer from axios
-          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
-          console.log('🔊 Blob size:', audioBlob.size);
+          if (!response.ok) {
+            throw new Error('Failed to generate audio');
+          }
+          
+          const audioBlob = await response.blob();
+          console.log('🔊 Blob size:', audioBlob.size, 'Type:', audioBlob.type);
           
           const audioUrl = URL.createObjectURL(audioBlob);
           console.log('🎵 Audio URL:', audioUrl);
@@ -68,7 +77,8 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
             URL.revokeObjectURL(audioUrl);
           };
 
-          audio.onerror = () => {
+          audio.onerror = (e) => {
+            console.error('Audio playback error:', e);
             setIsGeneratingVoice(false);
             URL.revokeObjectURL(audioUrl);
           };

@@ -215,71 +215,12 @@ export default function TakeStance() {
     }
   };
 
-  const handleTakeStance = async (position, opponentType) => {
+  const handleTakeStance = async (position) => {
     if (!currentUser) return; // Guard clause for unauthenticated user
 
     setIsSubmitting(true);
     try {
-      // If AI opponent, create session immediately and navigate to debate
-      if (opponentType === "ai") {
-        // Create a stance for the user
-        const userStance = await UserStance.create({
-          debate_id: debateId,
-          user_name: currentUser.username,
-          user_id: currentUser.id,
-          position: position,
-          status: "matched"
-        });
-
-        // Create a stance for the AI opponent (opposite position)
-        const aiPosition = position === "position_a" ? "position_b" : "position_a";
-        const aiStance = await UserStance.create({
-          debate_id: debateId,
-          user_name: "AI Debater",
-          user_id: "ai_debater",
-          position: aiPosition,
-          status: "matched"
-        });
-
-        // Create the debate session
-        const session = await DebateSession.create({
-          debate_id: debateId,
-          participant_a_id: userStance.id,
-          participant_b_id: aiStance.id,
-          status: "active"
-        });
-
-        // Update both stances with the session ID
-        await Promise.all([
-          UserStance.update(userStance.id, { 
-            session_id: session.id,
-            session_start_time: new Date().toISOString()
-          }),
-          UserStance.update(aiStance.id, { 
-            session_id: session.id,
-            session_start_time: new Date().toISOString()
-          })
-        ]);
-
-        // Update user stats
-        const categoryStats = currentUser.category_stats || {};
-        const category = debate.category;
-        categoryStats[category] = (categoryStats[category] || 0) + 1;
-
-        await User.updateMyUserData({
-          debates_joined: (currentUser.debates_joined || 0) + 1,
-          category_stats: categoryStats
-        });
-
-        // Award XP
-        await awardXpAndCheckLevelUp(50);
-
-        // Navigate to the debate
-        navigate(createPageUrl(`VoiceDebate?id=${session.id}&user=${encodeURIComponent(currentUser.username)}&ai=true`));
-        return;
-      }
-
-      // Original human opponent logic
+      // Human opponent logic
       const newStance = await UserStance.create({
         debate_id: debateId,
         user_name: currentUser.username,

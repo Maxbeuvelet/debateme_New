@@ -2,22 +2,14 @@ import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, MessageSquare, Mic, MicOff } from "lucide-react";
+import { Send, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { generateVoiceAudio } from "@/functions/generateVoiceAudio";
-import { base44 } from "@/api/base44Client";
+
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
-  const lastMessageIdRef = useRef(null);
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef(null);
-  const restartTimeoutRef = useRef(null);
-  const audioRef = useRef(null);
-  const audioQueueRef = useRef([]);
-  const isPlayingRef = useRef(false);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -37,206 +29,10 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       : "bg-red-100 text-red-800";
   };
 
-  // Neural TTS for AI messages using OpenAI
-  React.useEffect(() => {
-    if (messages.length === 0) return;
 
-    const latestMessage = messages[messages.length - 1];
-
-    // Only speak if it's a new AI message
-    if (latestMessage.id !== lastMessageIdRef.current && 
-        latestMessage.sender_name === "AI Debater") {
-
-      lastMessageIdRef.current = latestMessage.id;
-
-      // Play AI voice - using a button click to bypass autoplay restrictions
-      const playAudio = async () => {
-        try {
-          console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
-          
-          // Call the function directly via fetch to get binary response
-          const user = await base44.auth.me();
-          const response = await fetch('https://api.base44.app/v1/functions/generateVoiceAudio', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${user?.access_token}`
-            },
-            body: JSON.stringify({ text: latestMessage.content })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to generate audio');
-          }
-          
-          const audioBlob = await response.blob();
-          console.log('🔊 Blob size:', audioBlob.size);
-          
-          const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('🎵 Audio URL:', audioUrl);
-
-          // Create a new Audio element and play (bypasses autoplay restrictions better)
-          const audio = new Audio(audioUrl);
-          audio.volume = 1.0;
-          
-          audio.play()
-            .then(() => console.log('✅ AI VOICE PLAYING'))
-            .catch(error => {
-              console.error('❌ Play error:', error);
-              // If autoplay fails, show a prompt
-              if (confirm('Click OK to hear the AI voice')) {
-                audio.play();
-              }
-            });
-          
-        } catch (error) {
-          console.error('❌ Voice generation error:', error);
-        }
-      };
-
-      playAudio();
-    }
-  }, [messages]);
-
-  // Cleanup audio on unmount
-  React.useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-      }
-    };
-  }, []);
-
-  // Speech recognition for AI debates
-  React.useEffect(() => {
-    if (!isAiDebate) return;
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech recognition not supported");
-      return;
-    }
-
-    let isActive = true;
-    let isRestarting = false;
-    let processedResultsCount = 0;
-    let silenceTimeout = null;
-    let accumulatedTranscript = '';
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    const startRecognition = () => {
-      if (!isActive || isRestarting) return;
-      
-      try {
-        recognition.start();
-        isRestarting = false;
-        processedResultsCount = 0;
-      } catch (error) {
-        if (error.name === 'InvalidStateError') {
-          // Already running, ignore
-          return;
-        }
-        console.error("Error starting recognition:", error);
-      }
-    };
-
-    recognition.onstart = () => {
-      console.log("Speech recognition started");
-      setIsListening(true);
-      isRestarting = false;
-    };
-
-    recognition.onresult = (event) => {
-      // Clear any existing silence timeout
-      if (silenceTimeout) {
-        clearTimeout(silenceTimeout);
-      }
-
-      // Accumulate transcript from all results
-      let currentTranscript = '';
-      for (let i = 0; i < event.results.length; i++) {
-        currentTranscript += event.results[i][0].transcript + ' ';
-      }
-
-      accumulatedTranscript = currentTranscript.trim();
-      console.log("Current speech:", accumulatedTranscript);
-
-      // Set timeout to send message after 2 seconds of silence
-      silenceTimeout = setTimeout(() => {
-        if (accumulatedTranscript.trim()) {
-          console.log("Sending after silence:", accumulatedTranscript);
-          onSendMessage(accumulatedTranscript);
-          accumulatedTranscript = '';
-          processedResultsCount = event.results.length;
-        }
-      }, 2000);
-    };
-
-    recognition.onerror = (event) => {
-      console.log("Speech recognition error:", event.error);
-
-      // Don't restart on these errors
-      if (event.error === 'aborted' || event.error === 'not-allowed') {
-        isActive = false;
-        setIsListening(false);
-        return;
-      }
-
-      // Allow restart on other errors
-    };
-
-    recognition.onend = () => {
-      console.log("Speech recognition ended, isActive:", isActive);
-      setIsListening(false);
-
-      if (isActive && !isRestarting) {
-        isRestarting = true;
-        if (restartTimeoutRef.current) {
-          clearTimeout(restartTimeoutRef.current);
-        }
-        restartTimeoutRef.current = setTimeout(() => {
-          if (isActive) {
-            startRecognition();
-          }
-        }, 500);
-      }
-    };
-
-    recognitionRef.current = recognition;
-    startRecognition();
-
-    return () => {
-      console.log("Cleaning up speech recognition");
-      isActive = false;
-      isRestarting = true;
-      if (silenceTimeout) {
-        clearTimeout(silenceTimeout);
-      }
-      if (restartTimeoutRef.current) {
-        clearTimeout(restartTimeoutRef.current);
-        restartTimeoutRef.current = null;
-      }
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-          setIsListening(false);
-        } catch (error) {
-          console.log("Cleanup error:", error);
-        }
-      }
-    };
-  }, [isAiDebate, onSendMessage]);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
-      {/* Hidden audio element for AI voice playback */}
-      <audio ref={audioRef} autoPlay style={{ display: 'none' }} />
-      
       <CardHeader className="p-3 border-b border-slate-100">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
           <MessageSquare className="w-4 h-4" />
@@ -295,26 +91,11 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         </div>
 
         <div className="p-3 border-t border-slate-100">
-          {isAiDebate && (
-            <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 bg-slate-50 rounded-lg px-3 py-2">
-              {isListening ? (
-                <>
-                  <Mic className="w-4 h-4 text-green-600 animate-pulse" />
-                  <span className="text-green-600 font-medium">Listening to your voice...</span>
-                </>
-              ) : (
-                <>
-                  <MicOff className="w-4 h-4 text-slate-400" />
-                  <span>Microphone inactive</span>
-                </>
-              )}
-            </div>
-          )}
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={isAiDebate ? "Or type your message..." : "Type your message..."}
+              placeholder="Type your message..."
               className="flex-1 border-slate-300 focus:border-slate-500 text-sm"
               maxLength={500}
             />

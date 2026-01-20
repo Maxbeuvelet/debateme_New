@@ -138,25 +138,6 @@ export default function VoiceDebate() {
       }
       
       await setupVideoRoom();
-
-      // Send AI greeting if this is an AI debate and no messages exist yet
-      if (isAiDebate && msgs.length === 0 && userStance && debateData) {
-        const aiStance = participantStances.find(s => s.user_id === "ai_debater");
-        const userPosition = userStance.position === "position_a" ? debateData.position_a : debateData.position_b;
-        
-        if (aiStance) {
-          await PublicMessage.create({
-            session_id: sessionId,
-            sender_name: "AI Debater",
-            sender_position: aiStance.position,
-            content: `Hello ${userName}! I see you've chosen "${userPosition}". Let's have a thoughtful debate on this topic. I'm ready when you are!`
-          });
-          
-          // Reload messages to show the greeting
-          const updatedMsgs = await PublicMessage.filter({ session_id: sessionId }, "created_date");
-          setPublicMessages(updatedMsgs);
-        }
-      }
     } catch (error) {
       console.error("Error loading data:", error);
     }
@@ -203,64 +184,6 @@ export default function VoiceDebate() {
 
       console.log("Message created, reloading messages immediately");
       await loadMessages();
-
-      // If AI debate, trigger AI response
-      if (isAiDebate) {
-        console.log("AI debate detected, generating AI response...");
-        const aiStance = participants.find(s => s.user_id === "ai_debater");
-        
-        if (!aiStance) {
-          console.error("AI stance not found in participants:", participants);
-          return;
-        }
-        
-        if (!debate) {
-          console.error("Debate data not loaded");
-          return;
-        }
-        
-        try {
-          // Get fresh conversation history including the message we just sent
-          const freshMessages = await PublicMessage.filter({ session_id: sessionId }, "created_date");
-          console.log("Got fresh messages:", freshMessages.length);
-          
-          const conversationHistory = freshMessages.map(msg => ({
-            sender: msg.sender_name,
-            content: msg.content
-          }));
-
-          console.log("Calling generateAiDebateResponse...");
-          const response = await base44.functions.invoke('generateAiDebateResponse', {
-            debateTopic: debate.title,
-            debateDescription: debate.description,
-            aiStance: aiStance.position === "position_a" ? debate.position_a : debate.position_b,
-            conversationHistory: conversationHistory
-          });
-
-          console.log("AI response received:", response.data);
-
-          if (response.data && response.data.aiResponse) {
-            console.log("Creating AI message in database...");
-            await PublicMessage.create({
-              session_id: sessionId,
-              sender_name: "AI Debater",
-              sender_position: aiStance.position,
-              content: response.data.aiResponse
-            });
-            
-            console.log("AI message created, reloading messages");
-            await loadMessages();
-          } else {
-            console.error("No aiResponse in response data:", response.data);
-          }
-        } catch (error) {
-          console.error("Error getting AI response:", error);
-          if (error.response) {
-            console.error("Response data:", error.response.data);
-            console.error("Response status:", error.response.status);
-          }
-        }
-      }
     } catch (error) {
       console.error("Error sending message:", error);
     }

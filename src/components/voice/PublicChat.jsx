@@ -6,6 +6,7 @@ import { Send, MessageSquare, Mic, MicOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { generateVoiceAudio } from "@/functions/generateVoiceAudio";
+import { base44 } from "@/api/base44Client";
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
   const [newMessage, setNewMessage] = useState("");

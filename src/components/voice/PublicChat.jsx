@@ -54,10 +54,22 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         try {
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          const response = await generateVoiceAudio({ text: latestMessage.content });
+          // Call the function directly via fetch to get binary response
+          const user = await base44.auth.me();
+          const response = await fetch('https://api.base44.app/v1/functions/generateVoiceAudio', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${user?.access_token}`
+            },
+            body: JSON.stringify({ text: latestMessage.content })
+          });
           
-          // response.data is the raw audio buffer from axios
-          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+          if (!response.ok) {
+            throw new Error('Failed to generate audio');
+          }
+          
+          const audioBlob = await response.blob();
           console.log('🔊 Blob size:', audioBlob.size);
           
           const audioUrl = URL.createObjectURL(audioBlob);

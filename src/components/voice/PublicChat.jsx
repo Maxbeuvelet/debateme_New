@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Send, MessageSquare, Volume2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { base44 } from "@/api/base44Client";
 
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
@@ -49,20 +50,15 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
           setIsGeneratingVoice(true);
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          // Use direct fetch to get binary audio data
-          const response = await fetch('https://api.base44.app/v1/functions/generateVoiceAudio', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: latestMessage.content })
+          // Use SDK to invoke the function and get binary response
+          const response = await base44.functions.invoke('generateVoiceAudio', { 
+            text: latestMessage.content 
           });
           
-          if (!response.ok) {
-            throw new Error('Failed to generate audio');
-          }
+          console.log('Response type:', typeof response.data);
           
-          const audioBlob = await response.blob();
+          // Create blob from the response data
+          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
           console.log('🔊 Blob size:', audioBlob.size, 'Type:', audioBlob.type);
           
           const audioUrl = URL.createObjectURL(audioBlob);

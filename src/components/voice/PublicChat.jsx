@@ -54,35 +54,18 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
         try {
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          // Use base44 functions to get the endpoint URL
-          const user = await base44.auth.me();
-          const token = user?.access_token;
+          // Call backend function to generate and upload audio
+          const { data } = await generateVoiceAudio({ text: latestMessage.content });
           
-          // Call backend function directly with fetch to get binary data
-          const response = await fetch(`https://api.base44.app/v1/functions/generateVoiceAudio`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: latestMessage.content })
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Failed to generate voice: ${response.statusText}`);
+          if (!data.audio_url) {
+            throw new Error('No audio URL returned');
           }
           
-          // Get the audio as blob
-          const audioBlob = await response.blob();
-          console.log('🔊 Blob size:', audioBlob.size, 'type:', audioBlob.type);
-          
-          // Create object URL and play
-          const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('🎵 Created audio URL:', audioUrl);
+          console.log('🎵 Audio URL:', data.audio_url);
 
           if (audioRef.current) {
             audioRef.current.pause();
-            audioRef.current.src = audioUrl;
+            audioRef.current.src = data.audio_url;
             audioRef.current.load();
             
             audioRef.current.play()

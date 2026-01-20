@@ -49,29 +49,34 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
 
       lastMessageIdRef.current = latestMessage.id;
 
-      // Play AI voice
+      // Play AI voice - using a button click to bypass autoplay restrictions
       const playAudio = async () => {
         try {
           console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
           
-          // Call backend function to generate and upload audio
-          const { data } = await generateVoiceAudio({ text: latestMessage.content });
+          const response = await generateVoiceAudio({ text: latestMessage.content });
           
-          if (!data.audio_url) {
-            throw new Error('No audio URL returned');
-          }
+          // response.data is the raw audio buffer from axios
+          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+          console.log('🔊 Blob size:', audioBlob.size);
           
-          console.log('🎵 Audio URL:', data.audio_url);
+          const audioUrl = URL.createObjectURL(audioBlob);
+          console.log('🎵 Audio URL:', audioUrl);
 
-          if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.src = data.audio_url;
-            audioRef.current.load();
-            
-            audioRef.current.play()
-              .then(() => console.log('✅ AI VOICE PLAYING'))
-              .catch(error => console.error('❌ Play error:', error));
-          }
+          // Create a new Audio element and play (bypasses autoplay restrictions better)
+          const audio = new Audio(audioUrl);
+          audio.volume = 1.0;
+          
+          audio.play()
+            .then(() => console.log('✅ AI VOICE PLAYING'))
+            .catch(error => {
+              console.error('❌ Play error:', error);
+              // If autoplay fails, show a prompt
+              if (confirm('Click OK to hear the AI voice')) {
+                audio.play();
+              }
+            });
+          
         } catch (error) {
           console.error('❌ Voice generation error:', error);
         }

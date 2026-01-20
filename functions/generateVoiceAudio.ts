@@ -30,18 +30,15 @@ Deno.serve(async (req) => {
 
         // Convert to array buffer
         const buffer = await mp3.arrayBuffer();
-        
-        // Create a blob and upload it
-        const audioBlob = new Blob([buffer], { type: 'audio/mpeg' });
-        const audioFile = new File([audioBlob], 'voice.mp3', { type: 'audio/mpeg' });
-        
-        // Upload to storage
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: audioFile });
 
-        // Return the URL
-        return Response.json({ 
-            success: true,
-            audio_url: file_url 
+        // Return audio file
+        return new Response(buffer, {
+            status: 200,
+            headers: {
+                'Content-Type': 'audio/mpeg',
+                'Content-Length': buffer.byteLength.toString(),
+                'Cache-Control': 'no-cache'
+            }
         });
 
     } catch (error) {

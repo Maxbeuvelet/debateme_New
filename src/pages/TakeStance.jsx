@@ -57,11 +57,27 @@ export default function TakeStance() {
       
       if (inviteCode) {
         console.log("Looking for debate with invite code:", inviteCode);
-        debateData = allDebates.find(d => d.invite_code === inviteCode && d.is_private && d.status === "active");
+        console.log("All debates:", allDebates);
+        
+        // First try exact match
+        debateData = allDebates.find(d => 
+          d.invite_code === inviteCode && 
+          d.is_private === true
+        );
+        
         console.log("Found debate:", debateData);
         
         if (!debateData) {
-          alert("Invalid invite link. The debate may have ended or been deleted.");
+          console.error("No debate found with invite code:", inviteCode);
+          console.error("Available private debates:", allDebates.filter(d => d.is_private));
+          alert("Invalid invite link. The debate may not exist or has been deleted.");
+          navigate(createPageUrl("CreateDebate"));
+          return;
+        }
+        
+        // Check if debate is still active
+        if (debateData.status !== "active") {
+          alert("This debate has ended.");
           navigate(createPageUrl("CreateDebate"));
           return;
         }

@@ -57,11 +57,22 @@ export default function TakeStance() {
       
       if (inviteCode) {
         console.log("Looking for debate with invite code:", inviteCode);
-        console.log("All debates:", allDebates);
+        console.log("Invite code type:", typeof inviteCode, "length:", inviteCode.length);
+        console.log("All debates count:", allDebates.length);
         
-        // First try exact match
+        const privateDebates = allDebates.filter(d => d.is_private);
+        console.log("Private debates:", privateDebates);
+        console.log("Private debate codes:", privateDebates.map(d => ({ 
+          id: d.id, 
+          code: d.invite_code, 
+          type: typeof d.invite_code,
+          match: d.invite_code === inviteCode 
+        })));
+        
+        // Try exact match with trimming
         debateData = allDebates.find(d => 
-          d.invite_code === inviteCode && 
+          d.invite_code && 
+          d.invite_code.trim() === inviteCode.trim() && 
           d.is_private === true
         );
         
@@ -69,7 +80,6 @@ export default function TakeStance() {
         
         if (!debateData) {
           console.error("No debate found with invite code:", inviteCode);
-          console.error("Available private debates:", allDebates.filter(d => d.is_private));
           alert("Invalid invite link. The debate may not exist or has been deleted.");
           navigate(createPageUrl("CreateDebate"));
           return;

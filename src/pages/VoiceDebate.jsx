@@ -192,6 +192,12 @@ export default function VoiceDebate() {
   };
 
   const handleEndDebate = async () => {
+    if (!sessionId || !session) {
+      console.error("Missing sessionId or session");
+      navigate(createPageUrl("Home"));
+      return;
+    }
+
     try {
       // Stop speech synthesis and speech recognition immediately
       window.speechSynthesis.cancel();
@@ -200,17 +206,15 @@ export default function VoiceDebate() {
       setIsLoading(true);
       
       // Mark BOTH participant stances as completed before ending session
-      if (session) {
-        const stancesToComplete = [session.participant_a_id, session.participant_b_id];
-        await Promise.all(
-          stancesToComplete.map(stanceId => 
-            UserStance.update(stanceId, { status: "completed" }).catch(() => {})
-          )
-        );
-      }
+      const stancesToComplete = [session.participant_a_id, session.participant_b_id];
+      await Promise.all(
+        stancesToComplete.map(stanceId => 
+          UserStance.update(stanceId, { status: "completed" }).catch(() => {})
+        )
+      );
       
       // Track debate time and check for achievements
-      if (currentUserId && sessionId) {
+      if (currentUserId) {
         await base44.functions.invoke('trackDebateTime', { 
           sessionId: sessionId, 
           userId: currentUserId 

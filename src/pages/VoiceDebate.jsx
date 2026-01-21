@@ -223,6 +223,11 @@ export default function VoiceDebate() {
         });
       }
       
+      // Mark debate as inactive (remove from browse list)
+      if (debate?.id) {
+        await Debate.update(debate.id, { status: "inactive" }).catch(() => {});
+      }
+      
       // End the session
       await DebateSession.update(sessionId, { status: "ended" });
       

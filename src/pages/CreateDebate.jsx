@@ -501,7 +501,7 @@ export default function CreateDebate() {
                 Join an existing debate or create your own
               </p>
             </div>
-            
+
             <Button
               onClick={() => {
                 if (!currentUser) {
@@ -515,6 +515,21 @@ export default function CreateDebate() {
               <PlusCircle className="w-5 h-5 mr-2" />
               CREATE
             </Button>
+          </div>
+
+          {/* Marquee Strip */}
+          <div className="relative overflow-hidden py-6 mb-16 border-y border-slate-700/50">
+            <motion.div
+              animate={{ x: [0, -1000] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 whitespace-nowrap"
+            >
+              {[...Array(10)].map((_, i) => (
+                <span key={i} className="text-slate-600 text-lg font-bold">
+                  DebateMe
+                </span>
+              ))}
+            </motion.div>
           </div>
 
           {/* Categories Hero */}
@@ -601,21 +616,6 @@ export default function CreateDebate() {
             >
               Show All Categories
             </motion.button>
-          </div>
-
-          {/* Marquee Strip */}
-          <div className="relative overflow-hidden py-6 mb-16 border-y border-slate-700/50">
-            <motion.div
-              animate={{ x: [0, -1000] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap"
-            >
-              {[...Array(10)].map((_, i) => (
-                <span key={i} className="text-slate-600 text-lg font-bold">
-                  DEBATE • RANK UP • WIN • REPEAT
-                </span>
-              ))}
-            </motion.div>
           </div>
 
           {/* Debates List */}

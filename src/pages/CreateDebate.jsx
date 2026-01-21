@@ -517,21 +517,6 @@ export default function CreateDebate() {
             </Button>
           </div>
 
-          {/* Marquee Strip */}
-          <div className="relative overflow-hidden py-6 mb-16 border-y border-slate-700/50">
-            <motion.div
-              animate={{ x: [0, -1000] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap"
-            >
-              {[...Array(10)].map((_, i) => (
-                <span key={i} className="text-slate-600 text-lg font-bold">
-                  DebateMe
-                </span>
-              ))}
-            </motion.div>
-          </div>
-
           {/* Categories Hero */}
           <div className="text-center mb-16">
             <h2 className="text-6xl sm:text-7xl lg:text-8xl font-black text-white mb-4 leading-none tracking-tight">

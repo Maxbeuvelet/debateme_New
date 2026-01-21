@@ -52,6 +52,7 @@ export default function TakeStance() {
     try {
       // Find debate by ID or invite code
       let debateData;
+      let actualDebateId = debateId;
       const allDebates = await Debate.list();
       
       if (inviteCode) {
@@ -61,9 +62,11 @@ export default function TakeStance() {
           navigate(createPageUrl("CreateDebate"));
           return;
         }
+        actualDebateId = debateData.id;
         setIsPrivateDebate(true);
       } else if (debateId) {
         debateData = allDebates.find(d => d.id === debateId);
+        actualDebateId = debateId;
       }
       
       const [allStances, allSessions] = await Promise.all([
@@ -75,7 +78,7 @@ export default function TakeStance() {
       
       // STEP 1: Find ALL stances by this user for this debate
       const myStancesForThisDebate = allStances.filter(s => 
-        s.debate_id === debateId && s.user_id === user.id
+        s.debate_id === actualDebateId && s.user_id === user.id
       );
       
       // STEP 2: Check for active sessions first, or recent waiting stances
@@ -115,7 +118,7 @@ export default function TakeStance() {
       // STEP 4: Get recent stances from OTHER users (for display in StanceSelector/WaitingForMatch)
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
       const recentOtherUserWaitingStances = allStances.filter(stance => 
-        stance.debate_id === debateId &&
+        stance.debate_id === actualDebateId &&
         stance.user_id !== user.id && // Exclude current user's stances
         new Date(stance.updated_date) > tenMinutesAgo &&
         stance.status === "waiting" // Only show waiting stances
@@ -138,8 +141,14 @@ export default function TakeStance() {
 
   const tryMatch = useCallback(async (stanceId) => {
     try {
+      const actualDebateId = debate?.id;
+      if (!actualDebateId) {
+        console.error("No debate ID for matching");
+        return false;
+      }
+
       const response = await matchDebater({ 
-        debateId: debateId, 
+        debateId: actualDebateId, 
         stanceId: stanceId 
       });
       
@@ -238,9 +247,16 @@ export default function TakeStance() {
 
     setIsSubmitting(true);
     try {
+      // Get actual debate ID (handles both direct ID and invite code)
+      const actualDebateId = debate?.id;
+      if (!actualDebateId) {
+        console.error("No debate ID found");
+        return;
+      }
+
       // Create stance for human opponent matching
       const newStance = await UserStance.create({
-        debate_id: debateId,
+        debate_id: actualDebateId,
         user_name: currentUser.username,
         user_id: currentUser.id,
         position: position,

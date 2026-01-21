@@ -878,6 +878,7 @@ export default function CreateDebate() {
 
             <Button
               onClick={() => {
+                const createdDebateId = debates.find(d => d.invite_code === inviteCode)?.id;
                 setShowInviteDialog(false);
                 setInviteCode("");
                 setTitle("");
@@ -885,6 +886,11 @@ export default function CreateDebate() {
                 setUserStance("");
                 setCategory("");
                 setIsPrivate(false);
+                
+                // Navigate to the private debate
+                if (createdDebateId) {
+                  navigate(createPageUrl(`TakeStance?id=${createdDebateId}`));
+                }
               }}
               className="w-full bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700"
             >

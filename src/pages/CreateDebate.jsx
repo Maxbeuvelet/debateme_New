@@ -517,44 +517,105 @@ export default function CreateDebate() {
             </Button>
           </div>
 
-          {/* Category Filters */}
-          <div className="flex items-center gap-3 mb-6 flex-wrap">
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
-              <span className="text-sm font-medium text-slate-300">FILTER:</span>
-            </div>
-            {Object.entries(categoryLabels).map(([key, label]) => {
-              if (key === "all") {
-                return (
-                  <Button
-                    key={key}
-                    onClick={() => setSelectedCategory(key)}
-                    variant={selectedCategory === key ? "default" : "outline"}
-                    className={selectedCategory === key 
-                      ? "bg-black text-white border-2 border-cyan-500 hover:border-cyan-400 font-bold" 
-                      : "bg-black text-white border border-slate-500 hover:border-cyan-500"
-                    }
-                  >
-                    {label}
-                  </Button>
-                );
-              }
-              
-              const colors = categoryColors[key];
+          {/* Categories Hero */}
+          <div className="text-center mb-16">
+            <h2 className="text-6xl sm:text-7xl lg:text-8xl font-black text-white mb-4 leading-none tracking-tight">
+              Categories
+            </h2>
+            <p className="text-xl sm:text-2xl text-slate-400 font-light">
+              Choose your arena of ideas
+            </p>
+          </div>
+
+          {/* Category Card Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {Object.entries(categoryLabels).filter(([key]) => key !== "all").map(([key, label]) => {
+              const isSelected = selectedCategory === key || selectedCategory === "all";
+              const debateCount = filteredDebates.filter(d => d.category === key).length;
+
               return (
-                <Button
+                <motion.div
                   key={key}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
                   onClick={() => setSelectedCategory(key)}
-                  variant={selectedCategory === key ? "default" : "outline"}
-                  className={selectedCategory === key 
-                    ? `${colors.selected} font-bold border-0` 
-                    : colors.unselected
-                  }
+                  className={`group cursor-pointer rounded-3xl p-8 border transition-all duration-300 ${
+                    isSelected
+                      ? 'bg-slate-900/90 border-cyan-500/60 shadow-[0_0_40px_rgba(6,182,212,0.15)]'
+                      : 'bg-slate-900/50 border-slate-700/50 hover:border-slate-600 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]'
+                  }`}
                 >
-                  {label}
-                </Button>
+                  {/* Icon Badge */}
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 ${
+                    isSelected 
+                      ? 'bg-cyan-500/20 shadow-[0_0_20px_rgba(6,182,212,0.3)]' 
+                      : 'bg-slate-800/80 group-hover:bg-slate-800'
+                  }`}>
+                    <span className="text-4xl">
+                      {key === 'politics' && '🏛️'}
+                      {key === 'technology' && '💻'}
+                      {key === 'environment' && '🌍'}
+                      {key === 'economics' && '💰'}
+                    </span>
+                  </div>
+
+                  {/* Category Title */}
+                  <h3 className="text-3xl font-black text-white mb-3 leading-tight group-hover:text-cyan-400 transition-colors">
+                    {label}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                    {key === 'politics' && 'Government policy, elections, and power dynamics'}
+                    {key === 'technology' && 'AI, innovation, and the digital future'}
+                    {key === 'environment' && 'Climate action, sustainability, and conservation'}
+                    {key === 'economics' && 'Markets, wealth distribution, and trade policy'}
+                  </p>
+
+                  {/* Stats Badge */}
+                  <div className="flex items-center gap-2">
+                    <div className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+                      isSelected
+                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                        : 'bg-slate-800 text-slate-300 border border-slate-700'
+                    }`}>
+                      {debateCount} {debateCount === 1 ? 'debate' : 'debates'}
+                    </div>
+                  </div>
+                </motion.div>
               );
             })}
+          </div>
+
+          {/* All Categories Option */}
+          <div className="flex justify-center mb-16">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedCategory("all")}
+              className={`px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-300 ${
+                selectedCategory === "all"
+                  ? 'bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]'
+                  : 'bg-slate-900 text-white border border-slate-700 hover:border-slate-600'
+              }`}
+            >
+              Show All Categories
+            </motion.button>
+          </div>
+
+          {/* Marquee Strip */}
+          <div className="relative overflow-hidden py-6 mb-16 border-y border-slate-700/50">
+            <motion.div
+              animate={{ x: [0, -1000] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 whitespace-nowrap"
+            >
+              {[...Array(10)].map((_, i) => (
+                <span key={i} className="text-slate-600 text-lg font-bold">
+                  DEBATE • RANK UP • WIN • REPEAT
+                </span>
+              ))}
+            </motion.div>
           </div>
 
           {/* Debates List */}

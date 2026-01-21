@@ -50,24 +50,19 @@ export default function TakeStance() {
     setCurrentUser(user);
     
     try {
+      // Load all data first
+      const [allDebates, allStances, allSessions] = await Promise.all([
+        Debate.list(),
+        UserStance.list(),
+        DebateSession.list()
+      ]);
+      
       // Find debate by ID or invite code
       let debateData;
       let actualDebateId = debateId;
-      const allDebates = await Debate.list();
       
       if (inviteCode) {
         console.log("Looking for debate with invite code:", inviteCode);
-        console.log("Invite code type:", typeof inviteCode, "length:", inviteCode.length);
-        console.log("All debates count:", allDebates.length);
-        
-        const privateDebates = allDebates.filter(d => d.is_private);
-        console.log("Private debates:", privateDebates);
-        console.log("Private debate codes:", privateDebates.map(d => ({ 
-          id: d.id, 
-          code: d.invite_code, 
-          type: typeof d.invite_code,
-          match: d.invite_code === inviteCode 
-        })));
         
         // Try exact match with trimming and case-insensitive comparison
         debateData = allDebates.find(d => 
@@ -152,11 +147,6 @@ export default function TakeStance() {
       
       // Set debate data early so it's available for all operations
       setDebate(debateData);
-      
-      const [allStances, allSessions] = await Promise.all([
-        UserStance.list(),
-        DebateSession.list()
-      ]);
       
       // STEP 1: Find ALL stances by this user for this debate
       const myStancesForThisDebate = allStances.filter(s => 

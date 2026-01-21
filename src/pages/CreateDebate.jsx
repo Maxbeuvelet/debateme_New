@@ -41,20 +41,20 @@ const categoryLabels = {
 
 const categoryColors = {
   politics: {
-    selected: "bg-gradient-to-r from-gray-400 to-gray-600 text-black hover:from-gray-500 hover:to-gray-700 hover:text-black",
-    unselected: "border-gray-400 text-black hover:bg-gray-700 hover:border-gray-500 hover:text-black"
+    selected: "bg-white text-black border-2 border-gray-500 hover:border-gray-600",
+    unselected: "bg-transparent text-black border border-gray-400 hover:border-gray-500"
   },
   technology: {
-    selected: "bg-gradient-to-r from-blue-400 to-blue-600 text-black hover:from-blue-500 hover:to-blue-700 hover:text-black",
-    unselected: "border-blue-400 text-blue-300 hover:bg-blue-700 hover:border-blue-500 hover:text-white"
+    selected: "bg-white text-black border-2 border-blue-500 hover:border-blue-600",
+    unselected: "bg-transparent text-black border border-blue-400 hover:border-blue-500"
   },
   environment: {
-    selected: "bg-gradient-to-r from-emerald-400 to-emerald-600 text-black hover:from-emerald-500 hover:to-emerald-700 hover:text-black",
-    unselected: "border-emerald-400 text-emerald-300 hover:bg-emerald-700 hover:border-emerald-500 hover:text-white"
+    selected: "bg-white text-black border-2 border-emerald-500 hover:border-emerald-600",
+    unselected: "bg-transparent text-black border border-emerald-400 hover:border-emerald-500"
   },
   economics: {
-    selected: "bg-gradient-to-r from-amber-400 to-amber-600 text-black hover:from-amber-500 hover:to-amber-700 hover:text-black",
-    unselected: "border-amber-400 text-amber-300 hover:bg-amber-700 hover:border-amber-500 hover:text-white"
+    selected: "bg-white text-black border-2 border-amber-500 hover:border-amber-600",
+    unselected: "bg-transparent text-black border border-amber-400 hover:border-amber-500"
   }
 };
 

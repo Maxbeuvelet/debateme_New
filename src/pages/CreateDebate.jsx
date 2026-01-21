@@ -682,8 +682,8 @@ export default function CreateDebate() {
                       onClick={() => setCategory(key)}
                       variant={category === key ? "default" : "outline"}
                       className={category === key 
-                        ? `${colors.selected} font-bold border-0` 
-                        : `${colors.unselected} font-medium`
+                        ? `${colors.selected} font-bold border-0 scale-105 shadow-lg` 
+                        : `${colors.unselected} font-medium hover:scale-105 hover:shadow-md transition-all duration-200`
                       }
                     >
                       {label}

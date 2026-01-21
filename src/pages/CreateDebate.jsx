@@ -41,20 +41,20 @@ const categoryLabels = {
 
 const categoryColors = {
   politics: {
-    selected: "bg-white text-black border-2 border-gray-500 hover:border-gray-600",
-    unselected: "bg-white text-black border border-gray-400 hover:border-gray-500"
+    selected: "bg-black text-white border-2 border-gray-500 hover:border-gray-400",
+    unselected: "bg-black text-white border border-gray-600 hover:border-gray-500"
   },
   technology: {
-    selected: "bg-white text-black border-2 border-blue-500 hover:border-blue-600",
-    unselected: "bg-white text-black border border-blue-400 hover:border-blue-500"
+    selected: "bg-black text-white border-2 border-blue-500 hover:border-blue-400",
+    unselected: "bg-black text-white border border-blue-600 hover:border-blue-500"
   },
   environment: {
-    selected: "bg-white text-black border-2 border-emerald-500 hover:border-emerald-600",
-    unselected: "bg-white text-black border border-emerald-400 hover:border-emerald-500"
+    selected: "bg-black text-white border-2 border-emerald-500 hover:border-emerald-400",
+    unselected: "bg-black text-white border border-emerald-600 hover:border-emerald-500"
   },
   economics: {
-    selected: "bg-white text-black border-2 border-amber-500 hover:border-amber-600",
-    unselected: "bg-white text-black border border-amber-400 hover:border-amber-500"
+    selected: "bg-black text-white border-2 border-amber-500 hover:border-amber-400",
+    unselected: "bg-black text-white border border-amber-600 hover:border-amber-500"
   }
 };
 
@@ -531,8 +531,8 @@ export default function CreateDebate() {
                     onClick={() => setSelectedCategory(key)}
                     variant={selectedCategory === key ? "default" : "outline"}
                     className={selectedCategory === key 
-                      ? "bg-cyan-600 text-black hover:bg-cyan-700 hover:text-black border-cyan-600 font-bold" 
-                      : "border-slate-400 text-white hover:bg-slate-700 hover:border-cyan-500"
+                      ? "bg-black text-white border-2 border-cyan-500 hover:border-cyan-400 font-bold" 
+                      : "bg-black text-white border border-slate-500 hover:border-cyan-500"
                     }
                   >
                     {label}

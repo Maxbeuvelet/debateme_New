@@ -587,22 +587,6 @@ export default function CreateDebate() {
             })}
           </div>
 
-          {/* All Categories Option */}
-          <div className="flex justify-center mb-16">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory("all")}
-              className={`px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-300 ${
-                selectedCategory === "all"
-                  ? 'bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]'
-                  : 'bg-slate-900 text-white border border-slate-700 hover:border-slate-600'
-              }`}
-            >
-              Show All Categories
-            </motion.button>
-          </div>
-
           {/* Debates List */}
           <div className="space-y-3">
             {filteredDebates.length === 0 ? (

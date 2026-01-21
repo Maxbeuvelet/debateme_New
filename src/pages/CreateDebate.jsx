@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import { PlusCircle, AlertCircle, Users, Clock, Filter, Sparkles, Calendar } from "lucide-react";
+import { PlusCircle, AlertCircle, Users, Clock, Filter, Sparkles, Calendar, Copy, Check, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 
@@ -76,11 +76,14 @@ export default function CreateDebate() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [userStance, setUserStance] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [userStanceError, setUserStanceError] = useState("");
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
 
   useEffect(() => {
     if (isLaunched) {
@@ -174,6 +177,11 @@ export default function CreateDebate() {
 
     setIsSubmitting(true);
     try {
+      // Generate unique invite code if private
+      const generatedInviteCode = isPrivate 
+        ? Math.random().toString(36).substring(2, 10).toUpperCase()
+        : null;
+
       const newDebate = await Debate.create({
         title: title.trim(),
         description: description.trim(),
@@ -181,7 +189,9 @@ export default function CreateDebate() {
         position_a: userStance.trim(),
         position_b: "Opposing view",
         status: "active",
-        is_user_created: true
+        is_user_created: true,
+        is_private: isPrivate,
+        invite_code: generatedInviteCode
       });
 
       await UserStance.create({
@@ -221,18 +231,27 @@ export default function CreateDebate() {
         });
       }
 
-      // Reset form and close dialog
-      setTitle("");
-      setDescription("");
-      setUserStance("");
-      setCategory("");
-      setShowCreateDialog(false);
-      
-      // Reload data to show new debate
-      await loadData();
+      // If private, show invite code dialog
+      if (isPrivate) {
+        setInviteCode(generatedInviteCode);
+        setShowInviteDialog(true);
+        setShowCreateDialog(false);
+        await loadData();
+      } else {
+        // Reset form and close dialog
+        setTitle("");
+        setDescription("");
+        setUserStance("");
+        setCategory("");
+        setIsPrivate(false);
+        setShowCreateDialog(false);
+        
+        // Reload data to show new debate
+        await loadData();
 
-      // Navigate to the debate
-      navigate(createPageUrl(`TakeStance?id=${newDebate.id}`));
+        // Navigate to the debate
+        navigate(createPageUrl(`TakeStance?id=${newDebate.id}`));
+      }
 
     } catch (error) {
       console.error("Error creating debate:", error);
@@ -742,6 +761,33 @@ export default function CreateDebate() {
               </p>
             </div>
 
+            <div className="border-t border-slate-700 pt-4">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  Private Debate
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => setIsPrivate(!isPrivate)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    isPrivate ? 'bg-cyan-600' : 'bg-slate-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      isPrivate ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="text-xs text-slate-400">
+                {isPrivate 
+                  ? "You'll get a unique invite link to share with one specific person" 
+                  : "Anyone can join this debate from the public queue"}
+              </p>
+            </div>
+
             {formError && (
               <div className="flex items-center gap-2 text-red-400 text-sm mt-2">
                 <AlertCircle className="w-4 h-4" />
@@ -778,6 +824,73 @@ export default function CreateDebate() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invite Code Dialog */}
+      <Dialog open={showInviteDialog} onOpenChange={(open) => {
+        if (!open) {
+          setShowInviteDialog(false);
+          setInviteCode("");
+          setTitle("");
+          setDescription("");
+          setUserStance("");
+          setCategory("");
+          setIsPrivate(false);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
+              <Lock className="w-6 h-6 text-cyan-400" />
+              Private Debate Created!
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <p className="text-slate-300">
+              Share this invite link with someone specific to debate with them:
+            </p>
+            
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+              <p className="text-xs text-slate-400 mb-2">Invite Link</p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-cyan-400 text-sm bg-slate-900 px-3 py-2 rounded border border-slate-700 font-mono break-all">
+                  {window.location.origin}{createPageUrl(`TakeStance?invite=${inviteCode}`)}
+                </code>
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}${createPageUrl(`TakeStance?invite=${inviteCode}`)}`);
+                  }}
+                  size="icon"
+                  className="bg-cyan-600 hover:bg-cyan-700"
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-cyan-900/20 border border-cyan-700/50 rounded-lg p-3">
+              <p className="text-xs text-cyan-300">
+                💡 Only the person with this link can join. You'll both be matched automatically when they join.
+              </p>
+            </div>
+
+            <Button
+              onClick={() => {
+                setShowInviteDialog(false);
+                setInviteCode("");
+                setTitle("");
+                setDescription("");
+                setUserStance("");
+                setCategory("");
+                setIsPrivate(false);
+              }}
+              className="w-full bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700"
+            >
+              Done
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

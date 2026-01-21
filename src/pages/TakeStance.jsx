@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Clock } from "lucide-react";
+import { ArrowLeft, Users, Clock, Lock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ export default function TakeStance() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const debateId = urlParams.get('id');
+  const inviteCode = urlParams.get('invite');
   
   const [debate, setDebate] = useState(null);
   const [userStances, setUserStances] = useState([]);
@@ -22,6 +24,7 @@ export default function TakeStance() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isPrivateDebate, setIsPrivateDebate] = useState(false);
 
   const loadDebateData = useCallback(async () => {
     setIsLoading(true);
@@ -47,12 +50,27 @@ export default function TakeStance() {
     setCurrentUser(user);
     
     try {
+      // Find debate by ID or invite code
+      let debateData;
+      const allDebates = await Debate.list();
       
-      const [debateData, allStances, allSessions] = await Promise.all([
-        Debate.list().then(debates => debates.find(d => d.id === debateId)),
-        UserStance.list(), // Fetch all stances
+      if (inviteCode) {
+        debateData = allDebates.find(d => d.invite_code === inviteCode && d.is_private);
+        if (!debateData) {
+          alert("Invalid invite link");
+          navigate(createPageUrl("CreateDebate"));
+          return;
+        }
+        setIsPrivateDebate(true);
+      } else if (debateId) {
+        debateData = allDebates.find(d => d.id === debateId);
+      }
+      
+      const [allStances, allSessions] = await Promise.all([
+        UserStance.list(),
         DebateSession.list()
       ]);
+      
       setDebate(debateData);
       
       // STEP 1: Find ALL stances by this user for this debate
@@ -110,13 +128,13 @@ export default function TakeStance() {
     } finally {
       setIsLoading(false);
     }
-  }, [debateId, navigate]);
+  }, [debateId, inviteCode, navigate]);
 
   useEffect(() => {
-    if (debateId) {
+    if (debateId || inviteCode) {
       loadDebateData();
     }
-  }, [debateId, loadDebateData]);
+  }, [debateId, inviteCode, loadDebateData]);
 
   const tryMatch = useCallback(async (stanceId) => {
     try {
@@ -304,7 +322,7 @@ export default function TakeStance() {
     };
   }, [currentUserStance, tryMatch, awardXpAndCheckLevelUp, loadDebateData]);
 
-  if (!debateId) {
+  if (!debateId && !inviteCode) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
@@ -383,6 +401,14 @@ export default function TakeStance() {
 
           {/* Debate Topic Header */}
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+            {isPrivateDebate && (
+              <div className="mb-3 flex items-center gap-2">
+                <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">
+                  <Lock className="w-3 h-3 mr-1" />
+                  Private Debate
+                </Badge>
+              </div>
+            )}
             <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight">
               {debate.title}
             </h1>

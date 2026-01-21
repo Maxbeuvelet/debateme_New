@@ -42,19 +42,19 @@ const categoryLabels = {
 const categoryColors = {
   politics: {
     selected: "bg-white text-black border-2 border-gray-500 hover:border-gray-600",
-    unselected: "bg-transparent text-black border border-gray-400 hover:border-gray-500"
+    unselected: "bg-white text-black border border-gray-400 hover:border-gray-500"
   },
   technology: {
     selected: "bg-white text-black border-2 border-blue-500 hover:border-blue-600",
-    unselected: "bg-transparent text-black border border-blue-400 hover:border-blue-500"
+    unselected: "bg-white text-black border border-blue-400 hover:border-blue-500"
   },
   environment: {
     selected: "bg-white text-black border-2 border-emerald-500 hover:border-emerald-600",
-    unselected: "bg-transparent text-black border border-emerald-400 hover:border-emerald-500"
+    unselected: "bg-white text-black border border-emerald-400 hover:border-emerald-500"
   },
   economics: {
     selected: "bg-white text-black border-2 border-amber-500 hover:border-amber-600",
-    unselected: "bg-transparent text-black border border-amber-400 hover:border-amber-500"
+    unselected: "bg-white text-black border border-amber-400 hover:border-amber-500"
   }
 };
 

@@ -56,14 +56,55 @@ export default function TakeStance() {
       const allDebates = await Debate.list();
       
       if (inviteCode) {
-        debateData = allDebates.find(d => d.invite_code === inviteCode && d.is_private);
+        console.log("Looking for debate with invite code:", inviteCode);
+        debateData = allDebates.find(d => d.invite_code === inviteCode && d.is_private && d.status === "active");
+        console.log("Found debate:", debateData);
+        
         if (!debateData) {
-          alert("Invalid invite link");
+          alert("Invalid invite link. The debate may have ended or been deleted.");
           navigate(createPageUrl("CreateDebate"));
           return;
         }
         actualDebateId = debateData.id;
         setIsPrivateDebate(true);
+        
+        // For private debates via invite, auto-join the person to opposite position of creator
+        const creatorStance = allStances.find(s => s.debate_id === actualDebateId && s.status === "waiting");
+        
+        if (creatorStance && creatorStance.user_id !== user.id) {
+          // Auto-join as the opposite position
+          const oppositePosition = creatorStance.position === "position_a" ? "position_b" : "position_a";
+          
+          const newStance = await UserStance.create({
+            debate_id: actualDebateId,
+            user_name: user.username,
+            user_id: user.id,
+            position: oppositePosition,
+            status: "waiting"
+          });
+          
+          // Update user stats
+          const categoryStats = user.category_stats || {};
+          const category = debateData.category;
+          categoryStats[category] = (categoryStats[category] || 0) + 1;
+          
+          await User.updateMyUserData({
+            debates_joined: (user.debates_joined || 0) + 1,
+            category_stats: categoryStats
+          });
+          
+          // Try to match immediately
+          const matchResponse = await matchDebater({ 
+            debateId: actualDebateId, 
+            stanceId: newStance.id 
+          });
+          
+          if (matchResponse.data.matched) {
+            // Successfully matched! Navigate to debate
+            navigate(createPageUrl(`VoiceDebate?id=${matchResponse.data.sessionId}&user=${encodeURIComponent(user.username)}`));
+            return;
+          }
+        }
       } else if (debateId) {
         debateData = allDebates.find(d => d.id === debateId);
         actualDebateId = debateId;

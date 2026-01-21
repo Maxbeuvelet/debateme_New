@@ -28,25 +28,29 @@ Deno.serve(async (req) => {
             });
         }
 
-        // Check if already matched and session exists AND is active
-        if (myStance.status === 'matched') {
-            const allSessions = await base44.asServiceRole.entities.DebateSession.filter({ 
-                debate_id: debateId 
-            });
-            
-            const existingSession = allSessions.find(s => 
-                (s.participant_a_id === stanceId || s.participant_b_id === stanceId) &&
-                s.status === "active"
-            );
-            
-            if (existingSession) {
-                return Response.json({
-                    matched: true,
-                    sessionId: existingSession.id,
-                    userName: myStance.user_name
+        // Check if already matched - look for session by session_id field
+        if (myStance.session_id) {
+            try {
+                const sessions = await base44.asServiceRole.entities.DebateSession.filter({ 
+                    id: myStance.session_id 
                 });
-            } else {
-                // Session ended or doesn't exist, reset stance to waiting
+                const existingSession = sessions[0];
+                
+                if (existingSession && existingSession.status === "active") {
+                    return Response.json({
+                        matched: true,
+                        sessionId: existingSession.id,
+                        userName: myStance.user_name
+                    });
+                } else {
+                    // Session ended or doesn't exist, reset stance to waiting
+                    await base44.asServiceRole.entities.UserStance.update(stanceId, {
+                        status: "waiting",
+                        session_id: null
+                    });
+                }
+            } catch (error) {
+                // Session not found, reset stance
                 await base44.asServiceRole.entities.UserStance.update(stanceId, {
                     status: "waiting",
                     session_id: null

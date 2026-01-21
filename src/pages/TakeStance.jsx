@@ -69,10 +69,10 @@ export default function TakeStance() {
           match: d.invite_code === inviteCode 
         })));
         
-        // Try exact match with trimming
+        // Try exact match with trimming and case-insensitive comparison
         debateData = allDebates.find(d => 
           d.invite_code && 
-          d.invite_code.trim() === inviteCode.trim() && 
+          d.invite_code.trim().toUpperCase() === inviteCode.trim().toUpperCase() && 
           d.is_private === true
         );
         

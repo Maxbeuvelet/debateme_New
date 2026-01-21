@@ -2,17 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, MessageSquare, Volume2 } from "lucide-react";
+import { Send, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { base44 } from "@/api/base44Client";
 
 
-export default function PublicChat({ messages, onSendMessage, currentUser, participants, isAiDebate }) {
+export default function PublicChat({ messages, onSendMessage, currentUser, participants }) {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
-  const lastMessageIdRef = useRef(null);
-  const [isGeneratingVoice, setIsGeneratingVoice] = useState(false);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -32,82 +29,12 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
       : "bg-red-100 text-red-800";
   };
 
-  // Play AI voice when new AI message arrives
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    const latestMessage = messages[messages.length - 1];
-
-    // Only play if it's a new AI message
-    if (latestMessage.id !== lastMessageIdRef.current && 
-        latestMessage.sender_name === "AI Debater" && 
-        isAiDebate) {
-
-      lastMessageIdRef.current = latestMessage.id;
-
-      const playAudio = async () => {
-        try {
-          setIsGeneratingVoice(true);
-          console.log('🎤 Generating voice for:', latestMessage.content.substring(0, 50));
-          
-          // Use SDK to invoke the function and get binary response
-          const response = await base44.functions.invoke('generateVoiceAudio', { 
-            text: latestMessage.content 
-          });
-          
-          console.log('Response type:', typeof response.data);
-          
-          // Create blob from the response data
-          const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
-          console.log('🔊 Blob size:', audioBlob.size, 'Type:', audioBlob.type);
-          
-          const audioUrl = URL.createObjectURL(audioBlob);
-          console.log('🎵 Audio URL:', audioUrl);
-
-          // Create a new Audio element and play
-          const audio = new Audio(audioUrl);
-          audio.volume = 1.0;
-          
-          audio.onended = () => {
-            setIsGeneratingVoice(false);
-            URL.revokeObjectURL(audioUrl);
-          };
-
-          audio.onerror = (e) => {
-            console.error('Audio playback error:', e);
-            setIsGeneratingVoice(false);
-            URL.revokeObjectURL(audioUrl);
-          };
-          
-          await audio.play();
-          console.log('✅ AI VOICE PLAYING');
-          
-        } catch (error) {
-          console.error('❌ Voice generation error:', error);
-          setIsGeneratingVoice(false);
-        }
-      };
-
-      playAudio();
-    }
-  }, [messages, isAiDebate]);
-
-
-
   return (
     <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
       <CardHeader className="p-3 border-b border-slate-100">
-        <CardTitle className="flex items-center justify-between text-base font-semibold text-slate-900">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-4 h-4" />
-            Public Chat
-          </div>
-          {isAiDebate && isGeneratingVoice && (
-            <div className="flex items-center gap-1 text-xs text-purple-600 animate-pulse">
-              <Volume2 className="w-3 h-3" />
-              <span>AI speaking...</span>
-            </div>
-          )}
+        <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+          <MessageSquare className="w-4 h-4" />
+          Public Chat
         </CardTitle>
       </CardHeader>
       

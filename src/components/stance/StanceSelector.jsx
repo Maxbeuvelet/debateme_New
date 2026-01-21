@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Keeping Input for completeness, though no longer used directly in this component's new logic.
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Users, ArrowRight, AlertCircle, Bot, User } from "lucide-react";
+import { Users, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 // List of inappropriate words to filter (kept as per instruction)
@@ -21,12 +21,11 @@ const containsInappropriateContent = (name) => {
 
 export default function StanceSelector({ debate, participantCounts, userName, onTakeStance, isSubmitting }) {
   const [selectedPosition, setSelectedPosition] = useState("");
-  const [opponentType, setOpponentType] = useState("human"); // "human" or "ai"
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedPosition) {
-      onTakeStance(selectedPosition, opponentType);
+      onTakeStance(selectedPosition);
     }
   };
 
@@ -55,54 +54,6 @@ export default function StanceSelector({ debate, participantCounts, userName, on
         
         <CardContent className="p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-            {/* Opponent Type Selection */}
-            <div className="space-y-4">
-              <Label className="text-base sm:text-lg font-semibold text-slate-900">Choose Your Opponent</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpponentType("human")}
-                    className={`w-full p-4 rounded-xl border-2 transition-all duration-200 ${
-                      opponentType === "human"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                    }`}
-                  >
-                    <User className={`w-8 h-8 mx-auto mb-2 ${opponentType === "human" ? "text-blue-500" : "text-slate-400"}`} />
-                    <div className={`font-semibold ${opponentType === "human" ? "text-blue-700" : "text-slate-700"}`}>
-                      Human
-                    </div>
-                    <div className="text-xs text-slate-600 mt-1">Real person</div>
-                  </button>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpponentType("ai")}
-                    className={`w-full p-4 rounded-xl border-2 transition-all duration-200 ${
-                      opponentType === "ai"
-                        ? "border-purple-500 bg-purple-50"
-                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                    }`}
-                  >
-                    <Bot className={`w-8 h-8 mx-auto mb-2 ${opponentType === "ai" ? "text-purple-500" : "text-slate-400"}`} />
-                    <div className={`font-semibold ${opponentType === "ai" ? "text-purple-700" : "text-slate-700"}`}>
-                      AI Partner 🔥
-                    </div>
-                    <div className="text-xs text-slate-600 mt-1">Spicy & entertaining</div>
-                  </button>
-                </motion.div>
-              </div>
-            </div>
-
             {/* Position Selection */}
             <div className="space-y-4">
               <Label className="text-base sm:text-lg font-semibold text-slate-900">Your Position</Label>

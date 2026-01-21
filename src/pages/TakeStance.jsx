@@ -88,6 +88,7 @@ export default function TakeStance() {
         const creatorStance = allStances.find(s => s.debate_id === actualDebateId && s.status === "waiting");
         
         if (creatorStance && creatorStance.user_id !== user.id) {
+          console.log("Auto-joining private debate as opposite position");
           // Auto-join as the opposite position
           const oppositePosition = creatorStance.position === "position_a" ? "position_b" : "position_a";
           
@@ -99,6 +100,8 @@ export default function TakeStance() {
             status: "waiting"
           });
           
+          console.log("Created stance:", newStance);
+          
           // Update user stats
           const categoryStats = user.category_stats || {};
           const category = debateData.category;
@@ -109,29 +112,41 @@ export default function TakeStance() {
             category_stats: categoryStats
           });
           
-          // Try to match immediately
+          console.log("Attempting to match with debate ID:", actualDebateId);
+          
+          // Try to match immediately - pass the debate ID directly
           const matchResponse = await matchDebater({ 
             debateId: actualDebateId, 
             stanceId: newStance.id 
           });
           
+          console.log("Match response:", matchResponse);
+          
           if (matchResponse.data.matched) {
+            console.log("Matched! Navigating to debate session");
             // Successfully matched! Navigate to debate
             navigate(createPageUrl(`VoiceDebate?id=${matchResponse.data.sessionId}&user=${encodeURIComponent(user.username)}`));
             return;
+          } else {
+            console.log("Not matched yet, showing waiting screen");
           }
+        } else if (creatorStance && creatorStance.user_id === user.id) {
+          console.log("User is the creator, will show waiting screen");
+        } else {
+          console.log("No creator stance found yet");
         }
       } else if (debateId) {
         debateData = allDebates.find(d => d.id === debateId);
         actualDebateId = debateId;
       }
       
+      // Set debate data early so it's available for all operations
+      setDebate(debateData);
+      
       const [allStances, allSessions] = await Promise.all([
         UserStance.list(),
         DebateSession.list()
       ]);
-      
-      setDebate(debateData);
       
       // STEP 1: Find ALL stances by this user for this debate
       const myStancesForThisDebate = allStances.filter(s => 

@@ -194,6 +194,8 @@ export default function CreateDebate() {
         invite_code: generatedInviteCode
       });
 
+      console.log("Created debate with invite_code:", generatedInviteCode, "and ID:", newDebate.id);
+
       await UserStance.create({
         debate_id: newDebate.id,
         user_id: currentUser.id,
@@ -231,9 +233,11 @@ export default function CreateDebate() {
         });
       }
 
-      // If private, show invite code dialog
+      // If private, show invite code dialog and store debate ID
       if (isPrivate) {
         setInviteCode(generatedInviteCode);
+        // Store the debate ID in state for later navigation
+        sessionStorage.setItem('lastCreatedDebateId', newDebate.id);
         setShowInviteDialog(true);
         setShowCreateDialog(false);
         await loadData();
@@ -878,7 +882,9 @@ export default function CreateDebate() {
 
             <Button
               onClick={() => {
-                const createdDebateId = debates.find(d => d.invite_code === inviteCode)?.id;
+                const createdDebateId = sessionStorage.getItem('lastCreatedDebateId');
+                sessionStorage.removeItem('lastCreatedDebateId');
+                
                 setShowInviteDialog(false);
                 setInviteCode("");
                 setTitle("");

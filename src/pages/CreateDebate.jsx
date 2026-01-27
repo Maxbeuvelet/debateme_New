@@ -626,13 +626,7 @@ export default function CreateDebate() {
                     }
                   </p>
                   <Button 
-                    onClick={() => {
-                      if (!currentUser) {
-                        alert("Please log in to create a debate");
-                        return;
-                      }
-                      setShowCreateDialog(true);
-                    }}
+                    onClick={() => setShowCreateDialog(true)}
                     className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700"
                   >
                     Create Debate

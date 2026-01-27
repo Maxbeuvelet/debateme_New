@@ -141,15 +141,20 @@ export default function Layout({ children, currentPageName }) {
   React.useEffect(() => {
     const loadInitialUser = async () => {
       try {
-        const currentUser = await User.me();
-        setUser(currentUser);
-        
-        if (currentUser && currentUser.new_achievements && currentUser.new_achievements.length > 0) {
-          setHasNewAchievements(true);
-        }
-        
-        if (currentUser && !currentUser.username && currentPageName !== "SetupProfile") {
-          window.location.href = createPageUrl("SetupProfile");
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) {
+          const currentUser = await User.me();
+          setUser(currentUser);
+
+          if (currentUser && currentUser.new_achievements && currentUser.new_achievements.length > 0) {
+            setHasNewAchievements(true);
+          }
+
+          if (currentUser && !currentUser.username && currentPageName !== "SetupProfile") {
+            window.location.href = createPageUrl("SetupProfile");
+          }
+        } else {
+          setUser(null);
         }
       } catch (error) {
         setUser(null);

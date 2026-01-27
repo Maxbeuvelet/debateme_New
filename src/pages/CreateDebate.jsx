@@ -171,19 +171,20 @@ export default function CreateDebate() {
       return;
     }
     
-    // Generate anonymous user if not logged in
-    if (!currentUser) {
-      const randomId = Math.random().toString(36).substring(2, 8);
-      const guestUser = {
-        id: `guest_${randomId}`,
-        username: `Guest${randomId}`,
-        email: null
-      };
-      setCurrentUser(guestUser);
-    }
-
     setIsSubmitting(true);
     try {
+      // Generate anonymous user if not logged in
+      let userData = currentUser;
+      if (!userData) {
+        const randomId = Math.random().toString(36).substring(2, 8);
+        userData = {
+          id: `guest_${randomId}`,
+          username: `Guest${randomId}`,
+          email: null
+        };
+        setCurrentUser(userData);
+      }
+
       // Generate unique invite code if private
       const generatedInviteCode = isPrivate 
         ? Math.random().toString(36).substring(2, 10).toUpperCase()
@@ -202,17 +203,6 @@ export default function CreateDebate() {
       });
 
       console.log("Created debate with invite_code:", generatedInviteCode, "and ID:", newDebate.id);
-
-      const userForStance = currentUser || (async () => {
-        const randomId = Math.random().toString(36).substring(2, 8);
-        return {
-          id: `guest_${randomId}`,
-          username: `Guest${randomId}`,
-          email: null
-        };
-      })();
-      
-      const userData = typeof userForStance === 'function' ? await userForStance() : userForStance;
       
       await UserStance.create({
         debate_id: newDebate.id,
@@ -223,14 +213,14 @@ export default function CreateDebate() {
       });
 
       // Update user's debates_created count and award XP only for logged in users
-      if (currentUser?.email) {
+      if (userData?.email) {
         const debatesCreated = (currentUser.debates_created || 0) + 1;
         const isFirstDebate = debatesCreated === 1;
         
         // Award XP if this is their first debate
         if (isFirstDebate) {
-          const currentXp = currentUser.xp || 0;
-          const currentLevel = currentUser.level || 1;
+          const currentXp = userData.xp || 0;
+          const currentLevel = userData.level || 1;
           let newXp = currentXp + 50;
           let newLevel = currentLevel;
           

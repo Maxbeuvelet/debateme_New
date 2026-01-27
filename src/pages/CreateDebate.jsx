@@ -123,11 +123,18 @@ export default function CreateDebate() {
       setCurrentUser(user);
 
       const [debatesData, stancesData] = await Promise.all([
-        Debate.filter({ status: "active", is_user_created: true }, "-created_date"),
+        Debate.list("-created_date"),
         UserStance.list("-created_date")
       ]);
+      
+      // Filter to only show public, active, user-created debates
+      const publicDebates = debatesData.filter(d => 
+        d.status === "active" && 
+        d.is_user_created === true && 
+        (d.is_private === false || !d.is_private)
+      );
 
-      setDebates(debatesData);
+      setDebates(publicDebates);
       
       // Filter to recent waiting stances
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);

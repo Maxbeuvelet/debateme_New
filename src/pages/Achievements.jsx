@@ -100,8 +100,13 @@ export default function Achievements() {
   const loadUser = async () => {
     setIsLoading(true);
     try {
-      const user = await User.me();
-      setCurrentUser(user);
+      const isAuth = await User.isAuthenticated();
+      if (isAuth) {
+        const user = await User.me();
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
     } catch (error) {
       setCurrentUser(null);
     }

@@ -32,15 +32,26 @@ export default function TakeStance() {
     // Try to get logged in user, but don't require it
     let user = null;
     try {
-      user = await User.me();
-      
-      // If user doesn't have a username, redirect to setup
-      if (user && !user.username) {
-        navigate(createPageUrl("SetupProfile"));
-        return;
+      const isAuth = await User.isAuthenticated();
+      if (isAuth) {
+        user = await User.me();
+        
+        // If user doesn't have a username, redirect to setup
+        if (user && !user.username) {
+          navigate(createPageUrl("SetupProfile"));
+          return;
+        }
+      } else {
+        // User not logged in - generate anonymous username
+        const randomId = Math.random().toString(36).substring(2, 8);
+        user = {
+          id: `guest_${randomId}`,
+          username: `Guest${randomId}`,
+          email: null
+        };
       }
     } catch (error) {
-      // User not logged in - that's okay, generate anonymous username
+      // Error checking auth - generate anonymous username
       const randomId = Math.random().toString(36).substring(2, 8);
       user = {
         id: `guest_${randomId}`,
@@ -109,15 +120,17 @@ export default function TakeStance() {
           
           console.log("Created stance:", newStance);
           
-          // Update user stats
-          const categoryStats = user.category_stats || {};
-          const category = debateData.category;
-          categoryStats[category] = (categoryStats[category] || 0) + 1;
-          
-          await User.updateMyUserData({
-            debates_joined: (user.debates_joined || 0) + 1,
-            category_stats: categoryStats
-          });
+          // Update user stats only if logged in
+          if (user.email) {
+            const categoryStats = user.category_stats || {};
+            const category = debateData.category;
+            categoryStats[category] = (categoryStats[category] || 0) + 1;
+            
+            await User.updateMyUserData({
+              debates_joined: (user.debates_joined || 0) + 1,
+              category_stats: categoryStats
+            });
+          }
           
           console.log("Attempting to match with debate ID:", actualDebateId);
           
@@ -156,7 +169,11 @@ export default function TakeStance() {
       );
       
       // STEP 2: Check for active sessions first, or recent waiting stances
-      const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+      // For private debates accessed via direct ID (after creation), use 5 minute window
+      // For others (including invite links), use 1 minute window
+      const isCreatorDirectAccess = debateId && !inviteCode && debateData?.is_private;
+      const timeWindow = isCreatorDirectAccess ? 5 * 60 * 1000 : 60 * 1000;
+      const recentTimeAgo = new Date(Date.now() - timeWindow);
       let foundActiveOrWaiting = false;
       
       for (const stance of myStancesForThisDebate) {
@@ -171,8 +188,8 @@ export default function TakeStance() {
           }
         }
         
-        // Check for recent waiting stances (created in the last minute)
-        if (stance.status === "waiting" && new Date(stance.created_date) > oneMinuteAgo) {
+        // Check for recent waiting stances
+        if (stance.status === "waiting" && new Date(stance.created_date) > recentTimeAgo) {
           console.log(`User ${user.id} has recent waiting stance. Showing waiting screen.`);
           setCurrentUserStance(stance);
           foundActiveOrWaiting = true;
@@ -182,9 +199,9 @@ export default function TakeStance() {
       
       // STEP 3: Delete old stances if no active/recent waiting stance found
       if (!foundActiveOrWaiting) {
-        // Only delete stances that are older than 1 minute
+        // Only delete stances that are older than the time window
         const stancesToDelete = myStancesForThisDebate.filter(s => 
-          new Date(s.created_date) <= oneMinuteAgo
+          new Date(s.created_date) <= recentTimeAgo
         );
 
         for (const stance of stancesToDelete) {

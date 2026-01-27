@@ -386,11 +386,15 @@ export default function TakeStance() {
     }
   };
 
-  // Poll for matches when waiting - every 2 seconds
+  // Poll for matches when waiting - with exponential backoff for efficiency
   useEffect(() => {
     if (!currentUserStance) return;
 
-    const interval = setInterval(async () => {
+    let pollInterval = 1500; // Start with 1.5 seconds
+    let attempts = 0;
+    let timeoutId;
+
+    const pollForMatch = async () => {
       try {
         const matched = await tryMatch(currentUserStance.id);
         if (matched) {
@@ -398,8 +402,17 @@ export default function TakeStance() {
           if (currentUser?.email) {
             await awardXpAndCheckLevelUp(50);
           }
-          clearInterval(interval);
+          return; // Stop polling
         }
+        
+        // Increase interval slightly after each attempt (max 4 seconds)
+        attempts++;
+        if (attempts > 3 && pollInterval < 4000) {
+          pollInterval = Math.min(pollInterval + 500, 4000);
+        }
+        
+        // Schedule next poll
+        timeoutId = setTimeout(pollForMatch, pollInterval);
       } catch (error) {
         console.error("Error during match polling:", error);
         // If stance was deleted, reload the page
@@ -407,16 +420,23 @@ export default function TakeStance() {
           console.log("Stance was deleted, reloading debate data");
           setCurrentUserStance(null);
           await loadDebateData();
-          clearInterval(interval);
+          return;
         }
+        
+        // Retry on error after a brief delay
+        timeoutId = setTimeout(pollForMatch, 2000);
       }
-    }, 2000);
+    };
+
+    // Start polling immediately
+    pollForMatch();
     
     return () => {
-      // console.log("Clearing polling interval.");
-      clearInterval(interval);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
-  }, [currentUserStance, tryMatch, awardXpAndCheckLevelUp, loadDebateData]);
+  }, [currentUserStance, tryMatch, awardXpAndCheckLevelUp, loadDebateData, currentUser]);
 
   if (!debateId && !inviteCode) {
     return (

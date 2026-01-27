@@ -150,10 +150,10 @@ export default function TakeStance() {
       // Set debate data early so it's available for all operations
       setDebate(debateData);
       
-      // STEP 1: Find ALL stances by this user for this debate (skip if anonymous)
-      const myStancesForThisDebate = user.email ? allStances.filter(s => 
+      // STEP 1: Find ALL stances by this user for this debate (match by user_id for both logged-in and guest users)
+      const myStancesForThisDebate = allStances.filter(s => 
         s.debate_id === actualDebateId && s.user_id === user.id
-      ) : [];
+      );
       
       // STEP 2: Check for active sessions first, or recent waiting stances
       const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
@@ -182,9 +182,15 @@ export default function TakeStance() {
       
       // STEP 3: Delete old stances if no active/recent waiting stance found
       if (!foundActiveOrWaiting) {
-        for (const stance of myStancesForThisDebate) {
+        // Only delete stances that are older than 1 minute
+        const stancesToDelete = myStancesForThisDebate.filter(s => 
+          new Date(s.created_date) <= oneMinuteAgo
+        );
+
+        for (const stance of stancesToDelete) {
           await UserStance.delete(stance.id);
         }
+
         // If no active session or recent waiting stance found, ensure currentUserStance is null
         setCurrentUserStance(null);
       }

@@ -170,9 +170,16 @@ export default function CreateDebate() {
       setFormError("Please correct the errors in the form.");
       return;
     }
+    
+    // Generate anonymous user if not logged in
     if (!currentUser) {
-      setFormError("You must be logged in to create a debate.");
-      return;
+      const randomId = Math.random().toString(36).substring(2, 8);
+      const guestUser = {
+        id: `guest_${randomId}`,
+        username: `Guest${randomId}`,
+        email: null
+      };
+      setCurrentUser(guestUser);
     }
 
     setIsSubmitting(true);
@@ -196,41 +203,54 @@ export default function CreateDebate() {
 
       console.log("Created debate with invite_code:", generatedInviteCode, "and ID:", newDebate.id);
 
+      const userForStance = currentUser || (async () => {
+        const randomId = Math.random().toString(36).substring(2, 8);
+        return {
+          id: `guest_${randomId}`,
+          username: `Guest${randomId}`,
+          email: null
+        };
+      })();
+      
+      const userData = typeof userForStance === 'function' ? await userForStance() : userForStance;
+      
       await UserStance.create({
         debate_id: newDebate.id,
-        user_id: currentUser.id,
-        user_name: currentUser.username,
+        user_id: userData.id,
+        user_name: userData.username,
         position: "position_a",
         status: "waiting"
       });
 
-      // Update user's debates_created count and award XP (50 XP for first debate created)
-      const debatesCreated = (currentUser.debates_created || 0) + 1;
-      const isFirstDebate = debatesCreated === 1;
-      
-      // Award XP if this is their first debate
-      if (isFirstDebate) {
-        const currentXp = currentUser.xp || 0;
-        const currentLevel = currentUser.level || 1;
-        let newXp = currentXp + 50; // Award 50 XP for creating first debate
-        let newLevel = currentLevel;
+      // Update user's debates_created count and award XP only for logged in users
+      if (currentUser?.email) {
+        const debatesCreated = (currentUser.debates_created || 0) + 1;
+        const isFirstDebate = debatesCreated === 1;
         
-        // Check for level up
-        const xpForNextLevel = currentLevel * 100;
-        if (newXp >= xpForNextLevel) {
-          newLevel = currentLevel + 1;
-          newXp = newXp - xpForNextLevel;
+        // Award XP if this is their first debate
+        if (isFirstDebate) {
+          const currentXp = currentUser.xp || 0;
+          const currentLevel = currentUser.level || 1;
+          let newXp = currentXp + 50;
+          let newLevel = currentLevel;
+          
+          // Check for level up
+          const xpForNextLevel = currentLevel * 100;
+          if (newXp >= xpForNextLevel) {
+            newLevel = currentLevel + 1;
+            newXp = newXp - xpForNextLevel;
+          }
+          
+          await User.updateMyUserData({
+            debates_created: debatesCreated,
+            xp: newXp,
+            level: newLevel
+          });
+        } else {
+          await User.updateMyUserData({
+            debates_created: debatesCreated
+          });
         }
-        
-        await User.updateMyUserData({
-          debates_created: debatesCreated,
-          xp: newXp,
-          level: newLevel
-        });
-      } else {
-        await User.updateMyUserData({
-          debates_created: debatesCreated
-        });
       }
 
       // If private, show invite code dialog and store debate ID
@@ -266,30 +286,39 @@ export default function CreateDebate() {
   };
 
   const handleJoinDebate = async (debate) => {
-    if (!currentUser) {
-      alert("Please log in to join a debate");
-      return;
+    // Generate anonymous user if not logged in
+    let user = currentUser;
+    if (!user) {
+      const randomId = Math.random().toString(36).substring(2, 8);
+      user = {
+        id: `guest_${randomId}`,
+        username: `Guest${randomId}`,
+        email: null
+      };
+      setCurrentUser(user);
     }
 
     try {
       // Create stance for opposing position (position_b since creator is always position_a)
       const newStance = await UserStance.create({
         debate_id: debate.id,
-        user_id: currentUser.id,
-        user_name: currentUser.username,
+        user_id: user.id,
+        user_name: user.username,
         position: "position_b",
         status: "waiting"
       });
 
-      // Update user stats
-      const categoryStats = currentUser.category_stats || {};
-      const category = debate.category;
-      categoryStats[category] = (categoryStats[category] || 0) + 1;
-      
-      await User.updateMyUserData({
-        debates_joined: (currentUser.debates_joined || 0) + 1,
-        category_stats: categoryStats
-      });
+      // Update user stats only for logged in users
+      if (user.email) {
+        const categoryStats = user.category_stats || {};
+        const category = debate.category;
+        categoryStats[category] = (categoryStats[category] || 0) + 1;
+        
+        await User.updateMyUserData({
+          debates_joined: (user.debates_joined || 0) + 1,
+          category_stats: categoryStats
+        });
+      }
 
       // Navigate to take stance page which will try to match
       navigate(createPageUrl(`TakeStance?id=${debate.id}`));
@@ -503,13 +532,7 @@ export default function CreateDebate() {
             </div>
 
             <Button
-              onClick={() => {
-                if (!currentUser) {
-                  alert("Please log in to create a debate");
-                  return;
-                }
-                setShowCreateDialog(true);
-              }}
+              onClick={() => setShowCreateDialog(true)}
               className="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white font-semibold text-lg py-6 px-8 rounded-lg shadow-lg"
             >
               <PlusCircle className="w-5 h-5 mr-2" />

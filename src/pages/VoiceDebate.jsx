@@ -95,8 +95,16 @@ export default function VoiceDebate() {
     
     setIsLoading(true);
     try {
-      const user = await User.me();
-      setCurrentUserId(user.id);
+      // Try to get user, but allow anonymous
+      let user;
+      try {
+        user = await User.me();
+        setCurrentUserId(user.id);
+      } catch (error) {
+        // Anonymous user
+        user = null;
+        setCurrentUserId(null);
+      }
       
       const [sessions, msgs, debates, stances] = await Promise.all([
         DebateSession.list(),
@@ -130,11 +138,14 @@ export default function VoiceDebate() {
       
       if (userName) setCurrentUser(userName);
       
-      const userStance = participantStances.find(s => s.user_id === user.id);
-      if (userStance && !userStance.session_start_time) {
-        await UserStance.update(userStance.id, {
-          session_start_time: new Date().toISOString()
-        });
+      // Only update session start time for logged in users
+      if (user) {
+        const userStance = participantStances.find(s => s.user_id === user.id);
+        if (userStance && !userStance.session_start_time) {
+          await UserStance.update(userStance.id, {
+            session_start_time: new Date().toISOString()
+          });
+        }
       }
       
       await setupVideoRoom();

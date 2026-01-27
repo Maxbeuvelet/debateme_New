@@ -29,22 +29,24 @@ export default function TakeStance() {
   const loadDebateData = useCallback(async () => {
     setIsLoading(true);
     
-    // Check if user is logged in first
-    let user;
+    // Try to get logged in user, but don't require it
+    let user = null;
     try {
       user = await User.me();
+      
+      // If user doesn't have a username, redirect to setup
+      if (user && !user.username) {
+        navigate(createPageUrl("SetupProfile"));
+        return;
+      }
     } catch (error) {
-      // User not logged in
-      setIsLoading(false);
-      alert("Please log in to join a debate");
-      navigate(createPageUrl("Home"));
-      return;
-    }
-    
-    // If user doesn't have a username, redirect to setup
-    if (user && !user.username) {
-      navigate(createPageUrl("SetupProfile"));
-      return;
+      // User not logged in - that's okay, generate anonymous username
+      const randomId = Math.random().toString(36).substring(2, 8);
+      user = {
+        id: `guest_${randomId}`,
+        username: `Guest${randomId}`,
+        email: null
+      };
     }
     
     setCurrentUser(user);
@@ -148,10 +150,10 @@ export default function TakeStance() {
       // Set debate data early so it's available for all operations
       setDebate(debateData);
       
-      // STEP 1: Find ALL stances by this user for this debate
-      const myStancesForThisDebate = allStances.filter(s => 
+      // STEP 1: Find ALL stances by this user for this debate (skip if anonymous)
+      const myStancesForThisDebate = user.email ? allStances.filter(s => 
         s.debate_id === actualDebateId && s.user_id === user.id
-      );
+      ) : [];
       
       // STEP 2: Check for active sessions first, or recent waiting stances
       const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
@@ -315,7 +317,7 @@ export default function TakeStance() {
   };
 
   const handleTakeStance = async (position) => {
-    if (!currentUser) return; // Guard clause for unauthenticated user
+    if (!currentUser) return;
 
     setIsSubmitting(true);
     try {
@@ -335,28 +337,32 @@ export default function TakeStance() {
         status: "waiting"
       });
 
-      // Update user stats: increment debates_joined and category count
-      const categoryStats = currentUser.category_stats || {};
-      const category = debate.category;
-      categoryStats[category] = (categoryStats[category] || 0) + 1;
+      // Update user stats only if logged in
+      if (currentUser.email) {
+        const categoryStats = currentUser.category_stats || {};
+        const category = debate.category;
+        categoryStats[category] = (categoryStats[category] || 0) + 1;
 
-      await User.updateMyUserData({
-        debates_joined: (currentUser.debates_joined || 0) + 1,
-        category_stats: categoryStats
-      });
-      setCurrentUser(prevUser => ({
-        ...prevUser,
-        debates_joined: (prevUser.debates_joined || 0) + 1,
-        category_stats: categoryStats
-      }));
+        await User.updateMyUserData({
+          debates_joined: (currentUser.debates_joined || 0) + 1,
+          category_stats: categoryStats
+        });
+        setCurrentUser(prevUser => ({
+          ...prevUser,
+          debates_joined: (prevUser.debates_joined || 0) + 1,
+          category_stats: categoryStats
+        }));
+      }
 
       // Try to match immediately
       const matched = await tryMatch(newStance.id);
 
-      if (matched) {
-        // Award XP for joining a debate (50 XP)
+      if (matched && currentUser.email) {
+        // Award XP for joining a debate (50 XP) - only for logged in users
         await awardXpAndCheckLevelUp(50);
-      } else {
+      }
+      
+      if (!matched) {
         setCurrentUserStance(newStance);
       }
 
@@ -388,8 +394,10 @@ export default function TakeStance() {
       try {
         const matched = await tryMatch(currentUserStance.id);
         if (matched) {
-          // Award XP for joining a debate (50 XP) - only if matched and redirected
-          await awardXpAndCheckLevelUp(50);
+          // Award XP for joining a debate (50 XP) - only if matched and logged in
+          if (currentUser?.email) {
+            await awardXpAndCheckLevelUp(50);
+          }
           clearInterval(interval);
         }
       } catch (error) {

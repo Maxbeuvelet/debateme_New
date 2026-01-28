@@ -95,12 +95,12 @@ Deno.serve(async (req) => {
             new Date(a.created_date) - new Date(b.created_date)
         );
         
-        // Try to match with each potential opponent until one succeeds
+        // Try to match with the first available opponent
+        let opponent = null;
+        
         for (const potentialOpponent of recentWaitingStances) {
-            // Atomic check: try to update opponent to "matching" status
-            // This prevents race conditions where multiple users try to match with the same opponent
             try {
-                // First, verify opponent is still waiting (atomic read-check)
+                // Verify opponent is still waiting
                 const checkOpponent = await base44.asServiceRole.entities.UserStance.filter({ 
                     id: potentialOpponent.id 
                 });
@@ -109,13 +109,13 @@ Deno.serve(async (req) => {
                     continue; // This opponent is no longer available
                 }
                 
-                // Try to atomically claim this opponent by updating to "matching"
+                // Atomically claim this opponent by updating to "matching"
                 await base44.asServiceRole.entities.UserStance.update(potentialOpponent.id, { 
                     status: "matching" 
                 });
                 
-                // Successfully claimed the opponent, proceed with match
-                const opponent = potentialOpponent;
+                // Successfully claimed the opponent
+                opponent = potentialOpponent;
                 break;
             } catch (error) {
                 // Failed to claim this opponent, try next one
@@ -123,15 +123,7 @@ Deno.serve(async (req) => {
             }
         }
         
-        // If we didn't find any opponent after trying all candidates
-        const opponent = recentWaitingStances.find(async (potentialOpponent) => {
-            const checkOpponent = await base44.asServiceRole.entities.UserStance.filter({ 
-                id: potentialOpponent.id 
-            });
-            return checkOpponent[0]?.status === 'matching';
-        });
-        
-        if (!opponent || recentWaitingStances.length === 0) {
+        if (!opponent) {
             // Make sure current user is marked as waiting with updated timestamp
             await base44.asServiceRole.entities.UserStance.update(stanceId, { 
                 status: "waiting"

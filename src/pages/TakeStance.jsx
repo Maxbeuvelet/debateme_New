@@ -42,22 +42,35 @@ export default function TakeStance() {
           return;
         }
       } else {
-        // User not logged in - generate anonymous username
+        // User not logged in - check for existing guest user in sessionStorage
+        const existingGuest = sessionStorage.getItem('guestUser');
+        if (existingGuest) {
+          user = JSON.parse(existingGuest);
+        } else {
+          // Generate new guest user
+          const randomId = Math.random().toString(36).substring(2, 8);
+          user = {
+            id: `guest_${randomId}`,
+            username: `Guest${randomId}`,
+            email: null
+          };
+          sessionStorage.setItem('guestUser', JSON.stringify(user));
+        }
+      }
+    } catch (error) {
+      // Error checking auth - check for guest user or generate new
+      const existingGuest = sessionStorage.getItem('guestUser');
+      if (existingGuest) {
+        user = JSON.parse(existingGuest);
+      } else {
         const randomId = Math.random().toString(36).substring(2, 8);
         user = {
           id: `guest_${randomId}`,
           username: `Guest${randomId}`,
           email: null
         };
+        sessionStorage.setItem('guestUser', JSON.stringify(user));
       }
-    } catch (error) {
-      // Error checking auth - generate anonymous username
-      const randomId = Math.random().toString(36).substring(2, 8);
-      user = {
-        id: `guest_${randomId}`,
-        username: `Guest${randomId}`,
-        email: null
-      };
     }
     
     setCurrentUser(user);

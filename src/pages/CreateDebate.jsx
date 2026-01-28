@@ -183,12 +183,20 @@ export default function CreateDebate() {
       // Generate anonymous user if not logged in
       let userData = currentUser;
       if (!userData) {
-        const randomId = Math.random().toString(36).substring(2, 8);
-        userData = {
-          id: `guest_${randomId}`,
-          username: `Guest${randomId}`,
-          email: null
-        };
+        // Check if guest user already exists in sessionStorage
+        const existingGuest = sessionStorage.getItem('guestUser');
+        if (existingGuest) {
+          userData = JSON.parse(existingGuest);
+        } else {
+          const randomId = Math.random().toString(36).substring(2, 8);
+          userData = {
+            id: `guest_${randomId}`,
+            username: `Guest${randomId}`,
+            email: null
+          };
+          // Store guest user for cross-page consistency
+          sessionStorage.setItem('guestUser', JSON.stringify(userData));
+        }
         setCurrentUser(userData);
       }
 

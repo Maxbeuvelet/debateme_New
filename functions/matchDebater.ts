@@ -1,190 +1,194 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        
-        const { debateId, stanceId } = await req.json();
-        
-        if (!debateId || !stanceId) {
-            return Response.json({ 
-                error: 'Missing required parameters: debateId and stanceId' 
-            }, { status: 400 });
-        }
+  try {
+    const base44 = createClientFromRequest(req);
+    const { debateId, stanceId } = await req.json();
 
-        // Get the current stance - use filter for more reliable results
-        const myStances = await base44.asServiceRole.entities.UserStance.filter({ 
-            id: stanceId 
-        });
-        const myStance = myStances[0];
-        
-        if (!myStance) {
-            // Stance not found - it may have been deleted
-            // Return not matched instead of error to allow graceful handling
-            return Response.json({
-                matched: false,
-                message: 'Your stance was not found. Please try taking your stance again.',
-                stanceDeleted: true
-            });
-        }
-
-        // Check if already matched - look for session by session_id field
-        if (myStance.session_id) {
-            try {
-                const sessions = await base44.asServiceRole.entities.DebateSession.filter({ 
-                    id: myStance.session_id 
-                });
-                const existingSession = sessions[0];
-                
-                if (existingSession && existingSession.status === "active") {
-                    return Response.json({
-                        matched: true,
-                        sessionId: existingSession.id,
-                        userName: myStance.user_name
-                    });
-                } else {
-                    // Session ended or doesn't exist, reset stance to waiting
-                    await base44.asServiceRole.entities.UserStance.update(stanceId, {
-                        status: "waiting",
-                        session_id: null
-                    });
-                }
-            } catch (error) {
-                // Session not found, reset stance
-                await base44.asServiceRole.entities.UserStance.update(stanceId, {
-                    status: "waiting",
-                    session_id: null
-                });
-            }
-        }
-
-        // Get all stances for this debate
-        const allStances = await base44.asServiceRole.entities.UserStance.filter({ 
-            debate_id: debateId 
-        });
-
-        // Clean up old waiting stances (older than 10 minutes)
-        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-        const oldWaitingStances = allStances.filter(s => 
-            s.status === "waiting" && 
-            new Date(s.updated_date) < tenMinutesAgo
-        );
-        
-        // Delete old waiting stances in the background
-        if (oldWaitingStances.length > 0) {
-            Promise.all(
-                oldWaitingStances.map(s => 
-                    base44.asServiceRole.entities.UserStance.delete(s.id).catch(() => {})
-                )
-            );
-        }
-
-        // Look for RECENT waiting opponents with opposite position (within last 10 minutes)
-        const oppositePosition = myStance.position === "position_a" ? "position_b" : "position_a";
-        
-        // Filter to only include recent waiting stances (not older than 10 minutes)
-        const recentWaitingStances = allStances.filter(s => 
-            s.status === "waiting" &&
-            s.position === oppositePosition && 
-            s.id !== stanceId &&
-            new Date(s.updated_date) > tenMinutesAgo
-        );
-        
-        // Sort by created_date to match oldest waiting users first (fairness)
-        recentWaitingStances.sort((a, b) => 
-            new Date(a.created_date) - new Date(b.created_date)
-        );
-        
-        // Try to match with the first available opponent
-        let opponent = null;
-        
-        for (const potentialOpponent of recentWaitingStances) {
-            try {
-                // Verify opponent is still waiting
-                const checkOpponent = await base44.asServiceRole.entities.UserStance.filter({ 
-                    id: potentialOpponent.id 
-                });
-                
-                if (!checkOpponent[0] || checkOpponent[0].status !== 'waiting') {
-                    continue; // This opponent is no longer available
-                }
-                
-                // Atomically claim this opponent by updating to "matching"
-                await base44.asServiceRole.entities.UserStance.update(potentialOpponent.id, { 
-                    status: "matching" 
-                });
-                
-                // Successfully claimed the opponent
-                opponent = potentialOpponent;
-                break;
-            } catch (error) {
-                // Failed to claim this opponent, try next one
-                continue;
-            }
-        }
-        
-        if (!opponent) {
-            // Make sure current user is marked as waiting with updated timestamp
-            await base44.asServiceRole.entities.UserStance.update(stanceId, { 
-                status: "waiting"
-            });
-            
-            return Response.json({
-                matched: false,
-                message: 'No opponent available yet'
-            });
-        }
-
-        // Create debate session with both participants
-        let session;
-        try {
-            session = await base44.asServiceRole.entities.DebateSession.create({
-                debate_id: debateId,
-                participant_a_id: myStance.position === "position_a" ? stanceId : opponent.id,
-                participant_b_id: myStance.position === "position_b" ? stanceId : opponent.id,
-                status: "active",
-                duration_minutes: 30
-            });
-        } catch (error) {
-            // Failed to create session, reset both stances
-            await Promise.all([
-                base44.asServiceRole.entities.UserStance.update(stanceId, { 
-                    status: "waiting" 
-                }).catch(() => {}),
-                base44.asServiceRole.entities.UserStance.update(opponent.id, { 
-                    status: "waiting" 
-                }).catch(() => {})
-            ]);
-            
-            return Response.json({
-                matched: false,
-                message: 'Failed to create session, please try again'
-            });
-        }
-        
-        // Update both stances to matched with session reference
-        await Promise.all([
-            base44.asServiceRole.entities.UserStance.update(stanceId, { 
-                status: "matched",
-                session_id: session.id 
-            }),
-            base44.asServiceRole.entities.UserStance.update(opponent.id, { 
-                status: "matched",
-                session_id: session.id 
-            })
-        ]);
-        
-        return Response.json({
-            matched: true,
-            sessionId: session.id,
-            userName: myStance.user_name,
-            opponentName: opponent.user_name
-        });
-        
-    } catch (error) {
-        console.error("Error in matchDebater:", error);
-        return Response.json({ 
-            error: error.message 
-        }, { status: 500 });
+    if (!debateId || !stanceId) {
+      return Response.json(
+        { error: 'Missing required parameters: debateId and stanceId' },
+        { status: 400 }
+      );
     }
+
+    // Load my stance
+    const myStances = await base44.asServiceRole.entities.UserStance.filter({ id: stanceId });
+    const myStance = myStances[0];
+
+    if (!myStance) {
+      return Response.json({
+        matched: false,
+        message: 'Your stance was not found. Please try taking your stance again.',
+        stanceDeleted: true
+      });
+    }
+
+    // If already has a session_id, validate it and return matched if active
+    if (myStance.session_id) {
+      try {
+        const sessions = await base44.asServiceRole.entities.DebateSession.filter({
+          id: myStance.session_id
+        });
+        const existingSession = sessions[0];
+
+        if (existingSession && existingSession.status === 'active') {
+          return Response.json({
+            matched: true,
+            sessionId: existingSession.id,
+            userName: myStance.user_name
+          });
+        }
+
+        // Session ended or doesn't exist, reset stance
+        await base44.asServiceRole.entities.UserStance.update(stanceId, {
+          status: 'waiting',
+          session_id: null
+        });
+      } catch {
+        await base44.asServiceRole.entities.UserStance.update(stanceId, {
+          status: 'waiting',
+          session_id: null
+        });
+      }
+    }
+
+    // === KEY FIX: lock MY stance first ===
+    // If I'm still "waiting", immediately move me to "matching" so nobody else can match me concurrently.
+    // (Even if I end up with no opponent, we'll revert to "waiting".)
+    try {
+      await base44.asServiceRole.entities.UserStance.update(stanceId, { status: 'matching' });
+    } catch {
+      // If we can't lock, just fail gracefully
+      return Response.json({
+        matched: false,
+        message: 'Unable to enter queue right now. Please try again.'
+      });
+    }
+
+    // Get all stances for this debate
+    const allStances = await base44.asServiceRole.entities.UserStance.filter({ debate_id: debateId });
+
+    // Clean up old waiting stances (older than 10 minutes)
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    const oldWaitingStances = allStances.filter(
+      (s) => s.status === 'waiting' && new Date(s.updated_date) < tenMinutesAgo
+    );
+
+    if (oldWaitingStances.length > 0) {
+      Promise.all(
+        oldWaitingStances.map((s) =>
+          base44.asServiceRole.entities.UserStance.delete(s.id).catch(() => {})
+        )
+      );
+    }
+
+    const oppositePosition = myStance.position === 'position_a' ? 'position_b' : 'position_a';
+
+    // Candidate opponents: recent + waiting + opposite + not me
+    const candidates = allStances
+      .filter(
+        (s) =>
+          s.status === 'waiting' &&
+          s.position === oppositePosition &&
+          s.id !== stanceId &&
+          new Date(s.updated_date) > tenMinutesAgo
+      )
+      .sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+
+    let opponent = null;
+
+    for (const candidate of candidates) {
+      try {
+        // Verify still waiting
+        const check = await base44.asServiceRole.entities.UserStance.filter({ id: candidate.id });
+        const fresh = check[0];
+        if (!fresh || fresh.status !== 'waiting' || fresh.session_id) continue;
+
+        // Claim opponent
+        await base44.asServiceRole.entities.UserStance.update(candidate.id, { status: 'matching' });
+
+        // Re-fetch to confirm claim stuck
+        const verify = await base44.asServiceRole.entities.UserStance.filter({ id: candidate.id });
+        const claimed = verify[0];
+        if (!claimed || claimed.status !== 'matching' || claimed.session_id) {
+          // Someone else likely grabbed/changed them; keep scanning
+          // Best-effort revert
+          if (claimed && claimed.status === 'waiting') {
+            // already reverted by someone else
+          } else {
+            await base44.asServiceRole.entities.UserStance
+              .update(candidate.id, { status: 'waiting' })
+              .catch(() => {});
+          }
+          continue;
+        }
+
+        opponent = claimed;
+        break;
+      } catch {
+        continue;
+      }
+    }
+
+    if (!opponent) {
+      // No opponent available; revert my lock back to waiting
+      await base44.asServiceRole.entities.UserStance.update(stanceId, { status: 'waiting' }).catch(() => {});
+      return Response.json({ matched: false, message: 'No opponent available yet' });
+    }
+
+    // Safety: re-check my stance is still "matching" and not already assigned a session
+    const myCheck = await base44.asServiceRole.entities.UserStance.filter({ id: stanceId });
+    const myFresh = myCheck[0];
+    if (!myFresh || myFresh.status !== 'matching' || myFresh.session_id) {
+      // Something changed about me; revert opponent and exit
+      await base44.asServiceRole.entities.UserStance.update(opponent.id, { status: 'waiting' }).catch(() => {});
+      return Response.json({ matched: false, message: 'Queue state changed, please try again' });
+    }
+
+    // Create the session
+    let session;
+    try {
+      session = await base44.asServiceRole.entities.DebateSession.create({
+        debate_id: debateId,
+        participant_a_id: myStance.position === 'position_a' ? stanceId : opponent.id,
+        participant_b_id: myStance.position === 'position_b' ? stanceId : opponent.id,
+        status: 'active',
+        duration_minutes: 30
+      });
+    } catch {
+      // Session failed; revert both
+      await Promise.all([
+        base44.asServiceRole.entities.UserStance.update(stanceId, { status: 'waiting' }).catch(() => {}),
+        base44.asServiceRole.entities.UserStance.update(opponent.id, { status: 'waiting' }).catch(() => {})
+      ]);
+
+      return Response.json({
+        matched: false,
+        message: 'Failed to create session, please try again'
+      });
+    }
+
+    // Mark both matched
+    await Promise.all([
+      base44.asServiceRole.entities.UserStance.update(stanceId, {
+        status: 'matched',
+        session_id: session.id
+      }),
+      base44.asServiceRole.entities.UserStance.update(opponent.id, {
+        status: 'matched',
+        session_id: session.id
+      })
+    ]);
+
+    return Response.json({
+      matched: true,
+      sessionId: session.id,
+      userName: myStance.user_name,
+      opponentName: opponent.user_name
+    });
+  } catch (error) {
+    console.error('Error in matchDebater:', error);
+    return Response.json({ error: 'Server error' }, { status: 500 });
+  }
 });

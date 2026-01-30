@@ -199,6 +199,21 @@ export default function TakeStance() {
             });
 
             setCurrentUserStance(newStance);
+
+            // Try to match immediately (important so creator doesn't need a refresh)
+            const matchResponse = await matchDebater({
+              debateId: actualDebateId,
+              stanceId: newStance.id,
+            });
+
+            if (matchResponse.data.matched) {
+              navigate(
+                createPageUrl(
+                  `VoiceDebate?id=${matchResponse.data.sessionId}&user=${encodeURIComponent(user.username)}`
+                )
+              );
+              return;
+            }
           }
         }
       }

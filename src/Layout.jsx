@@ -240,8 +240,6 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen flex flex-col w-full bg-slate-50 overflow-x-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap');
-
         :root {
           --primary-navy: #0F172A;
           --primary-blue: #1E40AF;
@@ -256,11 +254,6 @@ export default function Layout({ children, currentPageName }) {
 
         .accent-gradient {
           background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--primary-blue) 100%);
-        }
-
-        .debate-logo-font {
-          font-family: 'Playfair Display', serif;
-          font-weight: 800;
         }
 
         body {
@@ -279,7 +272,7 @@ export default function Layout({ children, currentPageName }) {
                 alt="DebateMe" 
                 className="w-7 h-7 object-contain"
               />
-              <span className="debate-logo-font text-slate-900 text-sm">DebateMe</span>
+              <span className="font-bold text-slate-900 text-sm">DebateMe</span>
             </Link>
 
             {/* Navigation Links */}
@@ -384,7 +377,7 @@ export default function Layout({ children, currentPageName }) {
               alt="DebateMe" 
               className="w-7 h-7 sm:w-8 sm:h-8 object-contain flex-shrink-0"
             />
-            <h1 className="debate-logo-font text-slate-900 text-sm sm:text-base truncate">DebateMe</h1>
+            <h1 className="font-bold text-slate-900 text-sm sm:text-base truncate">DebateMe</h1>
           </div>
         </div>
         {user && (
@@ -435,7 +428,7 @@ export default function Layout({ children, currentPageName }) {
                     className="w-8 h-8 object-contain"
                   />
                   <div>
-                    <h2 className="debate-logo-font text-slate-900 text-base">DebateMe</h2>
+                    <h2 className="font-bold text-slate-900 text-base">DebateMe</h2>
                     <p className="text-[10px] text-slate-600 font-medium">Thoughtful Discourse</p>
                   </div>
                 </div>

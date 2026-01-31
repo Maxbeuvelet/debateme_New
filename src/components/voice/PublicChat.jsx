@@ -93,6 +93,12 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e);
+                }
+              }}
               placeholder="Type your message..."
               className="flex-1 border-slate-300 focus:border-slate-500 text-sm"
               maxLength={500}

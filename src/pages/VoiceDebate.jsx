@@ -136,16 +136,32 @@ export default function VoiceDebate() {
       );
       setParticipants(participantStances);
       
-      if (userName) setCurrentUser(userName);
-      
-      // Only update session start time for logged in users
-      if (user) {
-        const userStance = participantStances.find(s => s.user_id === user.id);
-        if (userStance && !userStance.session_start_time) {
-          await UserStance.update(userStance.id, {
-            session_start_time: new Date().toISOString()
-          });
+      // CRITICAL FIX: Authenticated user data ALWAYS takes priority over guest data
+      // If user is logged in, use their username. Guest username from URL is discarded.
+      if (user?.username) {
+        setCurrentUser(user.username);
+        
+        // Update the UserStance to use authenticated user's data if it was previously a guest
+        const userStance = participantStances.find(s => 
+          s.user_id === user.id || s.user_id?.startsWith('guest_')
+        );
+        
+        if (userStance) {
+          // Replace guest identity with authenticated user identity
+          const updates = {
+            user_id: user.id,
+            user_name: user.username
+          };
+          
+          if (!userStance.session_start_time) {
+            updates.session_start_time = new Date().toISOString();
+          }
+          
+          await UserStance.update(userStance.id, updates);
         }
+      } else if (userName) {
+        // Only use URL userName for anonymous users (guests)
+        setCurrentUser(userName);
       }
       
       await setupVideoRoom();

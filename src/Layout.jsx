@@ -262,8 +262,8 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       
       {/* Top Navigation Bar - Desktop */}
-      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-slate-100/95 backdrop-blur-md border-b border-slate-300/60">
-        <div className="max-w-7xl mx-auto px-6">
+      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-slate-100/95 backdrop-blur-md border-b border-slate-300/60" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="max-w-7xl mx-auto px-6" style={{ paddingLeft: 'max(1.5rem, env(safe-area-inset-left))', paddingRight: 'max(1.5rem, env(safe-area-inset-right))' }}>
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
@@ -361,7 +361,7 @@ export default function Layout({ children, currentPageName }) {
       <div className="hidden md:block h-14" />
 
       {/* Mobile Header */}
-      <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40">
+      <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Button
             variant="ghost"
@@ -419,6 +419,7 @@ export default function Layout({ children, currentPageName }) {
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed left-0 top-0 h-screen w-72 bg-slate-100 z-50 md:hidden flex flex-col shadow-2xl"
+              style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}
             >
               <div className="border-b border-slate-300/60 p-4 bg-slate-50 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">
@@ -558,7 +559,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <main className="flex-1 overflow-x-hidden">
           {children}
         </main>

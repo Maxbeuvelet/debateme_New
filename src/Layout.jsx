@@ -6,6 +6,7 @@ import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GlobalChat from "@/components/chat/GlobalChat";
+import BottomTabs from "@/components/navigation/BottomTabs";
 import {
   Dialog,
   DialogContent,
@@ -559,11 +560,14 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <main className="flex-1 overflow-x-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+        <main className="flex-1 overflow-x-hidden pb-20 md:pb-0">
           {children}
         </main>
       </div>
+
+      {/* Bottom Navigation for Mobile */}
+      <BottomTabs hasNewAchievements={hasNewAchievements} />
 
       {/* Global Chat - Hidden for now */}
               {/* <GlobalChat currentUser={user} /> */}

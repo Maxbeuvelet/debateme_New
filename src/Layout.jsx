@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import GlobalChat from "@/components/chat/GlobalChat";
 import BottomTabs from "@/components/navigation/BottomTabs";
 import RouteTransition from "@/components/navigation/RouteTransition";
+import { TabNavigationProvider } from "@/components/navigation/TabNavigationProvider";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -243,7 +244,8 @@ export default function Layout({ children, currentPageName }) {
   const rankCustomImage = getRankCustomImage(currentLevel);
 
   return (
-    <div className="min-h-screen flex flex-col w-full bg-slate-50 overflow-x-hidden">
+    <TabNavigationProvider>
+    <div className="min-h-screen flex flex-col w-full bg-background overflow-x-hidden">
       <style>{`
         :root {
           --primary-navy: #0F172A;
@@ -366,7 +368,7 @@ export default function Layout({ children, currentPageName }) {
       <div className="hidden md:block h-14" />
 
       {/* Mobile Header */}
-      <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
+      <header className="bg-card border-b border-border p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {navigationItems.some(item => item.url === location.pathname) ? (
             <Button
@@ -393,7 +395,7 @@ export default function Layout({ children, currentPageName }) {
               alt="DebateMe" 
               className="w-7 h-7 sm:w-8 sm:h-8 object-contain flex-shrink-0"
             />
-            <h1 className="font-bold text-slate-900 text-sm sm:text-base truncate">DebateMe</h1>
+            <h1 className="font-bold text-foreground text-sm sm:text-base truncate">DebateMe</h1>
           </div>
         </div>
         {user && (
@@ -653,5 +655,6 @@ export default function Layout({ children, currentPageName }) {
         </DialogContent>
       </Dialog>
     </div>
+    </TabNavigationProvider>
   );
 }

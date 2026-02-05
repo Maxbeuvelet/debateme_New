@@ -28,24 +28,24 @@ export default function VideoChat({ roomUrl, token, userName, isAiDebate, oppone
 
   if (error) {
     return (
-      <Card className="bg-white border-slate-200 shadow-sm">
+      <Card className="bg-card border-border shadow-sm">
         <CardContent className="p-8 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">Video Unavailable</h3>
-          <p className="text-slate-600">{error}</p>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Video Unavailable</h3>
+          <p className="text-muted-foreground">{error}</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
-      <CardHeader className="p-4 border-b border-slate-100 bg-slate-50">
-        <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+    <Card className="bg-card border-border shadow-sm overflow-hidden">
+      <CardHeader className="p-4 border-b border-border bg-muted">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <Video className="w-5 h-5" />
           Live Video Debate
         </CardTitle>
-        <p className="text-xs text-slate-600 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           ⚠️ Use the red "End Debate" button above to properly end the session
         </p>
       </CardHeader>

@@ -1,8 +1,9 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, PlusCircle, TrendingUp, Trophy, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTabNavigation } from "./TabNavigationProvider";
 
 const tabs = [
   { name: "Home", path: createPageUrl("Home"), icon: Home },
@@ -14,6 +15,7 @@ const tabs = [
 
 export default function BottomTabs({ hasNewAchievements }) {
   const location = useLocation();
+  const { navigateToTab } = useTabNavigation();
 
   return (
     <nav 
@@ -30,10 +32,10 @@ export default function BottomTabs({ hasNewAchievements }) {
           const isActive = location.pathname === tab.path;
           
           return (
-            <Link
+            <button
               key={tab.name}
-              to={tab.path}
-              className="relative flex flex-col items-center justify-center min-w-0 flex-1 py-2"
+              onClick={() => navigateToTab(tab.path)}
+              className="relative flex flex-col items-center justify-center min-w-0 flex-1 py-2 bg-transparent border-0"
             >
               <div className="relative">
                 <motion.div
@@ -68,7 +70,7 @@ export default function BottomTabs({ hasNewAchievements }) {
               >
                 {tab.name}
               </span>
-            </Link>
+            </button>
           );
         })}
       </div>

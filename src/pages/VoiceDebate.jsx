@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { DebateSession, Debate, UserStance, PublicMessage, User } from "@/entities/all";
+import { DebateSession, Debate, UserStance, PublicMessage, User, SessionParticipant } from "@/entities/all";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, AlertCircle, PhoneOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -106,11 +106,10 @@ export default function VoiceDebate() {
         setCurrentUserId(null);
       }
       
-      const [sessions, msgs, debates, stances] = await Promise.all([
+      const [sessions, msgs, sessionParticipants] = await Promise.all([
         DebateSession.list(),
         PublicMessage.filter({ session_id: sessionId }, "created_date"),
-        Debate.list(),
-        UserStance.list()
+        SessionParticipant.filter({ session_id: sessionId })
       ]);
       
       const currentSession = sessions.find(s => s.id === sessionId);
@@ -128,13 +127,36 @@ export default function VoiceDebate() {
       setSession(currentSession);
       setPublicMessages(msgs);
       
-      const debateData = debates.find(d => d.id === currentSession.debate_id);
+      // Get debate data
+      const debateData = await Debate.get(currentSession.debate_id);
       setDebate(debateData);
       
-      const participantStances = stances.filter(s => 
-        s.id === currentSession.participant_a_id || s.id === currentSession.participant_b_id
-      );
-      setParticipants(participantStances);
+      // For multi-participant debates, use SessionParticipant
+      // For legacy 1v1 debates, fall back to UserStance
+      let participantsList = [];
+      
+      if (sessionParticipants.length > 0) {
+        // Multi-participant debate (private with multiple joiners)
+        participantsList = sessionParticipants.map(sp => ({
+          id: sp.id,
+          user_id: sp.user_id,
+          user_name: sp.user_name,
+          position: sp.side === 'A' ? 'position_a' : 'position_b',
+          side: sp.side
+        }));
+      } else {
+        // Legacy 1v1 debate
+        const stances = await UserStance.list();
+        const participantStances = stances.filter(s => 
+          s.id === currentSession.participant_a_id || s.id === currentSession.participant_b_id
+        );
+        participantsList = participantStances.map(s => ({
+          ...s,
+          side: s.position === 'position_a' ? 'A' : 'B'
+        }));
+      }
+      
+      setParticipants(participantsList);
       
       // CRITICAL FIX: Authenticated user data ALWAYS takes priority over guest data
       // If user is logged in, use their username. Guest username from URL is discarded.
@@ -331,7 +353,20 @@ export default function VoiceDebate() {
           <div className="flex items-center gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{debate?.title || "Loading..."}</h1>
-              <p className="text-gray-600 text-sm">Live Video Debate • {currentUser} vs {opponent?.user_name || "Opponent"}</p>
+              <p className="text-gray-600 text-sm">
+                {debate?.is_private 
+                  ? `Live Debate • ${participants.length} participants`
+                  : `Live Video Debate • ${currentUser} vs ${opponent?.user_name || "Opponent"}`
+                }
+              </p>
+              {debate?.is_private && participants.length > 0 && (
+                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                  <Users className="w-3 h-3" />
+                  <span>Side A: {participants.filter(p => p.side === 'A').length}</span>
+                  <span>•</span>
+                  <span>Side B: {participants.filter(p => p.side === 'B').length}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">

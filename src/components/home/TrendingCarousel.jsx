@@ -105,7 +105,7 @@ export default function TrendingCarousel({ debates, userStances, isLoading }) {
         className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 sm:pb-4 -mx-1 px-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        <style jsx>{`
+        <style>{`
           div::-webkit-scrollbar {
             display: none;
           }

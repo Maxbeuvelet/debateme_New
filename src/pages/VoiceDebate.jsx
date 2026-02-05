@@ -24,7 +24,7 @@ import VideoChat from "../components/voice/VideoChat";
 export default function VoiceDebate() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get('id');
+  const sessionId = urlParams.get('session') || urlParams.get('id');
   const userName = urlParams.get('user');
   const isAiDebate = urlParams.get('ai') === 'true';
   
@@ -131,21 +131,22 @@ export default function VoiceDebate() {
       const debateData = await Debate.get(currentSession.debate_id);
       setDebate(debateData);
       
-      // For multi-participant debates, use SessionParticipant
+      // For multi-participant debates (private rooms), use SessionParticipant
       // For legacy 1v1 debates, fall back to UserStance
       let participantsList = [];
+      const isPrivateRoom = debateData.is_private && sessionParticipants.length > 0;
       
-      if (sessionParticipants.length > 0) {
-        // Multi-participant debate (private with multiple joiners)
+      if (isPrivateRoom) {
+        // Multi-participant debate (private room with no sides)
         participantsList = sessionParticipants.map(sp => ({
           id: sp.id,
           user_id: sp.user_id,
           user_name: sp.user_name,
-          position: sp.side === 'A' ? 'position_a' : 'position_b',
-          side: sp.side
+          position: null, // No position in private rooms
+          side: null
         }));
       } else {
-        // Legacy 1v1 debate
+        // Legacy 1v1 debate with sides
         const stances = await UserStance.list();
         const participantStances = stances.filter(s => 
           s.id === currentSession.participant_a_id || s.id === currentSession.participant_b_id
@@ -154,35 +155,34 @@ export default function VoiceDebate() {
           ...s,
           side: s.position === 'position_a' ? 'A' : 'B'
         }));
+        
+        // Update authenticated user in UserStance if needed
+        if (user?.username) {
+          const userStance = participantStances.find(s => 
+            s.user_id === user.id || s.user_id?.startsWith('guest_')
+          );
+          
+          if (userStance) {
+            const updates = {
+              user_id: user.id,
+              user_name: user.username
+            };
+            
+            if (!userStance.session_start_time) {
+              updates.session_start_time = new Date().toISOString();
+            }
+            
+            await UserStance.update(userStance.id, updates);
+          }
+        }
       }
       
       setParticipants(participantsList);
       
-      // CRITICAL FIX: Authenticated user data ALWAYS takes priority over guest data
-      // If user is logged in, use their username. Guest username from URL is discarded.
+      // Set current user
       if (user?.username) {
         setCurrentUser(user.username);
-        
-        // Update the UserStance to use authenticated user's data if it was previously a guest
-        const userStance = participantStances.find(s => 
-          s.user_id === user.id || s.user_id?.startsWith('guest_')
-        );
-        
-        if (userStance) {
-          // Replace guest identity with authenticated user identity
-          const updates = {
-            user_id: user.id,
-            user_name: user.username
-          };
-          
-          if (!userStance.session_start_time) {
-            updates.session_start_time = new Date().toISOString();
-          }
-          
-          await UserStance.update(userStance.id, updates);
-        }
       } else if (userName) {
-        // Only use URL userName for anonymous users (guests)
         setCurrentUser(userName);
       }
       
@@ -229,7 +229,7 @@ export default function VoiceDebate() {
       await PublicMessage.create({
         session_id: sessionId,
         sender_name: currentUser,
-        sender_position: participant.position,
+        sender_user_id: currentUserId,
         content: content
       });
 
@@ -355,16 +355,20 @@ export default function VoiceDebate() {
               <h1 className="text-2xl font-bold text-gray-900">{debate?.title || "Loading..."}</h1>
               <p className="text-gray-600 text-sm">
                 {debate?.is_private 
-                  ? `Live Debate • ${participants.length} participants`
+                  ? `Private Debate Room • ${participants.length} participant${participants.length !== 1 ? 's' : ''}`
                   : `Live Video Debate • ${currentUser} vs ${opponent?.user_name || "Opponent"}`
                 }
               </p>
               {debate?.is_private && participants.length > 0 && (
-                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                  <Users className="w-3 h-3" />
-                  <span>Side A: {participants.filter(p => p.side === 'A').length}</span>
-                  <span>•</span>
-                  <span>Side B: {participants.filter(p => p.side === 'B').length}</span>
+                <div className="flex flex-wrap items-center gap-1 mt-1 text-xs text-gray-600">
+                  {participants.map((p, i) => (
+                    <React.Fragment key={p.id}>
+                      {i > 0 && <span>•</span>}
+                      <span className={p.user_name === currentUser ? 'font-semibold' : ''}>
+                        {p.user_name}
+                      </span>
+                    </React.Fragment>
+                  ))}
                 </div>
               )}
             </div>

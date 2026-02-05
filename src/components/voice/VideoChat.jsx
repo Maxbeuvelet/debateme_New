@@ -50,7 +50,7 @@ export default function VideoChat({ roomUrl, token, userName, isAiDebate, oppone
         </p>
       </CardHeader>
       
-      <CardContent className="p-0 relative bg-slate-900" style={{ height: '500px' }}>
+      <CardContent className="p-0 relative bg-slate-900" style={{ height: 'min(500px, 50vh)' }}>
         {isAiDebate ? (
           <div className="grid grid-cols-2 gap-2 h-full p-2">
             {/* User Video */}

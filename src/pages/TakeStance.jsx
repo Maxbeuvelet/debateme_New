@@ -194,25 +194,37 @@ export default function TakeStance() {
       // Handle private debate via invite code
       if (inviteCode) {
         const side = position === "position_a" ? "A" : "B";
-        const response = await base44.functions.invoke('joinPrivateDebate', {
-          inviteCode,
-          side
-        });
+        console.log('🔍 Calling joinPrivateDebate with:', { inviteCode, side });
+        
+        try {
+          const response = await base44.functions.invoke('joinPrivateDebate', {
+            inviteCode,
+            side
+          });
+          
+          console.log('✅ joinPrivateDebate response:', response.data);
 
-        if (response.data.error) {
-          alert(response.data.error);
+          if (response.data.error) {
+            alert(response.data.error);
+            return;
+          }
+
+          // Navigate to the debate session
+          navigate(
+            createPageUrl(
+              `VoiceDebate?id=${response.data.sessionId}&user=${encodeURIComponent(
+                currentUser.username
+              )}`
+            )
+          );
           return;
+        } catch (error) {
+          console.error('❌ joinPrivateDebate error:', error);
+          console.error('❌ Error response:', error.response?.data);
+          console.error('❌ Error status:', error.response?.status);
+          console.error('❌ Full error:', JSON.stringify(error, null, 2));
+          throw error;
         }
-
-        // Navigate to the debate session
-        navigate(
-          createPageUrl(
-            `VoiceDebate?id=${response.data.sessionId}&user=${encodeURIComponent(
-              currentUser.username
-            )}`
-          )
-        );
-        return;
       }
 
       // Handle public debate (original flow)
@@ -229,10 +241,14 @@ export default function TakeStance() {
       setCurrentUserStance(newStance);
 
       // Try to match immediately
+      console.log('🔍 Calling matchDebater with:', { debateId: debate.id, stanceId: newStance.id });
+      
       const matchResponse = await matchDebater({
         debateId: debate.id,
         stanceId: newStance.id,
       });
+      
+      console.log('✅ matchDebater response:', matchResponse.data);
 
       if (matchResponse.data.matched) {
         navigate(
@@ -245,7 +261,9 @@ export default function TakeStance() {
         return;
       }
     } catch (error) {
-      console.error("Error taking stance:", error);
+      console.error("❌ Error taking stance:", error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
       alert("Failed to take stance. Please try again.");
     } finally {
       setIsSubmitting(false);

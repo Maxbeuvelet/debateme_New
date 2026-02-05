@@ -200,10 +200,12 @@ export default function CreateDebate() {
         setCurrentUser(userData);
       }
 
-      // Generate unique invite code if private
+      // Generate unique invite code if private (uppercase for consistency)
       const generatedInviteCode = isPrivate 
         ? Math.random().toString(36).substring(2, 10).toUpperCase()
         : null;
+
+      console.log("🔍 Creating debate with invite_code:", generatedInviteCode, "is_private:", isPrivate);
 
       const newDebate = await Debate.create({
         title: title.trim(),
@@ -217,7 +219,7 @@ export default function CreateDebate() {
         invite_code: generatedInviteCode
       });
 
-      console.log("Created debate with invite_code:", generatedInviteCode, "and ID:", newDebate.id);
+      console.log("✅ Created debate with invite_code:", generatedInviteCode, "and ID:", newDebate.id, "is_private:", newDebate.is_private);
       
       await UserStance.create({
         debate_id: newDebate.id,

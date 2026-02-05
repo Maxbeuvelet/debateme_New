@@ -9,6 +9,8 @@ Deno.serve(async (req) => {
     // Parse request body
     const { inviteCode, side } = await req.json();
     
+    console.log('🔍 joinPrivateDebate called with:', { inviteCode, side });
+    
     if (!inviteCode || !side) {
       return Response.json(
         { error: 'inviteCode and side are required' },
@@ -22,6 +24,9 @@ Deno.serve(async (req) => {
         { status: 400 }
       );
     }
+    
+    // Normalize invite code: trim and uppercase for consistent matching
+    const normalizedInviteCode = inviteCode.trim().toUpperCase();
     
     // Get current user (allow guests)
     let user;
@@ -38,13 +43,31 @@ Deno.serve(async (req) => {
     }
     
     // Find the debate by invite code
-    const debates = await base44.entities.Debate.filter({ 
-      invite_code: inviteCode,
+    console.log('🔍 Searching for debate with filter:', { 
+      invite_code: normalizedInviteCode,
       is_private: true,
       status: 'active'
     });
     
+    const debates = await base44.entities.Debate.filter({ 
+      invite_code: normalizedInviteCode,
+      is_private: true,
+      status: 'active'
+    });
+    
+    console.log('🔍 Found debates:', debates.length);
+    
     if (debates.length === 0) {
+      // Debug: Try finding without filters to see if debate exists
+      console.log('❌ No debates found with full filters. Trying without is_private filter...');
+      const allDebatesWithCode = await base44.entities.Debate.filter({ 
+        invite_code: normalizedInviteCode
+      });
+      console.log('🔍 Debates with just invite_code:', allDebatesWithCode.length);
+      if (allDebatesWithCode.length > 0) {
+        console.log('🔍 Found debate but filters not matching:', allDebatesWithCode[0]);
+      }
+      
       return Response.json(
         { error: 'Invalid invite code or debate not found' },
         { status: 404 }
@@ -52,6 +75,7 @@ Deno.serve(async (req) => {
     }
     
     const debate = debates[0];
+    console.log('✅ Found debate:', debate.id, debate.title);
     
     // Find or create active session for this debate
     let sessions = await base44.asServiceRole.entities.DebateSession.filter({ 

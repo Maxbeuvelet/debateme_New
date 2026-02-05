@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -6,9 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle }
   from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { Trophy, Clock, Users, TrendingUp, BarChart3, ArrowLeft, Zap, Star, Hexagon, Shield, Gem, Eye, Flame, Crown } from "lucide-react";
+import { Trophy, Clock, Users, TrendingUp, BarChart3, ArrowLeft, Zap, Star, Hexagon, Shield, Gem, Eye, Flame, Crown, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const categoryLabels = {
   politics: "Politics",
@@ -172,6 +179,8 @@ export default function UserStats() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadUserStats();
@@ -222,6 +231,17 @@ export default function UserStats() {
 
   const calculateXpForNextLevel = (level) => {
     return level * 100;
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      await base44.functions.invoke('deleteAccount');
+      await base44.auth.logout();
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading) {
@@ -518,10 +538,65 @@ export default function UserStats() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Delete Account Card - Only show for own profile */}
+              {isOwnProfile && (
+                <Card className="bg-red-900/20 backdrop-blur-xl border-red-800/50">
+                  <CardContent className="p-6">
+                    <h3 className="text-sm font-semibold text-red-400 mb-3">Danger Zone</h3>
+                    <p className="text-xs text-slate-400 mb-4">
+                      Permanently delete your account and all associated data. This action cannot be undone.
+                    </p>
+                    <Button
+                      onClick={() => setShowDeleteDialog(true)}
+                      variant="destructive"
+                      size="sm"
+                      className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Account
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="bg-slate-900 border-red-800">
+          <AlertDialogHeader>
+            <div className="w-12 h-12 bg-red-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-400" />
+            </div>
+            <AlertDialogTitle className="text-center text-xl text-white">
+              Delete Account?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-slate-300">
+              This will permanently delete your account, all your debates, stats, and achievements. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+              className="w-full sm:w-auto border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? "Deleting..." : "Yes, Delete My Account"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

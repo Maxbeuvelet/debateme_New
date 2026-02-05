@@ -122,7 +122,7 @@ export default function Achievements() {
     } else if (achievement.criteria_type === "consecutive_days") {
       currentValue = currentUser.consecutive_days || 0;
     } else if (achievement.criteria_type === "total_debate_time") {
-      currentValue = currentUser.total_debate_time || 0;
+      currentValue = currentUser.total_debate_time_minutes || 0;
     } else if (achievement.criteria_type === "debates_created") {
       currentValue = currentUser.debates_created || 0;
     }

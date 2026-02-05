@@ -68,4 +68,25 @@ html {
 body {
   background-color: #0f172a;
   color: #f8fafc;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Disable rubber-banding overscroll */
+html, body {
+  overscroll-behavior-y: none;
+}
+
+/* Touch optimizations */
+button, [role="button"], [role="tab"], .icon-button, a {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Minimum tap target size for mobile */
+button, [role="button"], [role="tab"] {
+  min-height: 44px;
+  min-width: 44px;
 }

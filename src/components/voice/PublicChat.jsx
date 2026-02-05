@@ -9,13 +9,36 @@ import { format } from "date-fns";
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants }) {
   const [newMessage, setNewMessage] = useState("");
+  const [localMessages, setLocalMessages] = useState([]);
   const messagesEndRef = useRef(null);
+
+  // Sync messages from parent
+  useEffect(() => {
+    setLocalMessages(messages);
+  }, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
-      await onSendMessage(newMessage.trim());
+      const messageContent = newMessage.trim();
+      const optimisticMessage = {
+        id: `temp-${Date.now()}`,
+        sender_name: currentUser,
+        content: messageContent,
+        created_date: new Date().toISOString()
+      };
+
+      // Add optimistic message immediately
+      setLocalMessages(prev => [...prev, optimisticMessage]);
       setNewMessage("");
+
+      try {
+        await onSendMessage(messageContent);
+      } catch (error) {
+        console.error("Error sending message:", error);
+        // Remove optimistic message on error
+        setLocalMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+      }
     }
   };
 
@@ -49,7 +72,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
             </div>
           )}
           <AnimatePresence>
-            {messages.map((message, index) => {
+            {localMessages.map((message, index) => {
               const participant = getParticipantInfo(message.sender_name);
               const isCurrentUser = message.sender_name === currentUser;
               

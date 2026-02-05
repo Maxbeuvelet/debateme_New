@@ -67,18 +67,32 @@ export default function GlobalChat({ currentUser }) {
     e.preventDefault();
     if (!newMessage.trim() || !currentUser || hasInappropriateContent) return;
 
+    const messageContent = newMessage.trim();
+    const optimisticMessage = {
+      id: `temp-${Date.now()}`,
+      sender_name: currentUser.username,
+      sender_id: currentUser.id,
+      content: messageContent,
+      created_date: new Date().toISOString()
+    };
+
+    // Add optimistic message immediately
+    setMessages(prev => [...prev, optimisticMessage]);
+    setNewMessage("");
+
     setIsSending(true);
     try {
       await base44.entities.ChatMessage.create({
         sender_name: currentUser.username,
         sender_id: currentUser.id,
-        content: newMessage.trim()
+        content: messageContent
       });
-      setNewMessage("");
       await loadMessages();
       inputRef.current?.focus();
     } catch (error) {
       console.error("Error sending message:", error);
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
     } finally {
       setIsSending(false);
     }

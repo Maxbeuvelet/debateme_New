@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GlobalChat from "@/components/chat/GlobalChat";
 import BottomTabs from "@/components/navigation/BottomTabs";
+import RouteTransition from "@/components/navigation/RouteTransition";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -86,6 +89,7 @@ const getRankCustomImage = (level) => {
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
   const [hasUserLoadedOnce, setHasUserLoadedOnce] = React.useState(false);
@@ -364,14 +368,25 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Header */}
       <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="rounded-full flex-shrink-0"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
+          {navigationItems.some(item => item.url === location.pathname) ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="rounded-full flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="rounded-full flex-shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          )}
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68da9d2bed6a011bee1c2750/a5f3d3437_Debate.png" 
@@ -562,7 +577,9 @@ export default function Layout({ children, currentPageName }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <main className="flex-1 overflow-x-hidden pb-20 md:pb-0">
-          {children}
+          <RouteTransition>
+            {children}
+          </RouteTransition>
         </main>
       </div>
 

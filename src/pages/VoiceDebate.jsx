@@ -95,28 +95,28 @@ export default function VoiceDebate() {
     
     setIsLoading(true);
     try {
-      // Try to get user, but allow anonymous
+      // Get user for ID tracking
       let user;
       try {
         user = await User.me();
         setCurrentUserId(user.id);
       } catch (error) {
-        // Anonymous user
         user = null;
         setCurrentUserId(null);
       }
-      
-      const [sessions, msgs, sessionParticipants] = await Promise.all([
-        DebateSession.list(),
-        PublicMessage.filter({ session_id: sessionId }, "created_date"),
-        SessionParticipant.filter({ session_id: sessionId })
-      ]);
-      
-      const currentSession = sessions.find(s => s.id === sessionId);
-      if (!currentSession) {
+
+      // Load all session data via backend function with service role
+      const result = await base44.functions.invoke('getSessionData', {
+        sessionId: sessionId
+      });
+
+      if (result.error || !result) {
+        console.error('Failed to load session:', result.error);
         navigate(createPageUrl("Home"));
         return;
       }
+
+      const { session: currentSession, debate: debateData, participants: sessionParticipants, messages: msgs } = result;
 
       if (currentSession.status === "ended") {
         setDisconnectReason("ended");
@@ -125,11 +125,8 @@ export default function VoiceDebate() {
       }
       
       setSession(currentSession);
-      setPublicMessages(msgs);
-      
-      // Get debate data
-      const debateData = await Debate.get(currentSession.debate_id);
       setDebate(debateData);
+      setPublicMessages(msgs || []);
       
       // For multi-participant debates (private rooms), use SessionParticipant
       // For legacy 1v1 debates, fall back to UserStance
@@ -142,7 +139,7 @@ export default function VoiceDebate() {
           id: sp.id,
           user_id: sp.user_id,
           user_name: sp.user_name,
-          position: null, // No position in private rooms
+          position: null,
           side: null
         }));
       } else {
@@ -188,12 +185,12 @@ export default function VoiceDebate() {
       
       await setupVideoRoom();
 
-
     } catch (error) {
       console.error("Error loading data:", error);
+      navigate(createPageUrl("Home"));
     }
     setIsLoading(false);
-  }, [sessionId, userName, navigate, setupVideoRoom, isAiDebate]);
+  }, [sessionId, userName, navigate, setupVideoRoom]);
 
   useEffect(() => {
     if (sessionId) loadData();

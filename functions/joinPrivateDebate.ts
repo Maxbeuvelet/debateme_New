@@ -33,8 +33,7 @@ Deno.serve(async (req) => {
     // Find the debate by invite code
     const debates = await base44.entities.Debate.filter({ 
       invite_code: normalizedInviteCode,
-      is_private: true,
-      status: 'active'
+      is_private: true
     });
     
     if (debates.length === 0) {

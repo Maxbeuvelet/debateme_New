@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DebateSession, Debate, UserStance, PublicMessage, User, SessionParticipant } from "@/entities/all";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, AlertCircle, PhoneOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   AlertDialog,
@@ -23,8 +23,9 @@ import VideoChat from "../components/voice/VideoChat";
 
 export default function VoiceDebate() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get('session') || urlParams.get('id');
+  const sessionId = id || urlParams.get('session') || urlParams.get('id');
   const userName = urlParams.get('user');
   const isAiDebate = urlParams.get('ai') === 'true';
   

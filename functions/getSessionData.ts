@@ -5,45 +5,39 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const { sessionId } = await req.json();
 
-    console.log("getSessionData called with:", sessionId);
+    console.log("getSessionData called", sessionId);
 
     if (!sessionId) {
       return Response.json({ error: "Missing sessionId" }, { status: 400 });
     }
 
-    // 🔥 IMPORTANT: support guests AND logged in users
-    let userId = null;
-    try {
-      const user = await base44.auth.me();
-      userId = user?.id || null;
-      console.log("Logged in user:", userId);
-    } catch (err) {
-      console.log("Guest user detected");
-    }
+    // 🔥 Correct way to get user in public Base44 functions
+    const contextUser = base44.user;
+    const userId = contextUser?.id || null;
+
+    console.log("User from context:", userId ? userId : "GUEST");
 
     // Get session via service role
     const session = await base44.asServiceRole.entities.DebateSession.get(sessionId);
     if (!session) {
-      console.log("Session not found");
       return Response.json({ error: "Session not found" }, { status: 404 });
     }
 
     const debate = await base44.asServiceRole.entities.Debate.get(session.debate_id);
     if (!debate) {
-      console.log("Debate not found");
       return Response.json({ error: "Debate not found" }, { status: 404 });
     }
 
-    // Get ALL participants
+    // Get participants
     let participants = await base44.asServiceRole.entities.SessionParticipant.filter({
       session_id: sessionId
     });
 
-    // If logged in user exists, ensure they are a participant
-    if (userId) {
+    // Auto-join logged in users to private debates
+    if (userId && debate.is_private) {
       const alreadyParticipant = participants.find(p => p.user_id === userId);
 
-      if (!alreadyParticipant && debate.is_private) {
+      if (!alreadyParticipant) {
         console.log("Auto-adding user to session");
 
         await base44.asServiceRole.entities.SessionParticipant.create({
@@ -73,6 +67,9 @@ Deno.serve(async (req) => {
 
   } catch (err) {
     console.error("getSessionData ERROR:", err);
-    return Response.json({ error: String(err) }, { status: 500 });
+    return Response.json(
+      { error: err?.message || String(err) },
+      { status: 500 }
+    );
   }
 });

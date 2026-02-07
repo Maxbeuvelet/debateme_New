@@ -15,9 +15,9 @@ import WaitingForMatch from "../components/stance/WaitingForMatch";
 
 export default function TakeStance() {
   const navigate = useNavigate();
-  const urlParams = new URLSearchParams(window.location.search);
-  const debateId = urlParams.get("id");
-  const inviteCode = urlParams.get("invite");
+  const qs = new URLSearchParams(window.location.search);
+  const debateId = qs.get("id");
+  const inviteCode = qs.get("invite");
 
   const [debate, setDebate] = useState(null);
   const [userStances, setUserStances] = useState([]);

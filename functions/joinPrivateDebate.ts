@@ -6,14 +6,18 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // Parse request body
-    const { inviteCode } = await req.json();
-    
+    const raw = await req.json().catch(() => ({}));
+    const body = raw.body || raw;
+
+    // Accept invite from any of these keys
+    const inviteCode =
+      body.inviteCode ||
+      body.invite_code ||
+      body.invite ||
+      null;
+
     if (!inviteCode) {
-      return Response.json(
-        { error: 'inviteCode is required' },
-        { status: 400 }
-      );
+      return Response.json({ error: "Invite code required" }, { status: 400 });
     }
     
     // Normalize invite code: trim and uppercase

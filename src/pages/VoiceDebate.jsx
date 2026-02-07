@@ -90,111 +90,112 @@ export default function VoiceDebate() {
     }
   }, [sessionId, userName]);
 
-  const loadData = useCallback(async () => {
-    if (!sessionId) return;
+  useEffect(() => {
+    if (!sessionId) return; // Wait for router to provide sessionId
     
-    setIsLoading(true);
-    try {
-      // Get user for ID tracking
-      let user;
+    const loadSession = async () => {
+      setIsLoading(true);
       try {
-        user = await User.me();
-        setCurrentUserId(user.id);
-      } catch (error) {
-        user = null;
-        setCurrentUserId(null);
-      }
+        // Get user for ID tracking
+        let user;
+        try {
+          user = await User.me();
+          setCurrentUserId(user.id);
+        } catch (error) {
+          user = null;
+          setCurrentUserId(null);
+        }
 
-      // Load all session data via backend function with service role
-      const result = await base44.functions.invoke('getSessionData', {
-        body: { sessionId: sessionId }
-      });
+        // Load all session data via backend function with service role
+        const { data, error } = await base44.functions.invoke('getSessionData', {
+          body: { sessionId }
+        });
 
-      if (result.error || !result) {
-        console.error('Failed to load session:', result.error);
-        navigate(createPageUrl("Home"));
-        return;
-      }
+        if (error || !data) {
+          console.error('Failed to load session:', error);
+          navigate(createPageUrl("Home"));
+          return;
+        }
 
-      const { session: currentSession, debate: debateData, participants: sessionParticipants, messages: msgs } = result;
+        const { session: currentSession, debate: debateData, participants: sessionParticipants, messages: msgs } = data;
 
-      if (currentSession.status === "ended") {
-        setDisconnectReason("ended");
-        setShowDisconnectDialog(true);
-        return;
-      }
-      
-      setSession(currentSession);
-      setDebate(debateData);
-      setPublicMessages(msgs || []);
-      
-      // For multi-participant debates (private rooms), use SessionParticipant
-      // For legacy 1v1 debates, fall back to UserStance
-      let participantsList = [];
-      const isPrivateRoom = debateData.is_private && sessionParticipants.length > 0;
-      
-      if (isPrivateRoom) {
-        // Multi-participant debate (private room with no sides)
-        participantsList = sessionParticipants.map(sp => ({
-          id: sp.id,
-          user_id: sp.user_id,
-          user_name: sp.user_name,
-          position: null,
-          side: null
-        }));
-      } else {
-        // Legacy 1v1 debate with sides
-        const stances = await UserStance.list();
-        const participantStances = stances.filter(s => 
-          s.id === currentSession.participant_a_id || s.id === currentSession.participant_b_id
-        );
-        participantsList = participantStances.map(s => ({
-          ...s,
-          side: s.position === 'position_a' ? 'A' : 'B'
-        }));
+        if (currentSession.status === "ended") {
+          setDisconnectReason("ended");
+          setShowDisconnectDialog(true);
+          setIsLoading(false);
+          return;
+        }
         
-        // Update authenticated user in UserStance if needed
-        if (user?.username) {
-          const userStance = participantStances.find(s => 
-            s.user_id === user.id || s.user_id?.startsWith('guest_')
+        setSession(currentSession);
+        setDebate(debateData);
+        setPublicMessages(msgs || []);
+        
+        // For multi-participant debates (private rooms), use SessionParticipant
+        // For legacy 1v1 debates, fall back to UserStance
+        let participantsList = [];
+        const isPrivateRoom = debateData.is_private && sessionParticipants.length > 0;
+        
+        if (isPrivateRoom) {
+          // Multi-participant debate (private room with no sides)
+          participantsList = sessionParticipants.map(sp => ({
+            id: sp.id,
+            user_id: sp.user_id,
+            user_name: sp.user_name,
+            position: null,
+            side: null
+          }));
+        } else {
+          // Legacy 1v1 debate with sides
+          const stances = await UserStance.list();
+          const participantStances = stances.filter(s => 
+            s.id === currentSession.participant_a_id || s.id === currentSession.participant_b_id
           );
+          participantsList = participantStances.map(s => ({
+            ...s,
+            side: s.position === 'position_a' ? 'A' : 'B'
+          }));
           
-          if (userStance) {
-            const updates = {
-              user_id: user.id,
-              user_name: user.username
-            };
+          // Update authenticated user in UserStance if needed
+          if (user?.username) {
+            const userStance = participantStances.find(s => 
+              s.user_id === user.id || s.user_id?.startsWith('guest_')
+            );
             
-            if (!userStance.session_start_time) {
-              updates.session_start_time = new Date().toISOString();
+            if (userStance) {
+              const updates = {
+                user_id: user.id,
+                user_name: user.username
+              };
+              
+              if (!userStance.session_start_time) {
+                updates.session_start_time = new Date().toISOString();
+              }
+              
+              await UserStance.update(userStance.id, updates);
             }
-            
-            await UserStance.update(userStance.id, updates);
           }
         }
-      }
-      
-      setParticipants(participantsList);
-      
-      // Set current user
-      if (user?.username) {
-        setCurrentUser(user.username);
-      } else if (userName) {
-        setCurrentUser(userName);
-      }
-      
-      await setupVideoRoom();
+        
+        setParticipants(participantsList);
+        
+        // Set current user
+        if (user?.username) {
+          setCurrentUser(user.username);
+        } else if (userName) {
+          setCurrentUser(userName);
+        }
+        
+        await setupVideoRoom();
+        setIsLoading(false);
 
-    } catch (error) {
-      console.error("Error loading data:", error);
-      navigate(createPageUrl("Home"));
-    }
-    setIsLoading(false);
+      } catch (err) {
+        console.error("Error loading session:", err);
+        navigate(createPageUrl("Home"));
+      }
+    };
+
+    loadSession();
   }, [sessionId, userName, navigate, setupVideoRoom]);
-
-  useEffect(() => {
-    if (sessionId) loadData();
-  }, [sessionId, loadData]);
 
   useEffect(() => {
     if (!sessionId || isLoading) return;

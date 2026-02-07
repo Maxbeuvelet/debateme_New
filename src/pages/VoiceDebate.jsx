@@ -107,7 +107,7 @@ export default function VoiceDebate() {
 
       // Load all session data via backend function with service role
       const result = await base44.functions.invoke('getSessionData', {
-        sessionId: sessionId
+        body: { sessionId: sessionId }
       });
 
       if (result.error || !result) {
@@ -262,8 +262,10 @@ export default function VoiceDebate() {
       // Track debate time and check for achievements
       if (currentUserId) {
         await base44.functions.invoke('trackDebateTime', { 
-          sessionId: sessionId, 
-          userId: currentUserId 
+          body: {
+            sessionId: sessionId, 
+            userId: currentUserId
+          }
         }).catch(err => {
           console.error("Error tracking debate time:", err);
         });

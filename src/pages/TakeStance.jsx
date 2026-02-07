@@ -99,14 +99,21 @@ export default function TakeStance() {
       // Handle private debate invite flow - auto-join immediately
       if (inviteCode) {
         try {
-          const result = await base44.functions.invoke('joinPrivateDebate', {
-            inviteCode: inviteCode
+          const { data, error } = await base44.functions.invoke('joinPrivateDebate', {
+            body: { inviteCode }
           });
           
-          console.log('✅ Joined private debate:', result);
+          if (error || !data?.sessionId) {
+            console.error('❌ Join failed:', error);
+            alert(error || 'Failed to join private debate');
+            navigate(createPageUrl('CreateDebate'));
+            return;
+          }
           
-          // Navigate directly to the session
-          navigate(createPageUrl(`VoiceDebate?session=${result.sessionId}&user=${user.username}`));
+          console.log('✅ Joined private debate, sessionId:', data.sessionId);
+          
+          // 🔥 THIS IS THE CRITICAL FIX - use data.sessionId from response
+          navigate(`/voicedebate?sessionId=${data.sessionId}`);
           return;
         } catch (error) {
           console.error('❌ Failed to join private debate:', error);

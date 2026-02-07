@@ -24,10 +24,10 @@ import VideoChat from "../components/voice/VideoChat";
 export default function VoiceDebate() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = id || urlParams.get('session') || urlParams.get('id');
-  const userName = urlParams.get('user');
-  const isAiDebate = urlParams.get('ai') === 'true';
+  const qs = new URLSearchParams(window.location.search);
+  const sessionId = id || qs.get("sessionId") || qs.get('session') || qs.get('id');
+  const userName = qs.get('user');
+  const isAiDebate = qs.get('ai') === 'true';
   
   const [session, setSession] = useState(null);
   const [debate, setDebate] = useState(null);

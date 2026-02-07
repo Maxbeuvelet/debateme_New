@@ -6,7 +6,10 @@ Deno.serve(async (req) => {
 
     const base44 = createClientFromRequest(req);
 
-    const body = await req.json().catch(() => ({}));
+    const raw = await req.json().catch(() => ({}));
+    
+    // Base44 wraps payload inside { body: {...} }
+    const body = raw.body || raw;
     console.log("Request body:", body);
 
     let { sessionId } = body;

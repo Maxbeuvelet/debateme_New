@@ -50,10 +50,9 @@ export default function Home() {
             Debate about
             <div className="relative inline-grid grid-cols-1 grid-rows-1 gap-12 overflow-hidden ml-4">
               <span className="animate-word col-span-full row-span-full">Politics</span>
-              <span className="animate-word-delay-1 col-span-full row-span-full">Sports</span>
-              <span className="animate-word-delay-2 col-span-full row-span-full">Environment</span>
-              <span className="animate-word-delay-3 col-span-full row-span-full">Economics</span>
-              <span className="animate-word-delay-4 col-span-full row-span-full">Social Issues</span>
+              <span className="animate-word-delay-1 col-span-full row-span-full">Environment</span>
+              <span className="animate-word-delay-2 col-span-full row-span-full">Economics</span>
+              <span className="animate-word-delay-3 col-span-full row-span-full">Social Issues</span>
             </div>
           </div>
           <p className="text-white text-lg sm:text-xl">

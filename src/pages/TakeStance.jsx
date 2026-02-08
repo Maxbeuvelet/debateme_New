@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Debate, UserStance, User, DebateSession, SessionParticipant } from "@/entities/all";
+import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Clock, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
 
 import { matchDebater } from "@/functions/matchDebater";
 
@@ -68,8 +67,9 @@ export default function TakeStance() {
     setCurrentUser(user);
 
     try {
-      // Load all needed data (no Debate.list())
-      const [allStances, allSessions] = await Promise.all([
+      // Load all needed data
+      const [allDebates, allStances, allSessions] = await Promise.all([
+        Debate.list(),
         UserStance.list(),
         DebateSession.list(),
       ]);
@@ -80,37 +80,143 @@ export default function TakeStance() {
 
       if (inviteCode) {
         console.log("Looking for debate with invite code:", inviteCode);
-        
-        // For private debates, use joinPrivateDebate backend function
-        // This will be handled in the private debate flow below
+
+        // Try exact match with trimming and case-insensitive comparison
+        debateData = allDebates.find(
+          (d) =>
+            d.invite_code &&
+            d.invite_code.trim().toUpperCase() ===
+              inviteCode.trim().toUpperCase() &&
+            d.is_private === true
+        );
+
+        console.log("Found debate:", debateData);
+
+        if (!debateData) {
+          console.error("No debate found with invite code:", inviteCode);
+          alert(
+            "Invalid invite link. The debate may not exist or has been deleted."
+          );
+          navigate(createPageUrl("CreateDebate"));
+          return;
+        }
+
+        // Check if debate is still active
+        if (debateData.status !== "active") {
+          alert("This debate has ended.");
+          navigate(createPageUrl("CreateDebate"));
+          return;
+        }
+
+        actualDebateId = debateData.id;
         setIsPrivateDebate(true);
+
+        // For private debates accessed via invite, stance creation / auto-join is handled later
+        // (after we set debate + load stances), so we avoid race conditions / duplicate stances here.
       } else if (debateId) {
-        // Fetch single debate by ID
-        debateData = await Debate.get(debateId);
+        debateData = allDebates.find((d) => d.id === debateId);
         actualDebateId = debateId;
       }
 
-      if (!debateData && !inviteCode) {
+      if (!debateData) {
         alert("Debate not found.");
         navigate(createPageUrl("CreateDebate"));
         return;
       }
 
-      // Handle private debate invite flow (multi-participant)
-      if (inviteCode) {
-        // Show side selection UI for private debates
-        setDebate(null); // We'll set this after they pick a side
-        setIsLoading(false);
-        return;
-      }
-
-      // Set debate data for non-private debates
+      // Set debate data early so it's available for all operations
       setDebate(debateData);
 
       // STEP 1: Find ALL stances by this user for this debate
       const myStancesForThisDebate = allStances.filter(
         (s) => s.debate_id === actualDebateId && s.user_id === user.id
       );
+
+      // Private debates should auto-create stances (no stance selector)
+      if (debateData?.is_private) {
+        const stancesForDebate = allStances
+          .filter((s) => s.debate_id === actualDebateId)
+          .sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+
+        const myExisting = stancesForDebate.find((s) => s.user_id === user.id);
+
+        if (!myExisting) {
+          const isInvitee = !!inviteCode;
+
+          if (isInvitee) {
+            const creatorStance =
+              stancesForDebate.find((s) => s.position === "position_a") ||
+              stancesForDebate[0] ||
+              null;
+
+            if (!creatorStance) {
+              // Creator hasn't created a stance yet; show waiting screen
+              setCurrentUserStance(null);
+              setUserStances([]);
+              setIsLoading(false);
+              return;
+            }
+
+            const oppositePosition =
+              creatorStance.position === "position_a"
+                ? "position_b"
+                : "position_a";
+
+            const newStance = await UserStance.create({
+              debate_id: actualDebateId,
+              user_name: user.username,
+              user_id: user.id,
+              position: oppositePosition,
+              status: "waiting",
+            });
+
+            setCurrentUserStance(newStance);
+
+            // Try to match immediately
+            const matchResponse = await matchDebater({
+              debateId: actualDebateId,
+              stanceId: newStance.id,
+            });
+
+            if (matchResponse.data.matched) {
+              navigate(
+                createPageUrl(
+                  `VoiceDebate?id=${matchResponse.data.sessionId}&user=${encodeURIComponent(
+                    user.username
+                  )}`
+                )
+              );
+              return;
+            }
+          } else {
+            // Creator direct access: ensure position_a stance exists
+            const newStance = await UserStance.create({
+              debate_id: actualDebateId,
+              user_name: user.username,
+              user_id: user.id,
+              position: "position_a",
+              status: "waiting",
+            });
+
+            setCurrentUserStance(newStance);
+
+            // Try to match immediately (important so creator doesn't need a refresh)
+            const matchResponse = await matchDebater({
+              debateId: actualDebateId,
+              stanceId: newStance.id,
+            });
+
+            if (matchResponse.data.matched) {
+              navigate(
+                createPageUrl(
+                  `VoiceDebate?id=${matchResponse.data.sessionId}&user=${encodeURIComponent(user.username)}`
+                )
+              );
+              return;
+            }
+          }
+        }
+      }
 
       // STEP 2: Check for active sessions first, or an existing queue stance
       // IMPORTANT:
@@ -186,50 +292,11 @@ export default function TakeStance() {
   }, [loadDebateData]);
 
   const handleTakeStance = async (position) => {
-    if (!currentUser) return;
+    if (!debate || !currentUser) return;
 
     setIsSubmitting(true);
 
     try {
-      // Handle private debate via invite code
-      if (inviteCode) {
-        const side = position === "position_a" ? "A" : "B";
-        console.log('🔍 Calling joinPrivateDebate with:', { inviteCode, side });
-        
-        try {
-          const response = await base44.functions.invoke('joinPrivateDebate', {
-            inviteCode,
-            side
-          });
-          
-          console.log('✅ joinPrivateDebate response:', response.data);
-
-          if (response.data.error) {
-            alert(response.data.error);
-            return;
-          }
-
-          // Navigate to the debate session
-          navigate(
-            createPageUrl(
-              `VoiceDebate?id=${response.data.sessionId}&user=${encodeURIComponent(
-                currentUser.username
-              )}`
-            )
-          );
-          return;
-        } catch (error) {
-          console.error('❌ joinPrivateDebate error:', error);
-          console.error('❌ Error response:', error.response?.data);
-          console.error('❌ Error status:', error.response?.status);
-          console.error('❌ Full error:', JSON.stringify(error, null, 2));
-          throw error;
-        }
-      }
-
-      // Handle public debate (original flow)
-      if (!debate) return;
-
       const newStance = await UserStance.create({
         debate_id: debate.id,
         user_name: currentUser.username,
@@ -241,14 +308,10 @@ export default function TakeStance() {
       setCurrentUserStance(newStance);
 
       // Try to match immediately
-      console.log('🔍 Calling matchDebater with:', { debateId: debate.id, stanceId: newStance.id });
-      
       const matchResponse = await matchDebater({
         debateId: debate.id,
         stanceId: newStance.id,
       });
-      
-      console.log('✅ matchDebater response:', matchResponse.data);
 
       if (matchResponse.data.matched) {
         navigate(
@@ -261,9 +324,7 @@ export default function TakeStance() {
         return;
       }
     } catch (error) {
-      console.error("❌ Error taking stance:", error);
-      console.error('❌ Error response:', error.response?.data);
-      console.error('❌ Error status:', error.response?.status);
+      console.error("Error taking stance:", error);
       alert("Failed to take stance. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -286,69 +347,10 @@ export default function TakeStance() {
 
   const totalWaiting = participantCounts.position_a + participantCounts.position_b;
 
-  if (isLoading) {
+  if (isLoading || !debate) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-white">
         Loading...
-      </div>
-    );
-  }
-
-  // Show side selector for private debates accessed via invite
-  if (inviteCode && !debate) {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white">
-        <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <Button
-              variant="ghost"
-              className="text-white hover:text-white hover:bg-white/10"
-              onClick={() => navigate(createPageUrl("CreateDebate"))}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              <Badge variant="secondary">Private Debate</Badge>
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/5 border border-white/10 rounded-xl p-8 text-center"
-          >
-            <h1 className="text-3xl font-bold mb-4">Join Private Debate</h1>
-            <p className="text-white/70 mb-8">Choose your side to join this debate</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              <Button
-                onClick={() => handleTakeStance("position_a")}
-                disabled={isSubmitting}
-                className="h-32 text-xl font-bold bg-blue-600 hover:bg-blue-700"
-              >
-                Side A
-              </Button>
-              <Button
-                onClick={() => handleTakeStance("position_b")}
-                disabled={isSubmitting}
-                className="h-32 text-xl font-bold bg-purple-600 hover:bg-purple-700"
-              >
-                Side B
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!debate) {
-    return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-white">
-        Debate not found
       </div>
     );
   }

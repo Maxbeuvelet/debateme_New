@@ -6,11 +6,6 @@ import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GlobalChat from "@/components/chat/GlobalChat";
-import BottomTabs from "@/components/navigation/BottomTabs";
-import RouteTransition from "@/components/navigation/RouteTransition";
-import { TabNavigationProvider } from "@/components/navigation/TabNavigationProvider";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -90,7 +85,6 @@ const getRankCustomImage = (level) => {
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
   const [hasUserLoadedOnce, setHasUserLoadedOnce] = React.useState(false);
@@ -244,8 +238,7 @@ export default function Layout({ children, currentPageName }) {
   const rankCustomImage = getRankCustomImage(currentLevel);
 
   return (
-    <TabNavigationProvider>
-    <div className="min-h-screen flex flex-col w-full bg-background overflow-x-hidden">
+    <div className="min-h-screen flex flex-col w-full bg-slate-50 overflow-x-hidden">
       <style>{`
         :root {
           --primary-navy: #0F172A;
@@ -269,8 +262,8 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       
       {/* Top Navigation Bar - Desktop */}
-      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-slate-100/95 backdrop-blur-md border-b border-slate-300/60" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="max-w-7xl mx-auto px-6" style={{ paddingLeft: 'max(1.5rem, env(safe-area-inset-left))', paddingRight: 'max(1.5rem, env(safe-area-inset-right))' }}>
+      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-slate-100/95 backdrop-blur-md border-b border-slate-300/60">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
@@ -368,34 +361,23 @@ export default function Layout({ children, currentPageName }) {
       <div className="hidden md:block h-14" />
 
       {/* Mobile Header */}
-      <header className="bg-card border-b border-border p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
+      <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          {navigationItems.some(item => item.url === location.pathname) ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="rounded-full flex-shrink-0"
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="rounded-full flex-shrink-0"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="rounded-full flex-shrink-0"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68da9d2bed6a011bee1c2750/a5f3d3437_Debate.png" 
               alt="DebateMe" 
               className="w-7 h-7 sm:w-8 sm:h-8 object-contain flex-shrink-0"
             />
-            <h1 className="font-bold text-foreground text-sm sm:text-base truncate">DebateMe</h1>
+            <h1 className="font-bold text-slate-900 text-sm sm:text-base truncate">DebateMe</h1>
           </div>
         </div>
         {user && (
@@ -437,7 +419,6 @@ export default function Layout({ children, currentPageName }) {
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed left-0 top-0 h-screen w-72 bg-slate-100 z-50 md:hidden flex flex-col shadow-2xl"
-              style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)' }}
             >
               <div className="border-b border-slate-300/60 p-4 bg-slate-50 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-2">
@@ -578,15 +559,10 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-        <main className="flex-1 overflow-x-hidden pb-20 md:pb-0">
-          <RouteTransition>
-            {children}
-          </RouteTransition>
+        <main className="flex-1 overflow-x-hidden">
+          {children}
         </main>
       </div>
-
-      {/* Bottom Navigation for Mobile */}
-      <BottomTabs hasNewAchievements={hasNewAchievements} />
 
       {/* Global Chat - Hidden for now */}
               {/* <GlobalChat currentUser={user} /> */}
@@ -655,6 +631,5 @@ export default function Layout({ children, currentPageName }) {
         </DialogContent>
       </Dialog>
     </div>
-    </TabNavigationProvider>
   );
 }

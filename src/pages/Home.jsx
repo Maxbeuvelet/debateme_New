@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Debate, UserStance, User, DebateSession } from "@/entities/all";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Star, Zap, Calendar, Clock, Sparkles, Trophy, ArrowRight, RefreshCw } from "lucide-react";
+import { Star, Zap, Calendar, Clock, Sparkles, Trophy, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -32,9 +32,6 @@ export default function Home() {
   const [newAchievements, setNewAchievements] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [debateOfTheWeek, setDebateOfTheWeek] = useState(null);
-  const [isPulling, setIsPulling] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const touchStartY = useRef(0);
 
   useEffect(() => {
     if (isLaunched) {
@@ -42,48 +39,6 @@ export default function Home() {
       checkForNewAchievements();
     }
   }, [isLaunched]);
-
-  // Pull-to-refresh handlers
-  useEffect(() => {
-    if (!isLaunched) return;
-
-    const handleTouchStart = (e) => {
-      if (window.scrollY === 0) {
-        touchStartY.current = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (window.scrollY > 0) return;
-      
-      const touchY = e.touches[0].clientY;
-      const distance = touchY - touchStartY.current;
-      
-      if (distance > 0 && distance < 150) {
-        setPullDistance(distance);
-        setIsPulling(true);
-      }
-    };
-
-    const handleTouchEnd = async () => {
-      if (pullDistance > 80) {
-        await loadData();
-      }
-      setIsPulling(false);
-      setPullDistance(0);
-      touchStartY.current = 0;
-    };
-
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchmove', handleTouchMove);
-    window.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isLaunched, pullDistance]);
 
   const checkForNewAchievements = async () => {
     try {
@@ -392,18 +347,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-800 overflow-x-hidden">
-      {/* Pull-to-refresh indicator */}
-      {isPulling && (
-        <div 
-          className="fixed top-0 left-0 right-0 flex justify-center z-50 transition-transform"
-          style={{ transform: `translateY(${Math.min(pullDistance - 20, 60)}px)` }}
-        >
-          <div className="bg-slate-800 rounded-full p-3 shadow-lg">
-            <RefreshCw className={`w-6 h-6 text-cyan-400 ${pullDistance > 80 ? 'animate-spin' : ''}`} />
-          </div>
-        </div>
-      )}
-
       <Dialog open={showAchievementDialog} onOpenChange={setShowAchievementDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

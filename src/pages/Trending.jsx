@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Debate, UserStance } from "@/entities/all";
 import { motion } from "framer-motion";
-import { TrendingUp, Users, Clock, Sparkles, Flame, RefreshCw } from "lucide-react";
+import { TrendingUp, Users, Clock, Sparkles, Flame } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -14,9 +14,6 @@ export default function Trending() {
   const [userStances, setUserStances] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isPulling, setIsPulling] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const touchStartY = useRef(0);
 
   // Launch date: Friday, January 2nd, 2026 at 6pm
   const LAUNCH_DATE = new Date(2026, 0, 2, 18, 0, 0); // year, month (0=Jan), day, hour, min, sec
@@ -40,48 +37,6 @@ export default function Trending() {
       setIsLoading(false);
     }
   }, [isLaunched]);
-
-  // Pull-to-refresh handlers
-  useEffect(() => {
-    if (!isLaunched) return;
-
-    const handleTouchStart = (e) => {
-      if (window.scrollY === 0) {
-        touchStartY.current = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (window.scrollY > 0) return;
-      
-      const touchY = e.touches[0].clientY;
-      const distance = touchY - touchStartY.current;
-      
-      if (distance > 0 && distance < 150) {
-        setPullDistance(distance);
-        setIsPulling(true);
-      }
-    };
-
-    const handleTouchEnd = async () => {
-      if (pullDistance > 80) {
-        await loadData();
-      }
-      setIsPulling(false);
-      setPullDistance(0);
-      touchStartY.current = 0;
-    };
-
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchmove', handleTouchMove);
-    window.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isLaunched, pullDistance]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -302,18 +257,6 @@ export default function Trending() {
 
   return (
     <div className="min-h-screen bg-slate-800 relative overflow-hidden">
-      {/* Pull-to-refresh indicator */}
-      {isPulling && (
-        <div 
-          className="fixed top-0 left-0 right-0 flex justify-center z-50 transition-transform"
-          style={{ transform: `translateY(${Math.min(pullDistance - 20, 60)}px)` }}
-        >
-          <div className="bg-slate-800 rounded-full p-3 shadow-lg border border-slate-700">
-            <RefreshCw className={`w-6 h-6 text-cyan-400 ${pullDistance > 80 ? 'animate-spin' : ''}`} />
-          </div>
-        </div>
-      )}
-
       {/* Animated background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" />

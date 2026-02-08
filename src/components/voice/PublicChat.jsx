@@ -9,36 +9,13 @@ import { format } from "date-fns";
 
 export default function PublicChat({ messages, onSendMessage, currentUser, participants }) {
   const [newMessage, setNewMessage] = useState("");
-  const [localMessages, setLocalMessages] = useState([]);
   const messagesEndRef = useRef(null);
-
-  // Sync messages from parent
-  useEffect(() => {
-    setLocalMessages(messages);
-  }, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
-      const messageContent = newMessage.trim();
-      const optimisticMessage = {
-        id: `temp-${Date.now()}`,
-        sender_name: currentUser,
-        content: messageContent,
-        created_date: new Date().toISOString()
-      };
-
-      // Add optimistic message immediately
-      setLocalMessages(prev => [...prev, optimisticMessage]);
+      await onSendMessage(newMessage.trim());
       setNewMessage("");
-
-      try {
-        await onSendMessage(messageContent);
-      } catch (error) {
-        console.error("Error sending message:", error);
-        // Remove optimistic message on error
-        setLocalMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-      }
     }
   };
 
@@ -53,9 +30,9 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
   };
 
   return (
-    <Card className="bg-card border-border shadow-sm h-full flex flex-col">
-      <CardHeader className="p-3 border-b border-border">
-        <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+    <Card className="bg-white border-slate-200 shadow-sm h-full flex flex-col">
+      <CardHeader className="p-3 border-b border-slate-100">
+        <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
           <MessageSquare className="w-4 h-4" />
           Public Chat
         </CardTitle>
@@ -66,13 +43,13 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
           {messages.length === 0 && (
             <div className="text-center py-4">
               <MessageSquare className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-slate-500 text-xs">
                 No messages yet. Start the conversation!
               </p>
             </div>
           )}
           <AnimatePresence>
-            {localMessages.map((message, index) => {
+            {messages.map((message, index) => {
               const participant = getParticipantInfo(message.sender_name);
               const isCurrentUser = message.sender_name === currentUser;
               
@@ -86,8 +63,8 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
                 >
                   <div className={`max-w-xs lg:max-w-md ${
                     isCurrentUser 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-foreground'
+                      ? 'bg-slate-900 text-white' 
+                      : 'bg-slate-100 text-slate-900'
                   } rounded-lg px-3 py-2`}>
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <span className="text-xs font-medium">
@@ -111,7 +88,7 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-slate-100">
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <Input
               value={newMessage}
@@ -123,19 +100,19 @@ export default function PublicChat({ messages, onSendMessage, currentUser, parti
                 }
               }}
               placeholder="Type your message..."
-              className="flex-1 border-border text-sm"
+              className="flex-1 border-slate-300 focus:border-slate-500 text-sm"
               maxLength={500}
             />
             <Button
               type="submit"
               disabled={!newMessage.trim()}
               size="icon"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="bg-slate-900 hover:bg-slate-800"
             >
               <Send className="w-4 h-4" />
             </Button>
           </form>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             {newMessage.length}/500 characters
           </p>
         </div>

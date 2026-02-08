@@ -16,7 +16,10 @@ Deno.serve(async (req) => {
 
     if (!sessionId) {
       console.log("Missing sessionId");
-      return Response.json({ error: "Missing sessionId" }, { status: 400 });
+      return new Response(JSON.stringify({ error: "Missing sessionId" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     // 🔥 CRITICAL FIX: Base44 sometimes passes IDs as objects/numbers
@@ -35,11 +38,17 @@ Deno.serve(async (req) => {
       console.log("Session loaded:", session?.id);
     } catch (err) {
       console.error("FAILED loading session:", err);
-      return Response.json({ error: "Session fetch failed" }, { status: 500 });
+      return new Response(JSON.stringify({ error: "Session fetch failed" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     if (!session) {
-      return Response.json({ error: "Session not found" }, { status: 404 });
+      return new Response(JSON.stringify({ error: "Session not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     // ---- LOAD DEBATE ----
@@ -49,7 +58,10 @@ Deno.serve(async (req) => {
       console.log("Debate loaded:", debate?.id);
     } catch (err) {
       console.error("FAILED loading debate:", err);
-      return Response.json({ error: "Debate fetch failed" }, { status: 500 });
+      return new Response(JSON.stringify({ error: "Debate fetch failed" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     // ---- LOAD PARTICIPANTS ----
@@ -100,18 +112,16 @@ Deno.serve(async (req) => {
 
     console.log("---- getSessionData SUCCESS ----");
 
-    return Response.json({
-      session,
-      debate,
-      participants,
-      messages
+    return new Response(JSON.stringify({ session, debate, participants, messages }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
     });
 
   } catch (err) {
     console.error("FATAL FUNCTION ERROR:", err);
-    return Response.json(
-      { error: String(err) },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 });

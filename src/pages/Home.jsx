@@ -38,10 +38,6 @@ export default function Home() {
           animation: word 7s infinite;
           animation-delay: -4.2s;
         }
-        .animate-word-delay-4 {
-          animation: word 7s infinite;
-          animation-delay: -5.6s;
-        }
       `}</style>
 
       <div className="flex min-h-screen items-center justify-center bg-black font-bold text-white">

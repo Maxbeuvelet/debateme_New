@@ -15,9 +15,9 @@ import WaitingForMatch from "../components/stance/WaitingForMatch";
 
 export default function TakeStance() {
   const navigate = useNavigate();
-  const qs = new URLSearchParams(window.location.search);
-  const debateId = qs.get("id");
-  const inviteCode = qs.get("invite");
+  const urlParams = new URLSearchParams(window.location.search);
+  const debateId = urlParams.get("id");
+  const inviteCode = urlParams.get("invite");
 
   const [debate, setDebate] = useState(null);
   const [userStances, setUserStances] = useState([]);
@@ -96,31 +96,12 @@ export default function TakeStance() {
         return;
       }
 
-      // Handle private debate invite flow - auto-join immediately
+      // Handle private debate invite flow (multi-participant)
       if (inviteCode) {
-        try {
-          const { data, error } = await base44.functions.invoke('joinPrivateDebate', {
-            body: { inviteCode }
-          });
-          
-          if (error || !data?.sessionId) {
-            console.error('❌ Join failed:', error);
-            alert(error || 'Failed to join private debate');
-            navigate(createPageUrl('CreateDebate'));
-            return;
-          }
-          
-          console.log('✅ Joined private debate, sessionId:', data.sessionId);
-          
-          // 🔥 THIS IS THE CRITICAL FIX - use data.sessionId from response
-          navigate(`/voicedebate?sessionId=${data.sessionId}`);
-          return;
-        } catch (error) {
-          console.error('❌ Failed to join private debate:', error);
-          alert(error.response?.data?.error || 'Failed to join private debate');
-          navigate(createPageUrl('CreateDebate'));
-          return;
-        }
+        // Show side selection UI for private debates
+        setDebate(null); // We'll set this after they pick a side
+        setIsLoading(false);
+        return;
       }
 
       // Set debate data for non-private debates
@@ -210,6 +191,41 @@ export default function TakeStance() {
     setIsSubmitting(true);
 
     try {
+      // Handle private debate via invite code
+      if (inviteCode) {
+        const side = position === "position_a" ? "A" : "B";
+        console.log('🔍 Calling joinPrivateDebate with:', { inviteCode, side });
+        
+        try {
+          const response = await base44.functions.invoke('joinPrivateDebate', {
+            inviteCode,
+            side
+          });
+          
+          console.log('✅ joinPrivateDebate response:', response.data);
+
+          if (response.data.error) {
+            alert(response.data.error);
+            return;
+          }
+
+          // Navigate to the debate session
+          navigate(
+            createPageUrl(
+              `VoiceDebate?id=${response.data.sessionId}&user=${encodeURIComponent(
+                currentUser.username
+              )}`
+            )
+          );
+          return;
+        } catch (error) {
+          console.error('❌ joinPrivateDebate error:', error);
+          console.error('❌ Error response:', error.response?.data);
+          console.error('❌ Error status:', error.response?.status);
+          console.error('❌ Full error:', JSON.stringify(error, null, 2));
+          throw error;
+        }
+      }
 
       // Handle public debate (original flow)
       if (!debate) return;
@@ -278,7 +294,56 @@ export default function TakeStance() {
     );
   }
 
+  // Show side selector for private debates accessed via invite
+  if (inviteCode && !debate) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <Button
+              variant="ghost"
+              className="text-white hover:text-white hover:bg-white/10"
+              onClick={() => navigate(createPageUrl("CreateDebate"))}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
 
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4" />
+              <Badge variant="secondary">Private Debate</Badge>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-8 text-center"
+          >
+            <h1 className="text-3xl font-bold mb-4">Join Private Debate</h1>
+            <p className="text-white/70 mb-8">Choose your side to join this debate</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <Button
+                onClick={() => handleTakeStance("position_a")}
+                disabled={isSubmitting}
+                className="h-32 text-xl font-bold bg-blue-600 hover:bg-blue-700"
+              >
+                Side A
+              </Button>
+              <Button
+                onClick={() => handleTakeStance("position_b")}
+                disabled={isSubmitting}
+                className="h-32 text-xl font-bold bg-purple-600 hover:bg-purple-700"
+              >
+                Side B
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   if (!debate) {
     return (

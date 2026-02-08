@@ -1,222 +1,305 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { MessageSquare, Users, Zap, Trophy } from "lucide-react";
 
 export default function Home() {
+  const [activeArticle, setActiveArticle] = useState(null);
+
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
       <style>{`
-        /* Forty Template Styles */
-        #banner {
-          background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         
-        #banner::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
+        .fade-in {
+          animation: fadeIn 0.6s ease-out;
         }
         
-        #banner .inner {
-          position: relative;
-          z-index: 1;
-          text-align: center;
-          color: white;
-          padding: 2rem;
-        }
-        
-        .tiles {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 0;
-        }
-        
-        .tiles article {
-          position: relative;
-          overflow: hidden;
-          height: 400px;
-        }
-        
-        .tiles article .image {
-          position: absolute;
+        .article-overlay {
+          position: fixed;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background-size: cover;
-          background-position: center;
-          transition: transform 0.3s ease;
-        }
-        
-        .tiles article:hover .image {
-          transform: scale(1.1);
-        }
-        
-        .tiles article::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.4);
-          z-index: 1;
-          transition: background 0.3s ease;
-        }
-        
-        .tiles article:hover::before {
-          background: rgba(0, 0, 0, 0.6);
-        }
-        
-        .tiles article header {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
+          background: rgba(0, 0, 0, 0.85);
+          backdrop-filter: blur(10px);
+          z-index: 100;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           padding: 2rem;
-          z-index: 2;
-          color: white;
+        }
+        
+        .article-content {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+          border-radius: 12px;
+          max-width: 800px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          padding: 3rem;
+          position: relative;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .article-content::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        .article-content::-webkit-scrollbar-track {
+          background: #2d2d2d;
+        }
+        
+        .article-content::-webkit-scrollbar-thumb {
+          background: #666;
+          border-radius: 4px;
         }
       `}</style>
 
-      {/* Banner */}
-      <section id="banner" className="major">
-        <div className="inner max-w-4xl mx-auto">
-          <header className="major mb-8">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">DebateMe</h1>
-          </header>
-          <div className="content">
-            <p className="text-xl md:text-2xl mb-8">
-              Engage in meaningful live video debates<br />
-              with people who think differently
-            </p>
-            <ul className="actions flex justify-center gap-4">
-              <Link to={createPageUrl("CreateDebate")} className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded transition-colors">
-                Get Started
-              </Link>
-            </ul>
+      {/* Header */}
+      <header className="text-center py-20 px-6 fade-in">
+        <div className="mb-8">
+          <div className="inline-block p-6 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-full mb-6 border border-orange-500/30">
+            <MessageSquare className="w-12 h-12 text-orange-400" />
           </div>
         </div>
-      </section>
-
-      {/* Main */}
-      <div id="main">
-        {/* Tiles Section */}
-        <section id="one" className="tiles">
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?q=80&w=2070')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Categories")} className="text-white hover:text-orange-400 transition-colors">
-                  Politics
-                </Link>
-              </h3>
-              <p>Government policy and civic debates</p>
-            </header>
-          </article>
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Categories")} className="text-white hover:text-orange-400 transition-colors">
-                  Technology
-                </Link>
-              </h3>
-              <p>Innovation and digital future</p>
-            </header>
-          </article>
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=2070')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Categories")} className="text-white hover:text-orange-400 transition-colors">
-                  Environment
-                </Link>
-              </h3>
-              <p>Climate and sustainability</p>
-            </header>
-          </article>
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2070')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Categories")} className="text-white hover:text-orange-400 transition-colors">
-                  Economics
-                </Link>
-              </h3>
-              <p>Markets and financial policy</p>
-            </header>
-          </article>
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=2032')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Categories")} className="text-white hover:text-orange-400 transition-colors">
-                  Social Issues
-                </Link>
-              </h3>
-              <p>Society and culture</p>
-            </header>
-          </article>
-          <article>
-            <span className="image" style={{backgroundImage: "url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070')"}}></span>
-            <header className="major">
-              <h3>
-                <Link to={createPageUrl("Trending")} className="text-white hover:text-orange-400 transition-colors">
-                  Trending
-                </Link>
-              </h3>
-              <p>Hot topics right now</p>
-            </header>
-          </article>
-        </section>
-
-        {/* Two */}
-        <section id="two" className="bg-gray-100 py-20">
-          <div className="max-w-4xl mx-auto px-6">
-            <header className="major mb-6">
-              <h2 className="text-4xl font-bold text-gray-900">Why DebateMe?</h2>
-            </header>
-            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-              Step out of your echo chamber. DebateMe connects you with real people for live video debates 
-              on topics that matter. Challenge your perspectives, sharpen your arguments, and engage in 
-              meaningful discourse with people who think differently. Whether you're passionate about politics, 
-              technology, the environment, or social issues—there's a debate waiting for you.
-            </p>
-            <ul className="actions">
-              <Link to={createPageUrl("CreateDebate")} className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded transition-colors">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-white via-orange-200 to-orange-400 bg-clip-text text-transparent">
+            DebateMe
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
+            Engage in live video debates with people who think differently.<br />
+            Challenge your views. Sharpen your arguments.
+          </p>
+        </div>
+        <nav className="mt-12">
+          <ul className="flex flex-wrap justify-center gap-4">
+            <li>
+              <button
+                onClick={() => setActiveArticle('about')}
+                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
+              >
+                About
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveArticle('categories')}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg font-semibold transition-all duration-300 border border-white/20"
+              >
+                Categories
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveArticle('features')}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg font-semibold transition-all duration-300 border border-white/20"
+              >
+                Features
+              </button>
+            </li>
+            <li>
+              <Link
+                to={createPageUrl("CreateDebate")}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg font-semibold transition-all duration-300 border border-white/20 inline-block"
+              >
                 Start Debating
               </Link>
-            </ul>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      {/* Main Content - Feature Cards */}
+      <div className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 transform hover:scale-105">
+            <div className="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
+              <MessageSquare className="w-7 h-7 text-blue-400" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Live Video</h3>
+            <p className="text-gray-300">
+              Face-to-face debates in real-time with live video streaming
+            </p>
           </div>
-        </section>
+
+          <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 transform hover:scale-105">
+            <div className="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+              <Users className="w-7 h-7 text-purple-400" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Smart Matching</h3>
+            <p className="text-gray-300">
+              Get paired with opponents who challenge your perspective
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-600/20 to-orange-800/20 backdrop-blur-sm rounded-2xl p-8 border border-orange-500/30 hover:border-orange-400/50 transition-all duration-300 transform hover:scale-105">
+            <div className="w-14 h-14 bg-orange-500/20 rounded-xl flex items-center justify-center mb-4">
+              <Zap className="w-7 h-7 text-orange-400" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Quick Setup</h3>
+            <p className="text-gray-300">
+              Jump into debates in seconds - no complicated setup required
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 backdrop-blur-sm rounded-2xl p-8 border border-green-500/30 hover:border-green-400/50 transition-all duration-300 transform hover:scale-105">
+            <div className="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
+              <Trophy className="w-7 h-7 text-green-400" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Level Up</h3>
+            <p className="text-gray-300">
+              Earn XP and achievements as you engage in debates
+            </p>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-20 text-center">
+          <div className="bg-gradient-to-r from-orange-500/10 to-orange-600/10 backdrop-blur-sm rounded-2xl p-12 border border-orange-500/20">
+            <h2 className="text-4xl font-bold mb-6">Ready to Challenge Your Views?</h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join thousands of debaters engaging in meaningful conversations on topics that matter.
+            </p>
+            <Link
+              to={createPageUrl("CreateDebate")}
+              className="inline-block px-10 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-lg font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Start Your First Debate
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="border-t border-gray-800 py-12 text-center">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">
-              © 2025 DebateMe • Live Video 1 on 1 Debates • 
-              <Link to={createPageUrl("PrivacyPolicy")} className="underline hover:text-gray-200 ml-2">
-                Privacy Policy
-              </Link>
-            </p>
-          </div>
+          <p className="text-gray-400">
+            © 2025 DebateMe • Live Video 1 on 1 Debates • 
+            <Link to={createPageUrl("PrivacyPolicy")} className="underline hover:text-gray-200 ml-2">
+              Privacy Policy
+            </Link>
+          </p>
         </div>
       </footer>
+
+      {/* Article Overlay */}
+      {activeArticle && (
+        <div className="article-overlay" onClick={() => setActiveArticle(null)}>
+          <div className="article-content fade-in" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setActiveArticle(null)}
+              className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all"
+            >
+              <span className="text-2xl">&times;</span>
+            </button>
+
+            {activeArticle === 'about' && (
+              <>
+                <h2 className="text-4xl font-bold mb-6 text-orange-400">About DebateMe</h2>
+                <div className="space-y-4 text-gray-300 leading-relaxed">
+                  <p>
+                    DebateMe is a platform designed to break you out of your echo chamber. We believe that meaningful 
+                    discourse happens when people with different perspectives come together to challenge each other's ideas.
+                  </p>
+                  <p>
+                    Through live video debates, you'll engage face-to-face with real people who hold different views. 
+                    No trolls, no anonymous comments—just thoughtful, structured conversations that help you refine 
+                    your arguments and broaden your understanding.
+                  </p>
+                  <p>
+                    Whether you're passionate about politics, technology, the environment, or social issues, there's 
+                    always someone ready to debate. Join our community and start having conversations that matter.
+                  </p>
+                </div>
+              </>
+            )}
+
+            {activeArticle === 'categories' && (
+              <>
+                <h2 className="text-4xl font-bold mb-6 text-orange-400">Debate Categories</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-blue-400">Politics</h3>
+                    <p className="text-gray-300">Engage in debates about government policy, elections, and civic issues.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-purple-400">Technology</h3>
+                    <p className="text-gray-300">Discuss AI, innovation, privacy, and the future of the digital world.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-green-400">Environment</h3>
+                    <p className="text-gray-300">Debate climate policy, sustainability, and conservation efforts.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-yellow-400">Economics</h3>
+                    <p className="text-gray-300">Challenge ideas about markets, wealth distribution, and trade policy.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-pink-400">Social Issues</h3>
+                    <p className="text-gray-300">Explore debates on culture, equality, justice, and societal norms.</p>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <Link
+                    to={createPageUrl("Categories")}
+                    className="inline-block px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg font-semibold transition-colors"
+                    onClick={() => setActiveArticle(null)}
+                  >
+                    Browse All Categories
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {activeArticle === 'features' && (
+              <>
+                <h2 className="text-4xl font-bold mb-6 text-orange-400">Platform Features</h2>
+                <div className="space-y-6 text-gray-300">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-white">Live Video Debates</h3>
+                    <p>
+                      Connect face-to-face with your debate partner through high-quality video streaming. 
+                      See reactions, read body language, and have a real conversation.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-white">Smart Matching System</h3>
+                    <p>
+                      Our algorithm pairs you with opponents who hold opposing views on the topics you care about. 
+                      Get ready for challenging, thought-provoking debates.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-white">Progression & Achievements</h3>
+                    <p>
+                      Level up your debate skills. Earn XP for participating, unlock achievements for milestones, 
+                      and climb the leaderboard as you become a better debater.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-white">Private Notes</h3>
+                    <p>
+                      Take personal notes during debates to organize your thoughts, track key points, 
+                      and improve your argumentation skills.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-white">Community Driven</h3>
+                    <p>
+                      Create your own debate topics, join trending discussions, and be part of a growing 
+                      community of thoughtful debaters.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

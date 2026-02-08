@@ -47,7 +47,7 @@ export default function Home() {
       <div className="flex min-h-screen items-center justify-center bg-black font-bold text-white">
         <div className="text-center space-y-12 px-6">
           <div className="text-center text-4xl sm:text-5xl md:text-6xl font-bold">
-            Debate about
+            DebateMe about
             <div className="relative inline-grid grid-cols-1 grid-rows-1 gap-12 overflow-hidden ml-4">
               <span className="animate-word col-span-full row-span-full">Politics</span>
               <span className="animate-word-delay-1 col-span-full row-span-full">Environment</span>

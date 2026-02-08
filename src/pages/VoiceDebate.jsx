@@ -25,7 +25,7 @@ export default function VoiceDebate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const qs = new URLSearchParams(window.location.search);
-  const sessionId = id || qs.get("sessionId") || qs.get('session') || qs.get('id');
+  const sessionId = qs.get("sessionId") || qs.get("session");
   const userName = qs.get('user');
   const isAiDebate = qs.get('ai') === 'true';
   
@@ -92,10 +92,11 @@ export default function VoiceDebate() {
   }, [sessionId, userName]);
 
   useEffect(() => {
-    if (!sessionId) return; // Wait for router to provide sessionId
-    
-    const loadSession = async () => {
+    if (!sessionId) return;
+
+    (async () => {
       setIsLoading(true);
+      
       try {
         // Get user for ID tracking
         let user;
@@ -107,18 +108,21 @@ export default function VoiceDebate() {
           setCurrentUserId(null);
         }
 
-        // Load all session data via backend function with service role
-        const { data, error } = await base44.functions.invoke('getSessionData', {
+        const res = await base44.functions.invoke("getSessionData", {
           body: { sessionId }
         });
 
-        if (error || !data) {
-          console.error('Failed to load session:', error);
+        console.log("getSessionData raw:", res);
+
+        const payload = res?.data?.session ? res.data : res?.data?.data;
+
+        if (!payload?.session || !payload?.debate) {
+          console.error('Failed to load session');
           navigate(createPageUrl("Home"));
           return;
         }
 
-        const { session: currentSession, debate: debateData, participants: sessionParticipants, messages: msgs } = data;
+        const { session: currentSession, debate: debateData, participants: sessionParticipants, messages: msgs } = payload;
 
         if (currentSession.status === "ended") {
           setDisconnectReason("ended");
@@ -193,9 +197,7 @@ export default function VoiceDebate() {
         console.error("Error loading session:", err);
         navigate(createPageUrl("Home"));
       }
-    };
-
-    loadSession();
+    })();
   }, [sessionId, userName, navigate, setupVideoRoom]);
 
   useEffect(() => {
@@ -290,16 +292,7 @@ export default function VoiceDebate() {
     }
   };
 
-  if (!sessionId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Session not found</h1>
-          <Button onClick={() => navigate(createPageUrl("Home"))} className="bg-slate-700 hover:bg-slate-600 text-white">Back to Home</Button>
-        </div>
-      </div>
-    );
-  }
+
 
   if (isLoading) {
     return (
@@ -312,16 +305,7 @@ export default function VoiceDebate() {
     );
   }
 
-  if (!session || !debate) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Session not found</h1>
-          <Button onClick={() => navigate(createPageUrl("Home"))} className="bg-slate-700 hover:bg-slate-600 text-white">Back to Home</Button>
-        </div>
-      </div>
-    );
-  }
+
 
   const opponent = participants.find(p => p.user_name !== currentUser);
 

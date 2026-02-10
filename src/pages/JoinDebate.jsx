@@ -76,7 +76,7 @@ export default function JoinDebate() {
       if (isPremade) {
         // Check if a Debate already exists for this premade
         const existingDebates = await base44.entities.Debate.filter({
-          title: debate.title
+          premade_debate_id: debate.id
         });
         
         if (existingDebates && existingDebates.length > 0) {
@@ -90,7 +90,8 @@ export default function JoinDebate() {
             position_a: debate.position_a,
             position_b: debate.position_b,
             status: 'active',
-            is_user_created: false
+            is_user_created: false,
+            premade_debate_id: debate.id
           });
           actualDebateId = newDebate.id;
         }

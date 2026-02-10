@@ -1046,7 +1046,7 @@ export default function Home() {
           <div className="content">
             <div className="inner">
               <h1>DebateMe</h1>
-              <p className="text-lg">Engage in thoughtful discourse and real-time debates<br />
+              <p className="text-lg" style={{textShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)'}}>Engage in thoughtful discourse and real-time debates<br />
               with people from around the world.</p>
             </div>
           </div>

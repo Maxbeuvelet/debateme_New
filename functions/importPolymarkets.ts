@@ -33,23 +33,56 @@ Deno.serve(async (req) => {
     // Filter for high-volume markets
     const highVolumeMarkets = markets.filter(m => (m.volume || 0) >= 50000);
     
-    // Deduplicate by extracting key terms and grouping
+    // Deduplicate by extracting key entities
     const uniqueMarkets = [];
-    const seenTopics = new Set();
+    const seenEntities = new Set();
     
     for (const market of highVolumeMarkets) {
-      // Extract main topic by removing common words
-      const topic = market.question
-        .toLowerCase()
-        .replace(/will |won't |does |doesn't |can |can't |should |by \d{4}|before |after /g, '')
-        .split(/[?.,]/)[0]
-        .trim()
-        .split(' ')
-        .slice(0, 3)
-        .join(' ');
+      const question = market.question.toLowerCase();
       
-      if (!seenTopics.has(topic)) {
-        seenTopics.add(topic);
+      // Extract key entities (brands, names, specific terms)
+      const entities = [];
+      
+      // Common entities to look for
+      const patterns = [
+        /gta\s*(?:6|vi|six)/i,
+        /trump/i,
+        /biden/i,
+        /bitcoin/i,
+        /ethereum/i,
+        /tesla/i,
+        /ai\b/i,
+        /election/i,
+        /ukraine/i,
+        /russia/i,
+        /china/i,
+        /nfl|super bowl/i,
+        /\b[A-Z][a-z]+ [A-Z][a-z]+\b/, // Proper names like "Donald Trump"
+      ];
+      
+      for (const pattern of patterns) {
+        const match = question.match(pattern);
+        if (match) {
+          entities.push(match[0].toLowerCase().replace(/\s+/g, '_'));
+        }
+      }
+      
+      // If no specific entities found, use first meaningful words
+      if (entities.length === 0) {
+        const cleaned = question
+          .replace(/will |won't |does |doesn't |can |can't |should |before |after |by \d{4}/g, '')
+          .trim()
+          .split(/[?.,\s]+/)
+          .filter(w => w.length > 3)
+          .slice(0, 2)
+          .join('_');
+        entities.push(cleaned);
+      }
+      
+      const entityKey = entities.join('_');
+      
+      if (!seenEntities.has(entityKey)) {
+        seenEntities.add(entityKey);
         uniqueMarkets.push(market);
       }
       

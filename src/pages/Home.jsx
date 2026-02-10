@@ -1041,7 +1041,7 @@ export default function Home() {
       <div id="wrapper">
         <header id="header">
           <div className="logo">
-            <span className="icon fa-gem"></span>
+            <span className="text-4xl font-bold">DM</span>
           </div>
           <div className="content">
             <div className="inner">

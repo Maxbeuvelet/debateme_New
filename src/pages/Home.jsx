@@ -1046,8 +1046,8 @@ export default function Home() {
           <div className="content">
             <div className="inner">
               <h1>DebateMe</h1>
-              <p>A morbi blandit ante natoque aliquet ut Commodo cep cubilia<br />
-              cep quam augue vel Feugiat Aliquam egestas.</p>
+              <p>Engage in thoughtful discourse and real-time debates<br />
+              with people from around the world.</p>
             </div>
           </div>
           <nav>

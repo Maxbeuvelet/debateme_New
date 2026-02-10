@@ -259,34 +259,34 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       
       {/* Top Navigation Bar - Desktop */}
-      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-md border-b border-slate-200">
+      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68da9d2bed6a011bee1c2750/a5f3d3437_Debate.png" 
                 alt="DebateMe" 
-                className="w-7 h-7 object-contain"
+                className="w-8 h-8 object-contain"
               />
-              <span className="font-bold text-slate-700 text-sm">DebateMe</span>
+              <span className="font-bold text-slate-900 text-base">DebateMe</span>
             </Link>
 
-            {/* Navigation Links */}
-            <div className="flex items-center gap-1">
+            {/* Navigation Links - Center */}
+            <div className="flex items-center gap-6">
               {navigationItems.map((item) => (
                 <Link
                   key={item.title}
                   to={item.url}
-                  className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
                       ? 'text-slate-900'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <span>{item.title}</span>
+                  {item.title}
                   {item.title === "Achievements" && hasNewAchievements && (
-                    <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
+                    <span className="ml-1 inline-block w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
                   )}
                 </Link>
               ))}
@@ -298,9 +298,9 @@ export default function Layout({ children, currentPageName }) {
                 onClick={() => setShowBugDialog(true)}
                 variant="ghost"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-medium"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-sm font-medium"
               >
-                <Bug className="w-3.5 h-3.5 mr-1" />
+                <Bug className="w-4 h-4 mr-1.5" />
                 Report Bug
               </Button>
 
@@ -318,7 +318,7 @@ export default function Layout({ children, currentPageName }) {
                        className="w-full h-full object-contain"
                      />
                    ) : (
-                     <RankIcon className="w-4 h-4 text-slate-700" />
+                     <RankIcon className="w-5 h-5 text-slate-700" />
                    )}
                  </div>
                  <span className="text-sm font-medium text-slate-900">@{user.username || user.email}</span>
@@ -327,7 +327,7 @@ export default function Layout({ children, currentPageName }) {
                 <Button
                   onClick={() => base44.auth.redirectToLogin(window.location.href)}
                   size="sm"
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs h-8 px-4"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm h-9 px-5"
                 >
                   Login
                 </Button>
@@ -338,7 +338,7 @@ export default function Layout({ children, currentPageName }) {
       </nav>
 
       {/* Spacer for fixed nav */}
-      <div className="hidden md:block h-14" />
+      <div className="hidden md:block h-16" />
 
       {/* Mobile Header */}
       <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40">

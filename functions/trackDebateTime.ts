@@ -1,37 +1,39 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.6";
 
 const achievements = [
-  { id: "first_exchange", xp_reward: 25, criteria_type: "debates_completed", criteria_value: 1 },
-  { id: "active_participant", xp_reward: 100, criteria_type: "debates_completed", criteria_value: 5 },
-  { id: "committed_contributor", xp_reward: 300, criteria_type: "debates_completed", criteria_value: 20 },
-  { id: "seasoned_debater", xp_reward: 1000, criteria_type: "debates_completed", criteria_value: 100 },
-  { id: "debate_creator", xp_reward: 50, criteria_type: "debates_created", criteria_value: 1 },
-  { id: "locked_in", xp_reward: 150, criteria_type: "total_debate_time_minutes", criteria_value: 30 },
+  { id: "first_debate", criteria_type: "debates_joined", criteria_value: 1 },
+  { id: "five_debates", criteria_type: "debates_joined", criteria_value: 5 },
+  { id: "ten_debates", criteria_type: "debates_joined", criteria_value: 10 },
+  { id: "twenty_debates", criteria_type: "debates_joined", criteria_value: 20 },
+  { id: "fifty_debates", criteria_type: "debates_joined", criteria_value: 50 },
+  { id: "hundred_debates", criteria_type: "debates_joined", criteria_value: 100 },
+  { id: "ten_min_debate", criteria_type: "debate_duration", criteria_value: 10 },
+  { id: "twenty_min_debate", criteria_type: "debate_duration", criteria_value: 20 },
+  { id: "thirty_min_debate", criteria_type: "debate_duration", criteria_value: 30 },
 ];
 
 const calculateXpForNextLevel = (level) => level * 100;
 
 function computeNewAchievements(user) {
-  const earned = user.achievements_earned || [];
+  const earned = user.achievements || [];
   const newlyEarned = [];
-  let totalXpAwarded = 0;
 
   for (const a of achievements) {
     if (earned.includes(a.id)) continue;
 
-    const currentValue =
-      a.criteria_type === "debates_completed" ? (user.debates_completed || 0) :
-      a.criteria_type === "debates_created" ? (user.debates_created || 0) :
-      a.criteria_type === "total_debate_time_minutes" ? (user.total_debate_time_minutes || 0) :
-      0;
+    let shouldUnlock = false;
+    if (a.criteria_type === "debates_joined") {
+      shouldUnlock = (user.debates_joined || 0) >= a.criteria_value;
+    } else if (a.criteria_type === "debate_duration") {
+      shouldUnlock = (user.max_debate_duration || 0) >= a.criteria_value;
+    }
 
-    if (currentValue >= a.criteria_value) {
+    if (shouldUnlock) {
       newlyEarned.push(a.id);
-      totalXpAwarded += a.xp_reward;
     }
   }
 
-  return { newlyEarned, totalXpAwarded };
+  return newlyEarned;
 }
 
 function applyLevelUps(currentLevel, currentXp) {
@@ -107,25 +109,30 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: "User not found" }, { status: 404 });
 
     // Compute updated stats locally (avoids read-after-write issues)
+    const updatedDebatesJoined = (user.debates_joined || 0) + 1;
+    const updatedMaxDuration = Math.max(user.max_debate_duration || 0, minutesSpent);
     const updatedUser = {
       ...user,
-      total_debate_time_minutes: (user.total_debate_time_minutes || 0) + minutesSpent,
-      debates_completed: (user.debates_completed || 0) + 1,
+      debates_joined: updatedDebatesJoined,
+      total_debate_time: (user.total_debate_time || 0) + minutesSpent,
+      max_debate_duration: updatedMaxDuration,
     };
 
     // Compute achievements from updated stats
-    const { newlyEarned, totalXpAwarded } = computeNewAchievements(updatedUser);
+    const newlyEarned = computeNewAchievements(updatedUser);
 
     // Apply XP + levels
-    const combinedXp = (user.xp || 0) + totalXpAwarded;
+    const baseXp = 50;
+    const combinedXp = (user.xp || 0) + baseXp;
     const { level, xp } = applyLevelUps(user.level || 1, combinedXp);
 
     // Update user once
     await base44.asServiceRole.entities.User.update(userId, {
-      total_debate_time_minutes: updatedUser.total_debate_time_minutes,
-      debates_completed: updatedUser.debates_completed,
-      achievements_earned: [...(user.achievements_earned || []), ...newlyEarned],
-      new_achievements: [...(user.new_achievements || []), ...newlyEarned],
+      debates_joined: updatedDebatesJoined,
+      total_debate_time: updatedUser.total_debate_time,
+      max_debate_duration: updatedMaxDuration,
+      achievements: [...(user.achievements || []), ...newlyEarned],
+      new_achievements: newlyEarned,
       xp,
       level,
     });
@@ -141,7 +148,6 @@ Deno.serve(async (req) => {
       success: true,
       minutesSpent,
       newAchievements: newlyEarned,
-      totalXpAwarded,
     });
   } catch (error) {
     console.error("Error in trackDebateTime:", error);

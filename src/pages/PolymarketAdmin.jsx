@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, RefreshCw, TrendingUp, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, Clock, CheckCircle2, XCircle, Trash2 } from "lucide-react";
 import { User } from "@/entities/User";
 
 export default function PolymarketAdmin() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [lastRun, setLastRun] = useState(null);
   const [stats, setStats] = useState(null);
 
@@ -42,6 +43,27 @@ export default function PolymarketAdmin() {
       alert("Import failed: " + (error.response?.data?.error || error.message));
     } finally {
       setImporting(false);
+    }
+  };
+
+  const clearAllDebates = async () => {
+    if (!confirm("Are you sure you want to delete all imported debates? This cannot be undone.")) {
+      return;
+    }
+    
+    setClearing(true);
+    try {
+      const allDebates = await base44.entities.PremadeDebate.list();
+      for (const debate of allDebates) {
+        await base44.entities.PremadeDebate.delete(debate.id);
+      }
+      alert(`Successfully deleted ${allDebates.length} debates`);
+      setStats(null);
+    } catch (error) {
+      console.error("Clear error:", error);
+      alert("Failed to clear debates: " + error.message);
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -129,23 +151,42 @@ export default function PolymarketAdmin() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button
-              onClick={runImport}
-              disabled={importing}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {importing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Importing...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Run Import Now
-                </>
-              )}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={runImport}
+                disabled={importing || clearing}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {importing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Run Import Now
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={clearAllDebates}
+                disabled={importing || clearing}
+                variant="destructive"
+              >
+                {clearing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Clearing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Clear All Debates
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

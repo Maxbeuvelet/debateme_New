@@ -1045,7 +1045,7 @@ export default function Home() {
           </div>
           <div className="content">
             <div className="inner">
-              <h1>Dimension</h1>
+              <h1>DebateMe</h1>
               <p>A morbi blandit ante natoque aliquet ut Commodo cep cubilia<br />
               cep quam augue vel Feugiat Aliquam egestas.</p>
             </div>

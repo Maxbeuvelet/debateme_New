@@ -83,10 +83,10 @@ export default function JoinDebate() {
 
       if (matchResponse.data.matched) {
         // Navigate to debate room
-        navigate(createPageUrl("DebateRoom") + `?session=${matchResponse.data.sessionId}`);
+        navigate(createPageUrl("DebateRoom") + `?sessionId=${matchResponse.data.sessionId}`);
       } else {
         // Navigate to waiting room
-        navigate(createPageUrl("WaitingRoom") + `?stance=${stance.id}`);
+        navigate(createPageUrl("WaitingRoom") + `?stanceId=${stance.id}`);
       }
     } catch (error) {
       console.error("Error joining debate:", error);

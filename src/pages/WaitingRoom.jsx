@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Copy, LogOut, Clock, Users } from "lucide-react";
 import { createPageUrl } from "@/utils";
+import AnimatedDMLogo from "@/components/AnimatedDMLogo";
 
 export default function WaitingRoom() {
   const navigate = useNavigate();
@@ -152,23 +153,7 @@ export default function WaitingRoom() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <motion.div
-            animate={{ rotate: opponent ? [0, 360] : 360 }}
-            transition={{ 
-              duration: opponent ? 1 : 8, 
-              repeat: opponent ? 0 : Infinity, 
-              ease: opponent ? "easeOut" : "linear" 
-            }}
-            className="relative"
-          >
-            <motion.div
-              animate={opponent ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="w-20 h-20 rounded-full border-2 border-blue-500/50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"
-            >
-              <span className="text-2xl font-bold text-white">DM</span>
-            </motion.div>
-          </motion.div>
+          <AnimatedDMLogo />
         </motion.div>
 
         {/* Main card */}

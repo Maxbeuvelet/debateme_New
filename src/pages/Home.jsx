@@ -2,8 +2,12 @@ import React, { useEffect } from "react";
 
 export default function Home() {
   useEffect(() => {
-    // Set body class for preload
+    // Set body class for preload and ensure proper styling
     document.body.classList.add('is-preload');
+    document.documentElement.style.height = '100%';
+    document.body.style.height = '100%';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
 
     // Load jQuery from CDN
     const jqueryScript = document.createElement('script');

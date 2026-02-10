@@ -51,6 +51,7 @@ import Categories from './pages/Categories';
 import Home from './pages/Home';
 import JoinDebate from './pages/JoinDebate';
 import PolymarketAdmin from './pages/PolymarketAdmin';
+import WaitingRoom from './pages/WaitingRoom';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +60,7 @@ export const PAGES = {
     "Home": Home,
     "JoinDebate": JoinDebate,
     "PolymarketAdmin": PolymarketAdmin,
+    "WaitingRoom": WaitingRoom,
 }
 
 export const pagesConfig = {

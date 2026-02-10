@@ -154,19 +154,66 @@ Deno.serve(async (req) => {
         tags.push(...market.tags.slice(0, 3));
       }
 
-      const debateContent = {
-        category,
-        tags,
-        bulletsA: [
+      // Generate personalized debate bullets using LLM
+      let bulletsA = [];
+      let bulletsB = [];
+      
+      try {
+        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+          prompt: `For the debate topic "${debateTitle}", generate 3 concise, compelling talking points for EACH side.
+
+Position A (Yes/For): Supporting arguments
+Position B (No/Against): Opposing arguments
+
+Make them specific to this topic, factual, and debate-worthy. Each bullet should be 8-15 words.
+
+Return ONLY valid JSON in this exact format:
+{
+  "positionA": ["point 1", "point 2", "point 3"],
+  "positionB": ["point 1", "point 2", "point 3"]
+}`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              positionA: {
+                type: "array",
+                items: { type: "string" },
+                minItems: 3,
+                maxItems: 3
+              },
+              positionB: {
+                type: "array",
+                items: { type: "string" },
+                minItems: 3,
+                maxItems: 3
+              }
+            },
+            required: ["positionA", "positionB"]
+          }
+        });
+        
+        bulletsA = llmResponse.positionA || [];
+        bulletsB = llmResponse.positionB || [];
+      } catch (llmError) {
+        console.error("LLM generation failed, using fallback:", llmError);
+        // Fallback to generic bullets if LLM fails
+        bulletsA = [
           "Historical trends support this outcome",
           "Current data suggests positive momentum",
           "Expert analysis leans toward this position"
-        ],
-        bulletsB: [
+        ];
+        bulletsB = [
           "Alternative scenarios remain plausible",
           "Uncertainty factors could change outcomes",
           "Historical precedents show different results"
-        ]
+        ];
+      }
+
+      const debateContent = {
+        category,
+        tags,
+        bulletsA,
+        bulletsB
       };
 
       // Check if debate already exists

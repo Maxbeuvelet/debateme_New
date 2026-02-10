@@ -118,13 +118,15 @@ export default function Achievements() {
     if (!user) return 0;
     
     if (achievement.requirement.type === "debates_joined") {
-      const debatesJoined = user.debates_joined || 0;
-      return Math.min(100, (debatesJoined / achievement.requirement.count) * 100);
+      const debatesJoined = user.debates_joined || user.debates_completed || 0;
+      const progress = (debatesJoined / achievement.requirement.count) * 100;
+      return Math.min(100, isNaN(progress) ? 0 : progress);
     }
     
     if (achievement.requirement.type === "debate_duration") {
-      const maxDebateTime = user.max_debate_duration || 0;
-      return Math.min(100, (maxDebateTime / achievement.requirement.minutes) * 100);
+      const maxDebateTime = user.max_debate_duration || user.total_debate_time_minutes || 0;
+      const progress = (maxDebateTime / achievement.requirement.minutes) * 100;
+      return Math.min(100, isNaN(progress) ? 0 : progress);
     }
     
     return 0;

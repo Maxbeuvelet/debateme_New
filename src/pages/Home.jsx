@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPageUrl } from "@/utils";
 
 export default function Home() {
   useEffect(() => {
@@ -1052,7 +1053,7 @@ export default function Home() {
           </div>
           <nav>
             <ul>
-              <li><a href="#intro">Intro</a></li>
+              <li><a href={createPageUrl("Categories")}>Categories</a></li>
               <li><a href="#work">Work</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>

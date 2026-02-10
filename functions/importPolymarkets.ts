@@ -154,58 +154,78 @@ Deno.serve(async (req) => {
         tags.push(...market.tags.slice(0, 3));
       }
 
-      // Generate personalized debate bullets using LLM
+      // Generate topic-specific bullets
+      const titleLower = debateTitle.toLowerCase();
       let bulletsA = [];
       let bulletsB = [];
       
-      try {
-        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
-          prompt: `For the debate topic "${debateTitle}", generate 3 concise, compelling talking points for EACH side.
-
-Position A (Yes/For): Supporting arguments
-Position B (No/Against): Opposing arguments
-
-Make them specific to this topic, factual, and debate-worthy. Each bullet should be 8-15 words.
-
-Return ONLY valid JSON in this exact format:
-{
-  "positionA": ["point 1", "point 2", "point 3"],
-  "positionB": ["point 1", "point 2", "point 3"]
-}`,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              positionA: {
-                type: "array",
-                items: { type: "string" },
-                minItems: 3,
-                maxItems: 3
-              },
-              positionB: {
-                type: "array",
-                items: { type: "string" },
-                minItems: 3,
-                maxItems: 3
-              }
-            },
-            required: ["positionA", "positionB"]
-          }
-        });
-        
-        bulletsA = llmResponse.positionA || [];
-        bulletsB = llmResponse.positionB || [];
-      } catch (llmError) {
-        console.error("LLM generation failed, using fallback:", llmError);
-        // Fallback to generic bullets if LLM fails
+      // Create contextual bullets based on debate type
+      if (titleLower.includes('trump') || titleLower.includes('election')) {
         bulletsA = [
-          "Historical trends support this outcome",
-          "Current data suggests positive momentum",
-          "Expert analysis leans toward this position"
+          "Strong polling momentum and historical precedents support this",
+          "Key demographic shifts favor this electoral outcome",
+          "Campaign strategy and messaging resonating with voters"
         ];
         bulletsB = [
-          "Alternative scenarios remain plausible",
-          "Uncertainty factors could change outcomes",
-          "Historical precedents show different results"
+          "Electoral college math presents significant challenges",
+          "Recent polling volatility suggests unpredictable results",
+          "Historical upsets show predictions can be wrong"
+        ];
+      } else if (titleLower.includes('bitcoin') || titleLower.includes('crypto') || titleLower.includes('eth')) {
+        bulletsA = [
+          "Institutional adoption and regulatory clarity driving growth",
+          "Technical indicators and market sentiment bullish",
+          "Historical price patterns suggest upward momentum"
+        ];
+        bulletsB = [
+          "Regulatory uncertainty could trigger market correction",
+          "Macroeconomic headwinds may pressure crypto assets",
+          "Historical volatility suggests caution needed"
+        ];
+      } else if (titleLower.includes('ai') || titleLower.includes('tech')) {
+        bulletsA = [
+          "Rapid technological advancement accelerating timeline",
+          "Major tech companies investing heavily in development",
+          "Recent breakthroughs demonstrate feasibility"
+        ];
+        bulletsB = [
+          "Technical challenges remain significant obstacles",
+          "Regulatory and ethical concerns may slow progress",
+          "Historical tech predictions often overestimate pace"
+        ];
+      } else if (titleLower.includes('war') || titleLower.includes('conflict') || titleLower.includes('ukraine') || titleLower.includes('russia')) {
+        bulletsA = [
+          "Current military dynamics favor this outcome",
+          "Diplomatic pressure and international support building",
+          "Historical conflict patterns suggest this trajectory"
+        ];
+        bulletsB = [
+          "Geopolitical complexity makes predictions unreliable",
+          "Multiple stakeholders with conflicting interests involved",
+          "Unforeseen events could dramatically shift situation"
+        ];
+      } else if (titleLower.includes('economy') || titleLower.includes('recession') || titleLower.includes('market')) {
+        bulletsA = [
+          "Economic indicators and data trends support this view",
+          "Federal Reserve policy aligning with this outcome",
+          "Market sentiment and expert forecasts pointing here"
+        ];
+        bulletsB = [
+          "Economic predictions historically unreliable",
+          "Multiple variables could shift outlook dramatically",
+          "Recent data shows mixed signals and uncertainty"
+        ];
+      } else {
+        // Generic but still better than before
+        bulletsA = [
+          "Available data and trends support this outcome",
+          "Expert analysis leans toward this position",
+          "Historical patterns suggest this is more likely"
+        ];
+        bulletsB = [
+          "Significant uncertainty factors remain in play",
+          "Alternative scenarios are still plausible",
+          "Historical precedents show different results possible"
         ];
       }
 

@@ -134,18 +134,47 @@ Deno.serve(async (req) => {
       debateTitle = debateTitle.replace(/\s+before\s+[A-Z][a-z]+\s+\d{4}\??$/, '?');
 
       // Auto-categorize based on keywords
-      let category = 'politics';
       const title = market.question.toLowerCase();
-      if (title.includes('tech') || title.includes('ai') || title.includes('crypto')) {
-        category = 'technology';
-      } else if (title.includes('climate') || title.includes('environment')) {
-        category = 'environment';
-      } else if (title.includes('health') || title.includes('medical')) {
-        category = 'healthcare';
-      } else if (title.includes('economy') || title.includes('market') || title.includes('price')) {
+      let category = 'politics'; // default fallback
+      
+      // Gaming
+      if (title.includes('gta') || title.includes('game') || title.includes('esport') || title.includes('gaming')) {
+        category = 'gaming';
+      }
+      // Economics - money, markets, trade, prices
+      else if (title.includes('tariff') || title.includes('dollar') || title.includes('price') || 
+               title.includes('market') || title.includes('stock') || title.includes('economy') || 
+               title.includes('gdp') || title.includes('inflation') || title.includes('revenue') || 
+               title.includes('trade') || title.includes('billion') || title.includes('worth')) {
         category = 'economics';
-      } else if (title.includes('social') || title.includes('culture')) {
+      }
+      // Social Issues - immigration, rights, culture
+      else if (title.includes('deport') || title.includes('immigration') || title.includes('migrate') ||
+               title.includes('rights') || title.includes('justice') || title.includes('social') || 
+               title.includes('culture') || title.includes('equality') || title.includes('discrimination')) {
         category = 'social_issues';
+      }
+      // Technology
+      else if (title.includes('tech') || title.includes('ai') || title.includes('crypto') || 
+               title.includes('bitcoin') || title.includes('ethereum') || title.includes('software') ||
+               title.includes('app') || title.includes('digital')) {
+        category = 'technology';
+      }
+      // Environment
+      else if (title.includes('climate') || title.includes('environment') || title.includes('carbon') ||
+               title.includes('emission') || title.includes('renewable') || title.includes('pollution')) {
+        category = 'environment';
+      }
+      // Healthcare
+      else if (title.includes('health') || title.includes('medical') || title.includes('hospital') ||
+               title.includes('disease') || title.includes('vaccine') || title.includes('drug')) {
+        category = 'healthcare';
+      }
+      // Politics - elections, candidates, government
+      else if (title.includes('election') || title.includes('president') || title.includes('congress') ||
+               title.includes('senate') || title.includes('vote') || title.includes('campaign') ||
+               title.includes('party') || title.includes('republican') || title.includes('democrat')) {
+        category = 'politics';
       }
 
       // Simple tags extraction

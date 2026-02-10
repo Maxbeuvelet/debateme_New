@@ -21,7 +21,8 @@ export default function Categories() {
     { id: "technology", name: "Technology", color: "bg-green-600" },
     { id: "environment", name: "Environment", color: "bg-emerald-600" },
     { id: "economics", name: "Economics", color: "bg-orange-600" },
-    { id: "healthcare", name: "Healthcare", color: "bg-red-600" }
+    { id: "healthcare", name: "Healthcare", color: "bg-red-600" },
+    { id: "gaming", name: "Gaming", color: "bg-pink-600" }
   ];
 
   useEffect(() => {

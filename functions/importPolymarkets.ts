@@ -183,79 +183,55 @@ Deno.serve(async (req) => {
         tags.push(...market.tags.slice(0, 3));
       }
 
-      // Generate topic-specific bullets
-      const titleLower = debateTitle.toLowerCase();
+      // Generate personalized bullets using AI
       let bulletsA = [];
       let bulletsB = [];
       
-      // Create contextual bullets based on debate type
-      if (titleLower.includes('trump') || titleLower.includes('election')) {
-        bulletsA = [
-          "Strong polling momentum and historical precedents support this",
-          "Key demographic shifts favor this electoral outcome",
-          "Campaign strategy and messaging resonating with voters"
-        ];
-        bulletsB = [
-          "Electoral college math presents significant challenges",
-          "Recent polling volatility suggests unpredictable results",
-          "Historical upsets show predictions can be wrong"
-        ];
-      } else if (titleLower.includes('bitcoin') || titleLower.includes('crypto') || titleLower.includes('eth')) {
-        bulletsA = [
-          "Institutional adoption and regulatory clarity driving growth",
-          "Technical indicators and market sentiment bullish",
-          "Historical price patterns suggest upward momentum"
-        ];
-        bulletsB = [
-          "Regulatory uncertainty could trigger market correction",
-          "Macroeconomic headwinds may pressure crypto assets",
-          "Historical volatility suggests caution needed"
-        ];
-      } else if (titleLower.includes('ai') || titleLower.includes('tech')) {
-        bulletsA = [
-          "Rapid technological advancement accelerating timeline",
-          "Major tech companies investing heavily in development",
-          "Recent breakthroughs demonstrate feasibility"
-        ];
-        bulletsB = [
-          "Technical challenges remain significant obstacles",
-          "Regulatory and ethical concerns may slow progress",
-          "Historical tech predictions often overestimate pace"
-        ];
-      } else if (titleLower.includes('war') || titleLower.includes('conflict') || titleLower.includes('ukraine') || titleLower.includes('russia')) {
-        bulletsA = [
-          "Current military dynamics favor this outcome",
-          "Diplomatic pressure and international support building",
-          "Historical conflict patterns suggest this trajectory"
-        ];
-        bulletsB = [
-          "Geopolitical complexity makes predictions unreliable",
-          "Multiple stakeholders with conflicting interests involved",
-          "Unforeseen events could dramatically shift situation"
-        ];
-      } else if (titleLower.includes('economy') || titleLower.includes('recession') || titleLower.includes('market')) {
-        bulletsA = [
-          "Economic indicators and data trends support this view",
-          "Federal Reserve policy aligning with this outcome",
-          "Market sentiment and expert forecasts pointing here"
-        ];
-        bulletsB = [
-          "Economic predictions historically unreliable",
-          "Multiple variables could shift outlook dramatically",
-          "Recent data shows mixed signals and uncertainty"
-        ];
-      } else {
-        // Generic but still better than before
-        bulletsA = [
-          "Available data and trends support this outcome",
-          "Expert analysis leans toward this position",
-          "Historical patterns suggest this is more likely"
-        ];
-        bulletsB = [
-          "Significant uncertainty factors remain in play",
-          "Alternative scenarios are still plausible",
-          "Historical precedents show different results possible"
-        ];
+      try {
+        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+          prompt: `Read this debate topic: "${debateTitle}"
+
+Generate 3 compelling talking points FOR this outcome (Yes/For side) and 3 AGAINST it (No/Against side).
+
+IMPORTANT: Match the tone of the debate:
+- If it's funny/absurd (like GTA 6 or Jesus returning), make the points witty and humorous
+- If it's serious (elections, economics, wars), be factual and analytical
+
+Each bullet must be:
+- 10-15 words max
+- Specific to THIS exact topic
+- Actually arguable (not generic)
+
+Return as JSON:`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              for_points: {
+                type: "array",
+                items: { type: "string" }
+              },
+              against_points: {
+                type: "array",
+                items: { type: "string" }
+              }
+            },
+            required: ["for_points", "against_points"]
+          }
+        });
+        
+        bulletsA = llmResponse.for_points || [];
+        bulletsB = llmResponse.against_points || [];
+        
+        // Validate we got 3 points each
+        if (bulletsA.length < 3 || bulletsB.length < 3) {
+          throw new Error("Insufficient bullets generated");
+        }
+      } catch (llmError) {
+        console.error(`LLM failed for "${debateTitle}":`, llmError.message);
+        // Skip this debate if AI generation fails
+        stats.skipped++;
+        stats.skipReasons.push(`AI generation failed: ${debateTitle.substring(0, 50)}`);
+        continue;
       }
 
       const debateContent = {

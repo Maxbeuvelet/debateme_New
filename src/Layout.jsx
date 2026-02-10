@@ -22,6 +22,36 @@ const navigationItems = [
     title: "Home",
     url: createPageUrl("Home"),
     icon: Home,
+  },
+  {
+    title: "Create",
+    url: createPageUrl("Create"),
+    icon: PlusCircle,
+  },
+  {
+    title: "Trending",
+    url: createPageUrl("Trending"),
+    icon: TrendingUp,
+  },
+  {
+    title: "Categories",
+    url: createPageUrl("Categories"),
+    icon: LayoutGrid,
+  },
+  {
+    title: "Achievements",
+    url: createPageUrl("Achievements"),
+    icon: Trophy,
+  },
+  {
+    title: "Ranked",
+    url: createPageUrl("Ranked"),
+    icon: Gavel,
+  },
+  {
+    title: "Community",
+    url: createPageUrl("Community"),
+    icon: Users,
   }
 ];
 
@@ -248,7 +278,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={item.title}
                   to={item.url}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                  className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
                       ? 'text-slate-900'
                       : 'text-slate-600 hover:text-slate-900'
@@ -257,9 +287,6 @@ export default function Layout({ children, currentPageName }) {
                   <span>{item.title}</span>
                   {item.title === "Achievements" && hasNewAchievements && (
                     <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
-                  )}
-                  {location.pathname === item.url && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900" />
                   )}
                 </Link>
               ))}
@@ -271,7 +298,7 @@ export default function Layout({ children, currentPageName }) {
                 onClick={() => setShowBugDialog(true)}
                 variant="ghost"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-medium"
               >
                 <Bug className="w-3.5 h-3.5 mr-1" />
                 Report Bug
@@ -282,39 +309,25 @@ export default function Layout({ children, currentPageName }) {
                  <div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" />
                </div>
               ) : user ? (
-               <div className="flex items-center gap-3">
-                 <div className="flex items-center gap-2">
-                   <div className="w-8 h-8 rounded-lg bg-transparent flex items-center justify-center shadow-md overflow-hidden">
-                     {rankCustomImage ? (
-                       <img 
-                         src={rankCustomImage} 
-                         alt="Rank"
-                         className="w-full h-full object-contain"
-                       />
-                     ) : (
-                       <RankIcon className="w-4 h-4 text-white" />
-                     )}
-                   </div>
-                   <div className="text-left">
-                     <p className="text-xs font-bold text-slate-900 leading-none">@{user.username || user.email}</p>
-                     <p className="text-[10px] text-slate-600 leading-none mt-0.5">Lvl {currentLevel} · {currentXp} XP</p>
-                   </div>
+               <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-lg bg-transparent flex items-center justify-center overflow-hidden">
+                   {rankCustomImage ? (
+                     <img 
+                       src={rankCustomImage} 
+                       alt="Rank"
+                       className="w-full h-full object-contain"
+                     />
+                   ) : (
+                     <RankIcon className="w-4 h-4 text-slate-700" />
+                   )}
                  </div>
-
-                 <Button
-                   onClick={async () => await User.logout()}
-                   variant="ghost"
-                   size="sm"
-                   className="text-slate-600 hover:text-slate-900 text-xs"
-                 >
-                   Logout
-                 </Button>
+                 <span className="text-sm font-medium text-slate-900">@{user.username || user.email}</span>
                </div>
               ) : (
                 <Button
                   onClick={() => base44.auth.redirectToLogin(window.location.href)}
                   size="sm"
-                  className="bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-white font-semibold text-xs h-8"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs h-8 px-4"
                 >
                   Login
                 </Button>

@@ -39,7 +39,7 @@ export default function Categories() {
       if (selectedCategory !== "all") {
         premadeFilters.category = selectedCategory;
       }
-      const premadeData = await base44.entities.PremadeDebate.filter(premadeFilters, '-marketVolume', 50);
+      const premadeData = await base44.entities.PremadeDebate.filter(premadeFilters, '-marketVolume', 15);
       setPremadeDebates(premadeData);
     } catch (error) {
       console.error("Error loading debates:", error);

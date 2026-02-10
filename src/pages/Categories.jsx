@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function Categories() {
+  const navigate = useNavigate();
   const [debates, setDebates] = useState([]);
   const [premadeDebates, setPremadeDebates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +95,7 @@ export default function Categories() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {premadeDebates.map((debate) => (
-                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
+                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl transition-all">
                       <CardHeader>
                         <div className="flex items-start justify-between gap-3">
                           <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
@@ -104,24 +108,33 @@ export default function Categories() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">Position A:</span>
-                            <span className="font-medium text-slate-200">{debate.positionA}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">Position B:</span>
-                            <span className="font-medium text-slate-200">{debate.positionB}</span>
-                          </div>
-                          {debate.tags && debate.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {debate.tags.slice(0, 3).map((tag, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs text-slate-400 border-slate-600">
-                                  {tag}
-                                </Badge>
-                              ))}
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-400">Position A:</span>
+                              <span className="font-medium text-slate-200">{debate.positionA}</span>
                             </div>
-                          )}
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-400">Position B:</span>
+                              <span className="font-medium text-slate-200">{debate.positionB}</span>
+                            </div>
+                            {debate.tags && debate.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {debate.tags.slice(0, 3).map((tag, idx) => (
+                                  <Badge key={idx} variant="outline" className="text-xs text-slate-400 border-slate-600">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <Button 
+                            className="w-full bg-blue-600 hover:bg-blue-700"
+                            onClick={() => alert("Join debate functionality coming soon!")}
+                          >
+                            Join Debate
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -135,7 +148,7 @@ export default function Categories() {
                 <h2 className="text-2xl font-bold text-white mb-4">Community Debates</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {debates.map((debate) => (
-                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
+                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl transition-all">
                       <CardHeader>
                         <div className="flex items-start justify-between gap-3">
                           <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
@@ -146,15 +159,24 @@ export default function Categories() {
                         <CardDescription className="mt-2 text-slate-400">{debate.description}</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">Position A:</span>
-                            <span className="font-medium text-slate-200">{debate.position_a}</span>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-400">Position A:</span>
+                              <span className="font-medium text-slate-200">{debate.position_a}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-400">Position B:</span>
+                              <span className="font-medium text-slate-200">{debate.position_b}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">Position B:</span>
-                            <span className="font-medium text-slate-200">{debate.position_b}</span>
-                          </div>
+                          <Button 
+                            className="w-full bg-blue-600 hover:bg-blue-700"
+                            onClick={() => alert("Join debate functionality coming soon!")}
+                          >
+                            Join Debate
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>

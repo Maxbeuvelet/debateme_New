@@ -3,85 +3,133 @@ import { Gem, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [activeArticle, setActiveArticle] = useState(null);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
-      {/* Animated background */}
-      <div className="fixed inset-0 opacity-30">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-600 via-transparent to-transparent animate-pulse" />
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
+      {/* Animated background with moving particles */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" />
+        <div className="absolute inset-0 opacity-50">
+          {[...Array(50)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                opacity: Math.random() * 0.5 + 0.2,
+              }}
+              animate={{
+                x: [
+                  Math.random() * window.innerWidth,
+                  Math.random() * window.innerWidth,
+                  Math.random() * window.innerWidth,
+                ],
+                y: [
+                  Math.random() * window.innerHeight,
+                  Math.random() * window.innerHeight,
+                  Math.random() * window.innerHeight,
+                ],
+                opacity: [0.2, 0.5, 0.2],
+              }}
+              transition={{
+                duration: Math.random() * 20 + 10,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Main wrapper */}
       <div className="relative z-10">
         {/* Header */}
-        <header className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
-          <div className="mb-8">
+        <motion.header
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="flex flex-col items-center justify-center min-h-screen px-4 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="mb-8"
+          >
             <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center border-4 border-white rounded-full bg-white/10 backdrop-blur-sm">
               <Gem className="w-12 h-12" />
             </div>
-          </div>
+          </motion.div>
           
-          <div className="max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="max-w-2xl"
+          >
             <h1 className="text-6xl md:text-7xl font-bold mb-6 tracking-tight">Dimension</h1>
             <p className="text-lg md:text-xl text-gray-300 mb-12 leading-relaxed">
               A morbi blandit ante natoque aliquet ut Commodo cep cubilia<br />
               cep quam augue vel Feugiat Aliquam egestas.
             </p>
-          </div>
+          </motion.div>
 
           {/* Navigation */}
-          <nav>
+          <motion.nav
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
             <ul className="flex flex-wrap gap-4 justify-center">
-              <li>
-                <button
-                  onClick={() => setActiveArticle("intro")}
-                  className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all"
+              {["intro", "work", "about", "contact"].map((item, i) => (
+                <motion.li
+                  key={item}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + i * 0.1 }}
                 >
-                  Intro
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveArticle("work")}
-                  className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all"
-                >
-                  Work
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveArticle("about")}
-                  className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all"
-                >
-                  About
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveArticle("contact")}
-                  className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all"
-                >
-                  Contact
-                </button>
-              </li>
+                  <button
+                    onClick={() => setActiveArticle(item)}
+                    className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 transition-all hover:scale-105"
+                  >
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </button>
+                </motion.li>
+              ))}
             </ul>
-          </nav>
-        </header>
+          </motion.nav>
+        </motion.header>
 
         {/* Article Modal Overlay */}
-        {activeArticle && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-slate-900/95 backdrop-blur-lg border border-white/20 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              {/* Close button */}
-              <button
-                onClick={() => setActiveArticle(null)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+        <AnimatePresence>
+          {activeArticle && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setActiveArticle(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                transition={{ type: "spring", damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-slate-900/95 backdrop-blur-lg border border-white/20 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative"
               >
-                <X className="w-6 h-6" />
-              </button>
+                {/* Close button */}
+                <button
+                  onClick={() => setActiveArticle(null)}
+                  className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors z-10"
+                >
+                  <X className="w-6 h-6" />
+                </button>
 
               <div className="p-8 md:p-12">
                 {activeArticle === "intro" && (
@@ -191,9 +239,10 @@ export default function Home() {
                   </article>
                 )}
               </div>
-            </div>
-          </div>
-        )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Footer */}
         <footer className="absolute bottom-0 left-0 right-0 py-6 text-center text-sm text-gray-400">

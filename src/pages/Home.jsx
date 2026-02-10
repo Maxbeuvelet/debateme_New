@@ -1055,7 +1055,7 @@ export default function Home() {
             <ul>
               <li><a href={createPageUrl("Categories")}>Categories</a></li>
               <li><a href={createPageUrl("Trending")}>Trending</a></li>
-              <li><a href="#about">About</a></li>
+              <li><a href={createPageUrl("Achievements")}>Achievements</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
           </nav>
@@ -1076,8 +1076,8 @@ export default function Home() {
             <p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
           </article>
 
-          <article id="about">
-            <h2 className="major">About</h2>
+          <article id="achievements">
+            <h2 className="major">Achievements</h2>
             <span className="image main"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop" alt="" /></span>
             <p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
           </article>

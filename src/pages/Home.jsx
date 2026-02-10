@@ -241,6 +241,10 @@ export default function Home() {
 
     return () => {
       document.body.classList.remove('is-preload');
+      document.documentElement.style.height = '';
+      document.body.style.height = '';
+      document.body.style.margin = '';
+      document.body.style.padding = '';
     };
   }, []);
 

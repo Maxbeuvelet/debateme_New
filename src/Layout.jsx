@@ -229,7 +229,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       
       {/* Top Navigation Bar - Desktop */}
-      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-slate-100/95 backdrop-blur-md border-b border-slate-300/60">
+      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-black backdrop-blur-md border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
@@ -239,7 +239,7 @@ export default function Layout({ children, currentPageName }) {
                 alt="DebateMe" 
                 className="w-7 h-7 object-contain"
               />
-              <span className="font-bold text-slate-900 text-sm">DebateMe</span>
+              <span className="font-bold text-white text-sm">DebateMe</span>
             </Link>
 
             {/* Navigation Links */}
@@ -250,8 +250,8 @@ export default function Layout({ children, currentPageName }) {
                   to={item.url}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                     location.pathname === item.url
-                      ? 'text-slate-900'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'text-white'
+                      : 'text-slate-300 hover:text-white'
                   }`}
                 >
                   <span>{item.title}</span>
@@ -259,7 +259,7 @@ export default function Layout({ children, currentPageName }) {
                     <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse" />
                   )}
                   {location.pathname === item.url && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
                   )}
                 </Link>
               ))}
@@ -271,7 +271,7 @@ export default function Layout({ children, currentPageName }) {
                 onClick={() => setShowBugDialog(true)}
                 variant="ghost"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs"
+                className="text-red-400 hover:text-red-300 hover:bg-slate-800 text-xs"
               >
                 <Bug className="w-3.5 h-3.5 mr-1" />
                 Report Bug
@@ -296,8 +296,8 @@ export default function Layout({ children, currentPageName }) {
                      )}
                    </div>
                    <div className="text-left">
-                     <p className="text-xs font-bold text-slate-900 leading-none">@{user.username || user.email}</p>
-                     <p className="text-[10px] text-slate-600 leading-none mt-0.5">Lvl {currentLevel} · {currentXp} XP</p>
+                     <p className="text-xs font-bold text-white leading-none">@{user.username || user.email}</p>
+                     <p className="text-[10px] text-slate-300 leading-none mt-0.5">Lvl {currentLevel} · {currentXp} XP</p>
                    </div>
                  </div>
 
@@ -305,7 +305,7 @@ export default function Layout({ children, currentPageName }) {
                    onClick={async () => await User.logout()}
                    variant="ghost"
                    size="sm"
-                   className="text-slate-600 hover:text-slate-900 text-xs"
+                   className="text-slate-300 hover:text-white hover:bg-slate-800 text-xs"
                  >
                    Logout
                  </Button>
@@ -328,7 +328,7 @@ export default function Layout({ children, currentPageName }) {
       <div className="hidden md:block h-14" />
 
       {/* Mobile Header */}
-      <header className="bg-white border-b border-slate-200 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40">
+      <header className="bg-black border-b border-slate-700 p-3 sm:p-4 md:hidden flex items-center justify-between fixed top-0 left-0 right-0 z-40">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Button
             variant="ghost"
@@ -344,7 +344,7 @@ export default function Layout({ children, currentPageName }) {
               alt="DebateMe" 
               className="w-7 h-7 sm:w-8 sm:h-8 object-contain flex-shrink-0"
             />
-            <h1 className="font-bold text-slate-900 text-sm sm:text-base truncate">DebateMe</h1>
+            <h1 className="font-bold text-white text-sm sm:text-base truncate">DebateMe</h1>
           </div>
         </div>
         {user && (

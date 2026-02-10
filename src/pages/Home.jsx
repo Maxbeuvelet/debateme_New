@@ -1054,7 +1054,7 @@ export default function Home() {
           <nav>
             <ul>
               <li><a href={createPageUrl("Categories")}>Categories</a></li>
-              <li><a href="#work">Work</a></li>
+              <li><a href={createPageUrl("Trending")}>Trending</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>

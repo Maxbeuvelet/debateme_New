@@ -33,11 +33,25 @@ Deno.serve(async (req) => {
     // Filter for high-volume markets
     const highVolumeMarkets = markets.filter(m => (m.volume || 0) >= 50000);
     
-    // Deduplicate by extracting key entities
+    // Separate GTA markets and others
+    const gtaMarkets = highVolumeMarkets.filter(m => 
+      /gta\s*(?:6|vi|six)/i.test(m.question)
+    );
+    const nonGtaMarkets = highVolumeMarkets.filter(m => 
+      !/gta\s*(?:6|vi|six)/i.test(m.question)
+    );
+    
+    // Add only highest volume GTA market (if any)
     const uniqueMarkets = [];
+    if (gtaMarkets.length > 0) {
+      gtaMarkets.sort((a, b) => (b.volume || 0) - (a.volume || 0));
+      uniqueMarkets.push(gtaMarkets[0]);
+    }
+    
+    // Deduplicate non-GTA markets by extracting key entities
     const seenEntities = new Set();
     
-    for (const market of highVolumeMarkets) {
+    for (const market of nonGtaMarkets) {
       const question = market.question.toLowerCase();
       
       // Extract key entities (brands, names, specific terms)
@@ -45,7 +59,6 @@ Deno.serve(async (req) => {
       
       // Common entities to look for
       const patterns = [
-        /gta\s*(?:6|vi|six)/i,
         /trump/i,
         /biden/i,
         /bitcoin/i,

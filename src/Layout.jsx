@@ -316,7 +316,11 @@ export default function Layout({ children, currentPageName }) {
                      <RankIcon className="w-5 h-5 text-slate-700" />
                    )}
                  </div>
-                 <span className="text-sm font-medium text-slate-900">@{user.username || user.email}</span>
+                 <div className="flex items-center gap-1.5">
+                   <span className="text-sm font-bold text-slate-900">Level {currentLevel}</span>
+                   <span className="text-slate-400">•</span>
+                   <span className="text-sm font-bold text-slate-900">@{user.username || user.email}</span>
+                 </div>
                </div>
               ) : (
                 <Button

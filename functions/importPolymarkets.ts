@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
 
     // Fetch markets from Polymarket - using simpler endpoint
     const response = await fetch(
-      'https://gamma-api.polymarket.com/markets?limit=30&closed=false',
+      'https://gamma-api.polymarket.com/markets?limit=100&closed=false',
       { signal: AbortSignal.timeout(10000) }
     );
     
@@ -30,8 +30,33 @@ Deno.serve(async (req) => {
 
     const markets = await response.json();
     
-    // Filter for high-volume markets manually and limit to 15
-    const filteredMarkets = markets.filter(m => (m.volume || 0) >= 10000).slice(0, 15);
+    // Filter for high-volume markets
+    const highVolumeMarkets = markets.filter(m => (m.volume || 0) >= 50000);
+    
+    // Deduplicate by extracting key terms and grouping
+    const uniqueMarkets = [];
+    const seenTopics = new Set();
+    
+    for (const market of highVolumeMarkets) {
+      // Extract main topic by removing common words
+      const topic = market.question
+        .toLowerCase()
+        .replace(/will |won't |does |doesn't |can |can't |should |by \d{4}|before |after /g, '')
+        .split(/[?.,]/)[0]
+        .trim()
+        .split(' ')
+        .slice(0, 3)
+        .join(' ');
+      
+      if (!seenTopics.has(topic)) {
+        seenTopics.add(topic);
+        uniqueMarkets.push(market);
+      }
+      
+      if (uniqueMarkets.length >= 15) break;
+    }
+    
+    const filteredMarkets = uniqueMarkets;
     stats.fetched = filteredMarkets.length || 0;
 
     // Process each market

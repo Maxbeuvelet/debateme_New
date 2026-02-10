@@ -172,7 +172,7 @@ export default function Categories() {
                           </div>
                           <Button 
                             className="w-full bg-blue-600 hover:bg-blue-700"
-                            onClick={() => alert("Join debate functionality coming soon!")}
+                            onClick={() => navigate(createPageUrl("JoinDebate") + `?id=${debate.id}&premade=false`)}
                           >
                             Join Debate
                             <ArrowRight className="w-4 h-4 ml-2" />

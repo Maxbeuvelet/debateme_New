@@ -75,12 +75,10 @@ export default function Home() {
         xxsmall: [null, '360px']
       });
 
-      // Play initial animations on page load
-      $window.on('load', function() {
-        window.setTimeout(function() {
-          $body.removeClass('is-preload');
-        }, 100);
-      });
+      // Remove preload class immediately to show content
+      window.setTimeout(function() {
+        $body.removeClass('is-preload');
+      }, 100);
 
       // Nav alignment
       const $nav = $header.children('nav');

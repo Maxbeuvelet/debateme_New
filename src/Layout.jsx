@@ -24,11 +24,6 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Create",
-    url: createPageUrl("Create"),
-    icon: PlusCircle,
-  },
-  {
     title: "Trending",
     url: createPageUrl("Trending"),
     icon: TrendingUp,

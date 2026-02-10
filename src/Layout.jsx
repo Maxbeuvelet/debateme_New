@@ -304,7 +304,7 @@ export default function Layout({ children, currentPageName }) {
                  <div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" />
                </div>
               ) : user ? (
-               <div className="flex items-center gap-2">
+               <Link to={createPageUrl("Profile")} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                  <div className="w-8 h-8 rounded-lg bg-transparent flex items-center justify-center overflow-hidden">
                    {rankCustomImage ? (
                      <img 
@@ -316,12 +316,11 @@ export default function Layout({ children, currentPageName }) {
                      <RankIcon className="w-5 h-5 text-slate-700" />
                    )}
                  </div>
-                 <div className="flex items-center gap-1.5">
-                   <span className="text-sm font-bold text-slate-900">Level {currentLevel}</span>
-                   <span className="text-slate-400">•</span>
-                   <span className="text-sm font-bold text-slate-900">@{user.username || user.email}</span>
+                 <div className="flex flex-col">
+                   <span className="text-sm font-bold text-slate-900 leading-tight">@{user.username || user.email}</span>
+                   <span className="text-xs font-bold text-slate-600 leading-tight">Level {currentLevel} • {currentXp} XP</span>
                  </div>
-               </div>
+               </Link>
               ) : (
                 <Button
                   onClick={() => base44.auth.redirectToLogin(window.location.href)}

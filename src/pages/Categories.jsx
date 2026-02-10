@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 
 export default function Categories() {
   const [debates, setDebates] = useState([]);
+  const [premadeDebates, setPremadeDebates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -32,6 +33,14 @@ export default function Categories() {
       }
       const data = await base44.entities.Debate.filter(filters);
       setDebates(data);
+
+      // Load premade debates from Polymarket
+      const premadeFilters = {};
+      if (selectedCategory !== "all") {
+        premadeFilters.category = selectedCategory;
+      }
+      const premadeData = await base44.entities.PremadeDebate.filter(premadeFilters, '-marketVolume', 50);
+      setPremadeDebates(premadeData);
     } catch (error) {
       console.error("Error loading debates:", error);
     } finally {
@@ -67,42 +76,96 @@ export default function Categories() {
           ))}
         </div>
 
-        {/* Debates Grid */}
+        {/* Premade Debates from Polymarket */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {debates.map((debate) => (
-              <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-3">
-                    <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
-                    <Badge className={categories.find(c => c.id === debate.category)?.color || "bg-slate-600"}>
-                      {debate.category}
-                    </Badge>
-                  </div>
-                  <CardDescription className="mt-2 text-slate-400">{debate.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-400">Position A:</span>
-                      <span className="font-medium text-slate-200">{debate.position_a}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-400">Position B:</span>
-                      <span className="font-medium text-slate-200">{debate.position_b}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <>
+            {premadeDebates.length > 0 && (
+              <div className="mb-12">
+                <div className="flex items-center gap-2 mb-4">
+                  <h2 className="text-2xl font-bold text-white">Trending Predictions</h2>
+                  <Badge className="bg-purple-600">From Polymarket</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {premadeDebates.map((debate) => (
+                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-3">
+                          <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
+                          <Badge className={categories.find(c => c.id === debate.category)?.color || "bg-slate-600"}>
+                            {debate.category}
+                          </Badge>
+                        </div>
+                        <CardDescription className="mt-2 text-slate-400">
+                          ${(debate.marketVolume / 1000).toFixed(0)}K volume
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Position A:</span>
+                            <span className="font-medium text-slate-200">{debate.positionA}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Position B:</span>
+                            <span className="font-medium text-slate-200">{debate.positionB}</span>
+                          </div>
+                          {debate.tags && debate.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {debate.tags.slice(0, 3).map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs text-slate-400 border-slate-600">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {debates.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-4">Community Debates</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {debates.map((debate) => (
+                    <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-3">
+                          <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
+                          <Badge className={categories.find(c => c.id === debate.category)?.color || "bg-slate-600"}>
+                            {debate.category}
+                          </Badge>
+                        </div>
+                        <CardDescription className="mt-2 text-slate-400">{debate.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Position A:</span>
+                            <span className="font-medium text-slate-200">{debate.position_a}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Position B:</span>
+                            <span className="font-medium text-slate-200">{debate.position_b}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
-        {!loading && debates.length === 0 && (
+        {!loading && debates.length === 0 && premadeDebates.length === 0 && (
           <div className="text-center py-20">
             <p className="text-slate-400 text-lg">No debates found in this category.</p>
           </div>

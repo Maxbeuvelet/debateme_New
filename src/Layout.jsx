@@ -5,7 +5,6 @@ import { Home, TrendingUp, LayoutGrid, Users, Gavel, Trophy, Hexagon, Shield, Za
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import GlobalChat from "@/components/chat/GlobalChat";
 import {
   Dialog,
   DialogContent,
@@ -25,16 +24,6 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Create",
-    url: createPageUrl("CreateDebate"),
-    icon: PlusCircle,
-  },
-  {
-    title: "Trending",
-    url: createPageUrl("Trending"),
-    icon: TrendingUp,
-  },
-  {
     title: "Categories",
     url: createPageUrl("Categories"),
     icon: LayoutGrid,
@@ -43,16 +32,6 @@ const navigationItems = [
     title: "Achievements",
     url: createPageUrl("Achievements"),
     icon: Star,
-  },
-  {
-    title: "Ranked",
-    url: createPageUrl("Ranked"),
-    icon: Trophy,
-  },
-  {
-    title: "Community",
-    url: createPageUrl("Community"),
-    icon: Users,
   }
 ];
 
@@ -150,9 +129,7 @@ export default function Layout({ children, currentPageName }) {
             setHasNewAchievements(true);
           }
 
-          if (currentUser && !currentUser.username && currentPageName !== "SetupProfile") {
-            window.location.href = createPageUrl("SetupProfile");
-          }
+
         } else {
           setUser(null);
         }
@@ -311,38 +288,38 @@ export default function Layout({ children, currentPageName }) {
               </Button>
 
               {isLoadingUser && !hasUserLoadedOnce ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" />
-                </div>
+               <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" />
+               </div>
               ) : user ? (
-                <div className="flex items-center gap-3">
-                  <Link to={createPageUrl("UserStats")} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <div className="w-8 h-8 rounded-lg bg-transparent flex items-center justify-center shadow-md overflow-hidden">
-                      {rankCustomImage ? (
-                        <img 
-                          src={rankCustomImage} 
-                          alt="Rank"
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <RankIcon className="w-4 h-4 text-white" />
-                      )}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-slate-900 leading-none">@{user.username}</p>
-                      <p className="text-[10px] text-slate-600 leading-none mt-0.5">Lvl {currentLevel} · {currentXp} XP</p>
-                    </div>
-                  </Link>
-                  
-                  <Button
-                    onClick={async () => await User.logout()}
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-600 hover:text-slate-900 text-xs"
-                  >
-                    Logout
-                  </Button>
-                </div>
+               <div className="flex items-center gap-3">
+                 <div className="flex items-center gap-2">
+                   <div className="w-8 h-8 rounded-lg bg-transparent flex items-center justify-center shadow-md overflow-hidden">
+                     {rankCustomImage ? (
+                       <img 
+                         src={rankCustomImage} 
+                         alt="Rank"
+                         className="w-full h-full object-contain"
+                       />
+                     ) : (
+                       <RankIcon className="w-4 h-4 text-white" />
+                     )}
+                   </div>
+                   <div className="text-left">
+                     <p className="text-xs font-bold text-slate-900 leading-none">@{user.username || user.email}</p>
+                     <p className="text-[10px] text-slate-600 leading-none mt-0.5">Lvl {currentLevel} · {currentXp} XP</p>
+                   </div>
+                 </div>
+
+                 <Button
+                   onClick={async () => await User.logout()}
+                   variant="ghost"
+                   size="sm"
+                   className="text-slate-600 hover:text-slate-900 text-xs"
+                 >
+                   Logout
+                 </Button>
+               </div>
               ) : (
                 <Button
                   onClick={() => base44.auth.redirectToLogin(window.location.href)}
@@ -381,7 +358,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </div>
         {user && (
-          <Link to={createPageUrl("UserStats")} className="flex-shrink-0">
+          <div className="flex-shrink-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-transparent flex items-center justify-center shadow-md overflow-hidden">
               {rankCustomImage ? (
                 <img 
@@ -393,7 +370,7 @@ export default function Layout({ children, currentPageName }) {
                 <RankIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               )}
             </div>
-          </Link>
+          </div>
         )}
       </header>
 
@@ -494,28 +471,23 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : user ? (
                   <div className="space-y-2">
-                    <Link 
-                      to={createPageUrl("UserStats")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <div className="flex items-center gap-2 p-2 bg-slate-200/50 rounded-lg hover:bg-slate-300/50 transition-colors cursor-pointer">
-                        <div className="w-10 h-10 rounded-lg bg-transparent flex items-center justify-center shadow-lg overflow-hidden">
-                          {rankCustomImage ? (
-                            <img 
-                              src={rankCustomImage} 
-                              alt="Rank"
-                              className="w-full h-full object-contain"
-                            />
-                          ) : (
-                            <RankIcon className="w-5 h-5 text-white" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-slate-900 truncate text-sm">@{user.username}</p>
-                          <p className="text-[10px] text-slate-600 font-medium">Level {currentLevel} · {currentXp} XP</p>
-                        </div>
+                    <div className="flex items-center gap-2 p-2 bg-slate-200/50 rounded-lg">
+                      <div className="w-10 h-10 rounded-lg bg-transparent flex items-center justify-center shadow-lg overflow-hidden">
+                        {rankCustomImage ? (
+                          <img 
+                            src={rankCustomImage} 
+                            alt="Rank"
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <RankIcon className="w-5 h-5 text-white" />
+                        )}
                       </div>
-                    </Link>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-slate-900 truncate text-sm">@{user.username || user.email}</p>
+                        <p className="text-[10px] text-slate-600 font-medium">Level {currentLevel} · {currentXp} XP</p>
+                      </div>
+                    </div>
                     
                     <div className="px-2">
                       <div className="flex justify-between items-center mb-1">
@@ -564,8 +536,7 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
 
-      {/* Global Chat - Hidden for now */}
-              {/* <GlobalChat currentUser={user} /> */}
+
 
       {/* Bug Report Dialog */}
       <Dialog open={showBugDialog} onOpenChange={setShowBugDialog}>

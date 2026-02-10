@@ -19,7 +19,8 @@ Deno.serve(async (req) => {
 
     // Fetch markets from Polymarket - using simpler endpoint
     const response = await fetch(
-      'https://gamma-api.polymarket.com/markets?limit=75&closed=false'
+      'https://gamma-api.polymarket.com/markets?limit=30&closed=false',
+      { signal: AbortSignal.timeout(10000) }
     );
     
     if (!response.ok) {
@@ -29,8 +30,8 @@ Deno.serve(async (req) => {
 
     const markets = await response.json();
     
-    // Filter for high-volume markets manually
-    const filteredMarkets = markets.filter(m => (m.volume || 0) >= 10000);
+    // Filter for high-volume markets manually and limit to 15
+    const filteredMarkets = markets.filter(m => (m.volume || 0) >= 10000).slice(0, 15);
     stats.fetched = filteredMarkets.length || 0;
 
     // Process each market
@@ -61,39 +62,41 @@ Deno.serve(async (req) => {
       debateTitle = debateTitle.replace(/\s+by\s+[A-Z][a-z]+\s+\d{4}\??$/, '?');
       debateTitle = debateTitle.replace(/\s+before\s+[A-Z][a-z]+\s+\d{4}\??$/, '?');
 
-      // Generate debate content using LLM
-      const llmPrompt = `Given this prediction market question: "${market.question}"
-
-Generate debate content in JSON format:
-{
-  "category": "one of: politics, social_issues, technology, environment, economics, healthcare",
-  "tags": ["tag1", "tag2", "tag3"],
-  "bulletsA": ["3-5 concise argument bullets supporting YES/FOR position"],
-  "bulletsB": ["3-5 concise argument bullets supporting NO/AGAINST position"]
-}
-
-Keep bullets general and logical, not claiming specific unprovable facts.`;
-
-      let debateContent;
-      try {
-        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
-          prompt: llmPrompt,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              category: { type: "string" },
-              tags: { type: "array", items: { type: "string" } },
-              bulletsA: { type: "array", items: { type: "string" } },
-              bulletsB: { type: "array", items: { type: "string" } }
-            }
-          }
-        });
-        debateContent = llmResponse;
-      } catch (llmError) {
-        stats.skipped++;
-        stats.skipReasons.push(`LLM error for ${market.id}: ${llmError.message}`);
-        continue;
+      // Auto-categorize based on keywords
+      let category = 'politics';
+      const title = market.question.toLowerCase();
+      if (title.includes('tech') || title.includes('ai') || title.includes('crypto')) {
+        category = 'technology';
+      } else if (title.includes('climate') || title.includes('environment')) {
+        category = 'environment';
+      } else if (title.includes('health') || title.includes('medical')) {
+        category = 'healthcare';
+      } else if (title.includes('economy') || title.includes('market') || title.includes('price')) {
+        category = 'economics';
+      } else if (title.includes('social') || title.includes('culture')) {
+        category = 'social_issues';
       }
+
+      // Simple tags extraction
+      const tags = [];
+      if (market.tags && Array.isArray(market.tags)) {
+        tags.push(...market.tags.slice(0, 3));
+      }
+
+      const debateContent = {
+        category,
+        tags,
+        bulletsA: [
+          "Historical trends support this outcome",
+          "Current data suggests positive momentum",
+          "Expert analysis leans toward this position"
+        ],
+        bulletsB: [
+          "Alternative scenarios remain plausible",
+          "Uncertainty factors could change outcomes",
+          "Historical precedents show different results"
+        ]
+      };
 
       // Check if debate already exists
       const existing = await base44.asServiceRole.entities.PremadeDebate.filter({

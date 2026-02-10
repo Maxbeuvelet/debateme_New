@@ -67,9 +67,38 @@ export default function JoinDebate() {
 
     setJoining(true);
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isPremade = urlParams.get('premade') === 'true';
+      
+      let actualDebateId = debate.id;
+      
+      // If this is a premade debate, create a Debate record from it
+      if (isPremade) {
+        // Check if a Debate already exists for this premade
+        const existingDebates = await base44.entities.Debate.filter({
+          title: debate.title
+        });
+        
+        if (existingDebates && existingDebates.length > 0) {
+          actualDebateId = existingDebates[0].id;
+        } else {
+          // Create new Debate from PremadeDebate
+          const newDebate = await base44.entities.Debate.create({
+            title: debate.title,
+            description: debate.description || `Market from Polymarket`,
+            category: debate.category || 'politics',
+            position_a: debate.position_a,
+            position_b: debate.position_b,
+            status: 'active',
+            is_user_created: false
+          });
+          actualDebateId = newDebate.id;
+        }
+      }
+      
       // Create user stance
       const stance = await base44.entities.UserStance.create({
-        debate_id: debate.id,
+        debate_id: actualDebateId,
         user_id: user.id,
         user_name: user.username || user.email,
         position: position
@@ -77,7 +106,7 @@ export default function JoinDebate() {
 
       // Start matching
       const matchResponse = await base44.functions.invoke('matchDebater', {
-        debateId: debate.id,
+        debateId: actualDebateId,
         stanceId: stance.id
       });
 

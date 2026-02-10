@@ -24,14 +24,14 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Trending",
-    url: createPageUrl("Trending"),
-    icon: TrendingUp,
-  },
-  {
     title: "Categories",
     url: createPageUrl("Categories"),
     icon: LayoutGrid,
+  },
+  {
+    title: "Trending",
+    url: createPageUrl("Trending"),
+    icon: TrendingUp,
   },
   {
     title: "Achievements",

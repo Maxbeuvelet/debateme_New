@@ -53,6 +53,7 @@ import JoinDebate from './pages/JoinDebate';
 import PolymarketAdmin from './pages/PolymarketAdmin';
 import WaitingRoom from './pages/WaitingRoom';
 import Trending from './pages/Trending';
+import Achievements from './pages/Achievements';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "PolymarketAdmin": PolymarketAdmin,
     "WaitingRoom": WaitingRoom,
     "Trending": Trending,
+    "Achievements": Achievements,
 }
 
 export const pagesConfig = {

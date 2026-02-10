@@ -22,16 +22,6 @@ const navigationItems = [
     title: "Home",
     url: createPageUrl("Home"),
     icon: Home,
-  },
-  {
-    title: "Categories",
-    url: createPageUrl("Categories"),
-    icon: LayoutGrid,
-  },
-  {
-    title: "Achievements",
-    url: createPageUrl("Achievements"),
-    icon: Star,
   }
 ];
 

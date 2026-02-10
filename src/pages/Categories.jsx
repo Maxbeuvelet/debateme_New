@@ -40,12 +40,12 @@ export default function Categories() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-slate-900">
       {/* Header Bar */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="bg-slate-800 border-b border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-slate-900">Debate Categories</h1>
-          <p className="text-slate-600 mt-2">Choose a topic and join the conversation</p>
+          <h1 className="text-3xl font-bold text-white">Debate Categories</h1>
+          <p className="text-slate-300 mt-2">Choose a topic and join the conversation</p>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ export default function Categories() {
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                 selectedCategory === category.id
                   ? `${category.color} text-white shadow-lg scale-105`
-                  : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-300"
+                  : "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
               }`}
             >
               {category.name}
@@ -70,30 +70,30 @@ export default function Categories() {
         {/* Debates Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-slate-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {debates.map((debate) => (
-              <Card key={debate.id} className="hover:shadow-xl transition-shadow cursor-pointer">
+              <Card key={debate.id} className="bg-slate-800 border-slate-700 hover:shadow-xl hover:bg-slate-750 transition-all cursor-pointer">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-3">
-                    <CardTitle className="text-lg">{debate.title}</CardTitle>
+                    <CardTitle className="text-lg text-white">{debate.title}</CardTitle>
                     <Badge className={categories.find(c => c.id === debate.category)?.color || "bg-slate-600"}>
                       {debate.category}
                     </Badge>
                   </div>
-                  <CardDescription className="mt-2">{debate.description}</CardDescription>
+                  <CardDescription className="mt-2 text-slate-400">{debate.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Position A:</span>
-                      <span className="font-medium">{debate.position_a}</span>
+                      <span className="text-slate-400">Position A:</span>
+                      <span className="font-medium text-slate-200">{debate.position_a}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Position B:</span>
-                      <span className="font-medium">{debate.position_b}</span>
+                      <span className="text-slate-400">Position B:</span>
+                      <span className="font-medium text-slate-200">{debate.position_b}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -104,7 +104,7 @@ export default function Categories() {
 
         {!loading && debates.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-slate-600 text-lg">No debates found in this category.</p>
+            <p className="text-slate-400 text-lg">No debates found in this category.</p>
           </div>
         )}
       </div>

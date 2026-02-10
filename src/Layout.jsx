@@ -278,7 +278,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={item.title}
                   to={item.url}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-base font-semibold transition-colors duration-200 ${
                     location.pathname === item.url
                       ? 'text-slate-900'
                       : 'text-slate-600 hover:text-slate-900'

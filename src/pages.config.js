@@ -47,19 +47,11 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Achievements from './pages/Achievements';
-import AdminDashboard from './pages/AdminDashboard';
-import Categories from './pages/Categories';
-import CategoryTopics from './pages/CategoryTopics';
 import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Achievements": Achievements,
-    "AdminDashboard": AdminDashboard,
-    "Categories": Categories,
-    "CategoryTopics": CategoryTopics,
     "Home": Home,
 }
 

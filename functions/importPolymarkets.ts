@@ -17,20 +17,24 @@ Deno.serve(async (req) => {
       skipReasons: []
     };
 
-    // Fetch markets from Polymarket
+    // Fetch markets from Polymarket - using simpler endpoint
     const response = await fetch(
-      'https://gamma-api.polymarket.com/markets?limit=75&order=volume_num&ascending=false&volume_num_min=10000'
+      'https://gamma-api.polymarket.com/markets?limit=75&closed=false'
     );
     
     if (!response.ok) {
-      throw new Error(`Polymarket API error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Polymarket API error ${response.status}: ${errorText}`);
     }
 
     const markets = await response.json();
-    stats.fetched = markets.length || 0;
+    
+    // Filter for high-volume markets manually
+    const filteredMarkets = markets.filter(m => (m.volume || 0) >= 10000);
+    stats.fetched = filteredMarkets.length || 0;
 
     // Process each market
-    for (const market of markets) {
+    for (const market of filteredMarkets) {
       // Quality filters
       if (!market.question || market.question.trim() === '') {
         stats.skipped++;

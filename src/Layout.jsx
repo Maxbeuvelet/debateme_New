@@ -53,10 +53,6 @@ const getRankCustomImage = (level) => {
 };
 
 export default function Layout({ children, currentPageName }) {
-  // Hide layout for Home page (Dimension template)
-  if (currentPageName === "Home") {
-    return children;
-  }
   const location = useLocation();
   const [user, setUser] = React.useState(null);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);

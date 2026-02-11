@@ -26,7 +26,21 @@ export default function DebateRoom() {
   const dailyCallRef = useRef(null);
 
   useEffect(() => {
-    loadDebateRoom();
+    // Load Daily.co script
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@daily-co/daily-js';
+    script.async = true;
+    document.head.appendChild(script);
+    
+    script.onload = () => {
+      loadDebateRoom();
+    };
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -107,7 +121,7 @@ export default function DebateRoom() {
       setStance(myStance);
       setOpponent(opponentStance);
       setMessages(chatMessages.reverse());
-      setVideoRoom(roomResponse.data.room_url);
+      setVideoRoom(roomResponse.data.roomUrl);
 
       // Initialize Daily.co
       if (roomResponse.data.room_url && window.DailyIframe) {
@@ -150,24 +164,27 @@ export default function DebateRoom() {
   const endDebate = async () => {
     try {
       if (dailyCallRef.current) {
-        dailyCallRef.current.leave();
+        await dailyCallRef.current.leave();
         dailyCallRef.current.destroy();
       }
 
-      await base44.entities.DebateSession.update(session.id, { status: "ended" });
-      
-      const sessionStartTime = new Date(session.created_date);
-      const sessionEndTime = new Date();
-      const durationMinutes = Math.floor((sessionEndTime - sessionStartTime) / 1000 / 60);
+      if (session) {
+        await base44.entities.DebateSession.update(session.id, { status: "ended" });
+        
+        const sessionStartTime = new Date(session.created_date);
+        const sessionEndTime = new Date();
+        const durationMinutes = Math.floor((sessionEndTime - sessionStartTime) / 1000 / 60);
 
-      await base44.functions.invoke('trackDebateTime', {
-        session_id: session.id,
-        duration_minutes: durationMinutes
-      });
+        await base44.functions.invoke('trackDebateTime', {
+          session_id: session.id,
+          duration_minutes: durationMinutes
+        });
+      }
 
       navigate(createPageUrl("Categories"));
     } catch (error) {
       console.error("Error ending debate:", error);
+      navigate(createPageUrl("Categories"));
     }
   };
 
@@ -312,8 +329,6 @@ export default function DebateRoom() {
         </div>
       </div>
 
-      {/* Load Daily.co script */}
-      <script src="https://unpkg.com/@daily-co/daily-js"></script>
     </div>
   );
 }

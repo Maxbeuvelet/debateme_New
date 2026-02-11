@@ -32,28 +32,45 @@ export default function WaitingRoom() {
   useEffect(() => {
     if (!myStance) return;
 
-    // Subscribe to my stance updates (to detect when session_id gets assigned)
-    const stanceUnsubscribe = base44.entities.UserStance.subscribe((event) => {
-      if (event.type === 'update' && event.data.id === myStance.id && event.data.session_id) {
-        // My stance was matched! Load the session and opponent
-        base44.entities.DebateSession.get(event.data.session_id).then(session => {
+    const checkForMatch = async () => {
+      try {
+        // Re-fetch my stance to check if I've been matched
+        const updatedStance = await base44.entities.UserStance.get(myStance.id);
+        
+        if (updatedStance.session_id) {
+          // I've been matched! Load the session
+          const session = await base44.entities.DebateSession.get(updatedStance.session_id);
+          
           if (session && session.participant_a_id && session.participant_b_id) {
             const opponentStanceId = session.participant_a_id === myStance.id 
               ? session.participant_b_id 
               : session.participant_a_id;
             
-            base44.entities.UserStance.get(opponentStanceId).then(opponentStance => {
-              setOpponent(opponentStance);
-              setTimeout(() => {
-                navigate(createPageUrl("DebateRoom") + `?session_id=${session.id}`);
-              }, 2000);
-            });
+            const opponentStance = await base44.entities.UserStance.get(opponentStanceId);
+            setOpponent(opponentStance);
+            
+            setTimeout(() => {
+              navigate(createPageUrl("DebateRoom") + `?session_id=${session.id}`);
+            }, 2000);
           }
-        });
+        }
+      } catch (error) {
+        console.error("Error checking for match:", error);
+      }
+    };
+
+    // Poll every 2 seconds
+    const pollInterval = setInterval(checkForMatch, 2000);
+
+    // Also subscribe to real-time updates
+    const stanceUnsubscribe = base44.entities.UserStance.subscribe((event) => {
+      if (event.type === 'update' && event.data.id === myStance.id && event.data.session_id) {
+        checkForMatch();
       }
     });
 
     return () => {
+      clearInterval(pollInterval);
       stanceUnsubscribe();
     };
   }, [myStance]);

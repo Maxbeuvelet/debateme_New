@@ -26,13 +26,13 @@ export default function Community() {
 
   const loadTopDebaters = async () => {
     try {
-      const allUsers = await base44.entities.User.list("-level", 10);
+      const allUsers = await base44.entities.User.list("-level", 5);
       const sortedUsers = allUsers.sort((a, b) => {
         const levelDiff = (b.level || 0) - (a.level || 0);
         if (levelDiff !== 0) return levelDiff;
         return (b.xp || 0) - (a.xp || 0);
       });
-      setTopUsers(sortedUsers.slice(0, 10));
+      setTopUsers(sortedUsers.slice(0, 5));
     } catch (error) {
       console.error("Error loading top debaters:", error);
     } finally {

@@ -122,7 +122,7 @@ export default function Profile() {
           <Button
             onClick={handleLogout}
             size="sm"
-            className="bg-black text-white hover:bg-slate-900"
+            className="bg-red-600 text-white hover:bg-red-700"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout

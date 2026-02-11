@@ -20,16 +20,42 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(checkForOpponent, 2000);
     const timer = setInterval(() => {
       setTimeRemaining(prev => Math.max(0, prev - 1));
     }, 1000);
 
     return () => {
-      clearInterval(interval);
       clearInterval(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!myStance || !myStance.session_id) return;
+
+    // Subscribe to session updates
+    const unsubscribe = base44.entities.DebateSession.subscribe((event) => {
+      if (event.type === 'update' && event.data.id === myStance.session_id) {
+        // Check if session is active with both participants
+        if (event.data.status === 'active' && event.data.participant_a_id && event.data.participant_b_id) {
+          // Load opponent and navigate
+          const opponentStanceId = event.data.participant_a_id === myStance.id 
+            ? event.data.participant_b_id 
+            : event.data.participant_a_id;
+          
+          base44.entities.UserStance.get(opponentStanceId).then(opponentStance => {
+            setOpponent(opponentStance);
+            setTimeout(() => {
+              navigate(createPageUrl("DebateRoom") + `?session_id=${event.data.id}`);
+            }, 2000);
+          });
+        }
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [myStance]);
 
   const loadData = async () => {
     try {
@@ -58,29 +84,7 @@ export default function WaitingRoom() {
     }
   };
 
-  const checkForOpponent = async () => {
-    if (!myStance || !myStance.session_id) return;
 
-    try {
-      const session = await base44.entities.DebateSession.get(myStance.session_id);
-      
-      if (session) {
-        const opponentStanceId = session.participant_a_id === myStance.id 
-          ? session.participant_b_id 
-          : session.participant_a_id;
-        
-        const opponentStance = await base44.entities.UserStance.get(opponentStanceId);
-        setOpponent(opponentStance);
-
-        // Navigate to debate room after brief delay
-        setTimeout(() => {
-          navigate(createPageUrl("DebateRoom") + `?session_id=${session.id}`);
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Error checking opponent:", error);
-    }
-  };
 
   const handleCopyInvite = () => {
     const inviteUrl = window.location.origin + createPageUrl("JoinDebate") + `?id=${debate?.id}`;

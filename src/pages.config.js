@@ -54,10 +54,10 @@ import DebateRoom from './pages/DebateRoom';
 import Home from './pages/Home';
 import JoinDebate from './pages/JoinDebate';
 import PolymarketAdmin from './pages/PolymarketAdmin';
+import Profile from './pages/Profile';
 import Ranked from './pages/Ranked';
 import Trending from './pages/Trending';
 import WaitingRoom from './pages/WaitingRoom';
-import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -69,10 +69,10 @@ export const PAGES = {
     "Home": Home,
     "JoinDebate": JoinDebate,
     "PolymarketAdmin": PolymarketAdmin,
+    "Profile": Profile,
     "Ranked": Ranked,
     "Trending": Trending,
     "WaitingRoom": WaitingRoom,
-    "Profile": Profile,
 }
 
 export const pagesConfig = {

@@ -208,9 +208,15 @@ export default function DebateRoom() {
             <div>
               <h1 className="text-2xl font-bold text-white">{debate.title}</h1>
               <div className="flex items-center gap-4 mt-2">
-                <Badge className="bg-blue-600">{stance?.position === 'position_a' ? debate.position_a : debate.position_b}</Badge>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400">You:</span>
+                  <Badge className="bg-blue-600">{stance?.position === 'position_a' ? debate.position_a : debate.position_b}</Badge>
+                </div>
                 <span className="text-slate-400">vs</span>
-                <Badge className="bg-purple-600">{opponent?.position === 'position_a' ? debate.position_a : debate.position_b}</Badge>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400">@{opponent?.user_name}:</span>
+                  <Badge className="bg-purple-600">{opponent?.position === 'position_a' ? debate.position_a : debate.position_b}</Badge>
+                </div>
               </div>
             </div>
             <div className="text-right">

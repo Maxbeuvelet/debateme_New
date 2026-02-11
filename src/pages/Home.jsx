@@ -1056,7 +1056,7 @@ export default function Home() {
               <li><a href={createPageUrl("Categories")}>Categories</a></li>
               <li><a href={createPageUrl("Trending")}>Trending</a></li>
               <li><a href={createPageUrl("Achievements")}>Achievements</a></li>
-              <li><a href="#community">Community</a></li>
+              <li><a href={createPageUrl("Community")}>Community</a></li>
             </ul>
           </nav>
         </header>

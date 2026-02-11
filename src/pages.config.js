@@ -47,28 +47,28 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Achievements from './pages/Achievements';
 import Categories from './pages/Categories';
+import Community from './pages/Community';
 import Home from './pages/Home';
 import JoinDebate from './pages/JoinDebate';
 import PolymarketAdmin from './pages/PolymarketAdmin';
-import WaitingRoom from './pages/WaitingRoom';
-import Trending from './pages/Trending';
-import Achievements from './pages/Achievements';
 import Ranked from './pages/Ranked';
-import Community from './pages/Community';
+import Trending from './pages/Trending';
+import WaitingRoom from './pages/WaitingRoom';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Achievements": Achievements,
     "Categories": Categories,
+    "Community": Community,
     "Home": Home,
     "JoinDebate": JoinDebate,
     "PolymarketAdmin": PolymarketAdmin,
-    "WaitingRoom": WaitingRoom,
-    "Trending": Trending,
-    "Achievements": Achievements,
     "Ranked": Ranked,
-    "Community": Community,
+    "Trending": Trending,
+    "WaitingRoom": WaitingRoom,
 }
 
 export const pagesConfig = {

@@ -159,7 +159,7 @@ export default function Ranked() {
                     )}
                   </div>
 
-                  <div className="w-16 h-16 mx-auto my-4">
+                  <div className="w-24 h-24 mx-auto my-4">
                     <img 
                       src={rank.icon} 
                       alt={rank.name}

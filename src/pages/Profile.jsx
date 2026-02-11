@@ -36,7 +36,6 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [matchHistory, setMatchHistory] = useState([]);
-  const [backfilling, setBackfilling] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -86,19 +85,6 @@ export default function Profile() {
     await User.logout();
   };
 
-  const handleBackfillStats = async () => {
-    setBackfilling(true);
-    try {
-      const response = await base44.functions.invoke('backfillUserStats', {});
-      const updatedUser = await User.me();
-      setUser(updatedUser);
-    } catch (error) {
-      console.error('Error backfilling stats:', error);
-    } finally {
-      setBackfilling(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -133,28 +119,15 @@ export default function Profile() {
       <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Profile</h1>
-          <div className="flex items-center gap-2">
-            {(user?.debates_joined === 0 || user?.total_debate_time === 0) && matchHistory.length > 0 && (
-              <Button
-                onClick={handleBackfillStats}
-                disabled={backfilling}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {backfilling ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                {backfilling ? 'Updating...' : 'Update Stats from Past Debates'}
-              </Button>
-            )}
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              size="sm"
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            size="sm"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 

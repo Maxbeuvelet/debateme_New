@@ -22,6 +22,7 @@ export default function DebateRoom() {
   const [videoRoom, setVideoRoom] = useState(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const dailyCallRef = useRef(null);
 
@@ -89,21 +90,21 @@ export default function DebateRoom() {
         return;
       }
 
-      const sessionData = await base44.entities.DebateSession.filter({ id: sessionId });
-      if (!sessionData || sessionData.length === 0) {
-        navigate(createPageUrl("Categories"));
-        return;
+      const currentSession = await base44.entities.DebateSession.get(sessionId);
+      if (!currentSession) {
+        throw new Error("Debate session not found");
       }
 
-      const currentSession = sessionData[0];
-      const debateData = await base44.entities.Debate.filter({ id: currentSession.debate_id });
-      const currentDebate = debateData[0];
+      const currentDebate = await base44.entities.Debate.get(currentSession.debate_id);
+      if (!currentDebate) {
+        throw new Error("Debate not found");
+      }
 
-      const stanceA = await base44.entities.UserStance.filter({ id: currentSession.participant_a_id });
-      const stanceB = await base44.entities.UserStance.filter({ id: currentSession.participant_b_id });
+      const stanceA = await base44.entities.UserStance.get(currentSession.participant_a_id);
+      const stanceB = await base44.entities.UserStance.get(currentSession.participant_b_id);
 
-      const myStance = stanceA[0]?.user_id === currentUser.id ? stanceA[0] : stanceB[0];
-      const opponentStance = stanceA[0]?.user_id === currentUser.id ? stanceB[0] : stanceA[0];
+      const myStance = stanceA?.user_id === currentUser.id ? stanceA : stanceB;
+      const opponentStance = stanceA?.user_id === currentUser.id ? stanceB : stanceA;
 
       const chatMessages = await base44.entities.PublicMessage.filter(
         { session_id: sessionId },
@@ -184,8 +185,8 @@ export default function DebateRoom() {
         const durationMinutes = Math.floor((sessionEndTime - sessionStartTime) / 1000 / 60);
 
         await base44.functions.invoke('trackDebateTime', {
-          session_id: session.id,
-          duration_minutes: durationMinutes
+          sessionId: session.id,
+          userId: user.id
         });
       }
 
@@ -220,6 +221,22 @@ export default function DebateRoom() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-white" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <Card className="bg-slate-800 border-slate-700 p-8 max-w-md">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-500 mb-4">Error Loading Debate</h2>
+            <p className="text-slate-300 mb-6">{error}</p>
+            <Button onClick={() => navigate(createPageUrl("Categories"))} className="bg-blue-600 hover:bg-blue-700">
+              Return to Categories
+            </Button>
+          </div>
+        </Card>
       </div>
     );
   }

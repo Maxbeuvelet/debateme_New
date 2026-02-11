@@ -113,7 +113,7 @@ export default function JoinDebate() {
 
       if (matchResponse.data.matched) {
         // Navigate to debate room
-        navigate(createPageUrl("DebateRoom") + `?sessionId=${matchResponse.data.sessionId}`);
+        navigate(createPageUrl("DebateRoom") + `?session_id=${matchResponse.data.sessionId}`);
       } else {
         // Navigate to waiting room
         navigate(createPageUrl("WaitingRoom") + `?stanceId=${stance.id}`);

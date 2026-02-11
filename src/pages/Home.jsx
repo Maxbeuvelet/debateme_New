@@ -1031,7 +1031,7 @@ export default function Home() {
 
         #footer .copyright {
           letter-spacing: 0.2rem;
-          font-size: 0.6rem;
+          font-size: 0.8rem;
           opacity: 0.75;
           margin-bottom: 0;
           text-transform: uppercase;

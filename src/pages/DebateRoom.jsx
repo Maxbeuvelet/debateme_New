@@ -150,7 +150,8 @@ export default function DebateRoom() {
       }, 100);
     } catch (error) {
       console.error("Error loading debate room:", error);
-      navigate(createPageUrl("Categories"));
+      setError(error.message || "Failed to load debate room");
+      setLoading(false);
     }
   };
 

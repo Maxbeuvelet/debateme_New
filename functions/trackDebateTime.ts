@@ -56,7 +56,9 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const authUser = await base44.auth.me();
 
-    const { sessionId, userId } = await req.json();
+    const body = await req.json();
+    const sessionId = body.sessionId || body.session_id;
+    const userId = body.userId || authUser?.id;
 
     if (!sessionId || !userId) {
       return Response.json({ error: "Missing required parameters" }, { status: 400 });

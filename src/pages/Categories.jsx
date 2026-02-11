@@ -104,9 +104,6 @@ export default function Categories() {
                             {debate.category}
                           </Badge>
                         </div>
-                        <CardDescription className="mt-2 text-slate-400">
-                          ${(debate.marketVolume / 1000).toFixed(0)}K volume
-                        </CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">

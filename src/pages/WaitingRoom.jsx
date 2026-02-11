@@ -30,30 +30,31 @@ export default function WaitingRoom() {
   }, []);
 
   useEffect(() => {
-    if (!myStance || !myStance.session_id) return;
+    if (!myStance) return;
 
-    // Subscribe to session updates
-    const unsubscribe = base44.entities.DebateSession.subscribe((event) => {
-      if (event.type === 'update' && event.data.id === myStance.session_id) {
-        // Check if session is active with both participants
-        if (event.data.status === 'active' && event.data.participant_a_id && event.data.participant_b_id) {
-          // Load opponent and navigate
-          const opponentStanceId = event.data.participant_a_id === myStance.id 
-            ? event.data.participant_b_id 
-            : event.data.participant_a_id;
-          
-          base44.entities.UserStance.get(opponentStanceId).then(opponentStance => {
-            setOpponent(opponentStance);
-            setTimeout(() => {
-              navigate(createPageUrl("DebateRoom") + `?session_id=${event.data.id}`);
-            }, 2000);
-          });
-        }
+    // Subscribe to my stance updates (to detect when session_id gets assigned)
+    const stanceUnsubscribe = base44.entities.UserStance.subscribe((event) => {
+      if (event.type === 'update' && event.data.id === myStance.id && event.data.session_id) {
+        // My stance was matched! Load the session and opponent
+        base44.entities.DebateSession.get(event.data.session_id).then(session => {
+          if (session && session.participant_a_id && session.participant_b_id) {
+            const opponentStanceId = session.participant_a_id === myStance.id 
+              ? session.participant_b_id 
+              : session.participant_a_id;
+            
+            base44.entities.UserStance.get(opponentStanceId).then(opponentStance => {
+              setOpponent(opponentStance);
+              setTimeout(() => {
+                navigate(createPageUrl("DebateRoom") + `?session_id=${session.id}`);
+              }, 2000);
+            });
+          }
+        });
       }
     });
 
     return () => {
-      unsubscribe();
+      stanceUnsubscribe();
     };
   }, [myStance]);
 

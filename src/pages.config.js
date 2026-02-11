@@ -50,13 +50,13 @@
 import Achievements from './pages/Achievements';
 import Categories from './pages/Categories';
 import Community from './pages/Community';
+import DebateRoom from './pages/DebateRoom';
 import Home from './pages/Home';
 import JoinDebate from './pages/JoinDebate';
 import PolymarketAdmin from './pages/PolymarketAdmin';
 import Ranked from './pages/Ranked';
 import Trending from './pages/Trending';
 import WaitingRoom from './pages/WaitingRoom';
-import DebateRoom from './pages/DebateRoom';
 import __Layout from './Layout.jsx';
 
 
@@ -64,13 +64,13 @@ export const PAGES = {
     "Achievements": Achievements,
     "Categories": Categories,
     "Community": Community,
+    "DebateRoom": DebateRoom,
     "Home": Home,
     "JoinDebate": JoinDebate,
     "PolymarketAdmin": PolymarketAdmin,
     "Ranked": Ranked,
     "Trending": Trending,
     "WaitingRoom": WaitingRoom,
-    "DebateRoom": DebateRoom,
 }
 
 export const pagesConfig = {

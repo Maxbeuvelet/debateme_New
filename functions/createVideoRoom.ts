@@ -1,16 +1,20 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
         
-        const { sessionId, userName } = await req.json();
+        const body = await req.json().catch(() => ({}));
+        const sessionId = body.session_id || body.sessionId;
         
-        if (!sessionId || !userName) {
+        if (!sessionId) {
             return Response.json({ 
-                error: 'Missing required parameters: sessionId and userName' 
+                error: 'Missing required parameter: session_id (or sessionId)' 
             }, { status: 400 });
         }
+
+        const userName = body.userName || user?.username || user?.email || "Guest";
 
         // Verify the session exists
         const sessions = await base44.asServiceRole.entities.DebateSession.list();

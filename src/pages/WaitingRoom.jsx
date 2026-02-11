@@ -74,7 +74,7 @@ export default function WaitingRoom() {
 
         // Navigate to debate room after brief delay
         setTimeout(() => {
-          navigate(createPageUrl("DebateRoom") + `?sessionId=${session.id}`);
+          navigate(createPageUrl("DebateRoom") + `?session_id=${session.id}`);
         }, 2000);
       }
     } catch (error) {

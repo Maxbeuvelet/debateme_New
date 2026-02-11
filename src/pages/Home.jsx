@@ -1035,6 +1035,7 @@ export default function Home() {
           opacity: 0.75;
           margin-bottom: 0;
           text-transform: uppercase;
+          font-weight: 600;
         }
 
         body.is-article-visible #footer {

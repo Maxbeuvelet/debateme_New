@@ -115,15 +115,15 @@ export default function Profile() {
   const rankCustomImage = getRankCustomImage(currentLevel);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+    <div className="min-h-screen bg-slate-900">
+      <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Profile</h1>
+          <h1 className="text-2xl font-bold text-white">Profile</h1>
           <Button
             onClick={handleLogout}
             variant="outline"
             size="sm"
-            className="border-slate-300 text-slate-700 hover:bg-slate-100"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
@@ -135,7 +135,7 @@ export default function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Sidebar - User Info */}
           <div className="lg:col-span-3">
-            <Card className="bg-white border-slate-200">
+            <Card className="bg-slate-800 border-slate-700">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-20 h-20 rounded-full bg-transparent flex items-center justify-center shadow-lg overflow-hidden mb-4">
@@ -146,18 +146,18 @@ export default function Profile() {
                         className="w-full h-full object-contain"
                       />
                     ) : (
-                      <RankIcon className="w-10 h-10 text-slate-700" />
+                      <RankIcon className="w-10 h-10 text-slate-300" />
                     )}
                   </div>
-                  <h2 className="text-xl font-bold text-slate-900">@{user.username || user.email?.split('@')[0]}</h2>
-                  <p className="text-sm text-slate-500 mb-4">#{user.id?.slice(0, 8)}</p>
+                  <h2 className="text-xl font-bold text-white">@{user.username || user.email?.split('@')[0]}</h2>
+                  <p className="text-sm text-slate-400 mb-4">#{user.id?.slice(0, 8)}</p>
                   
-                  <div className="w-full space-y-3 text-left mt-4 pt-4 border-t border-slate-200">
+                  <div className="w-full space-y-3 text-left mt-4 pt-4 border-t border-slate-700">
                     <div className="flex items-start gap-2">
                       <Mail className="w-4 h-4 text-slate-400 mt-0.5" />
                       <div>
                         <p className="text-xs text-slate-500">Email</p>
-                        <p className="text-sm text-slate-900 break-all">{user.email}</p>
+                        <p className="text-sm text-white break-all">{user.email}</p>
                       </div>
                     </div>
                   </div>
@@ -169,41 +169,41 @@ export default function Profile() {
           {/* Right Content - Stats & History */}
           <div className="lg:col-span-9 space-y-6">
             {/* Stats Overview */}
-            <Card className="bg-white border-slate-200">
+            <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-slate-900 text-base">Statistics</CardTitle>
+                <CardTitle className="text-white text-base">Statistics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Metric</th>
-                        <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Value</th>
+                      <tr className="border-b border-slate-700">
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Metric</th>
+                        <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Value</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-slate-100">
-                        <td className="py-3 px-4 text-sm text-slate-700">Total Debates</td>
-                        <td className="py-3 px-4 text-sm font-medium text-slate-900">{user.debates_joined || 0}</td>
+                      <tr className="border-b border-slate-700/50">
+                        <td className="py-3 px-4 text-sm text-slate-300">Total Debates</td>
+                        <td className="py-3 px-4 text-sm font-medium text-white">{user.debates_joined || 0}</td>
                       </tr>
-                      <tr className="border-b border-slate-100">
-                        <td className="py-3 px-4 text-sm text-slate-700">Total Time in Debates</td>
-                        <td className="py-3 px-4 text-sm font-medium text-slate-900">{Math.floor((user.total_debate_time || 0) / 60)} minutes</td>
+                      <tr className="border-b border-slate-700/50">
+                        <td className="py-3 px-4 text-sm text-slate-300">Total Time in Debates</td>
+                        <td className="py-3 px-4 text-sm font-medium text-white">{Math.floor((user.total_debate_time || 0) / 60)} minutes</td>
                       </tr>
-                      <tr className="border-b border-slate-100">
-                        <td className="py-3 px-4 text-sm text-slate-700">Achievements Earned</td>
-                        <td className="py-3 px-4 text-sm font-medium text-slate-900">{(user.achievements || []).length}</td>
+                      <tr className="border-b border-slate-700/50">
+                        <td className="py-3 px-4 text-sm text-slate-300">Achievements Earned</td>
+                        <td className="py-3 px-4 text-sm font-medium text-white">{(user.achievements || []).length}</td>
                       </tr>
-                      <tr className="border-b border-slate-100">
-                        <td className="py-3 px-4 text-sm text-slate-700">Current Level</td>
-                        <td className="py-3 px-4 text-sm font-medium text-slate-900">Level {currentLevel}</td>
+                      <tr className="border-b border-slate-700/50">
+                        <td className="py-3 px-4 text-sm text-slate-300">Current Level</td>
+                        <td className="py-3 px-4 text-sm font-medium text-white">Level {currentLevel}</td>
                       </tr>
                       <tr>
-                        <td className="py-3 px-4 text-sm text-slate-700">Experience Points</td>
+                        <td className="py-3 px-4 text-sm text-slate-300">Experience Points</td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-slate-900">{currentXp} / {xpForNextLevel} XP</span>
+                            <span className="text-sm font-medium text-white">{currentXp} / {xpForNextLevel} XP</span>
                             <div className="flex-1 max-w-[200px]">
                               <Progress value={xpProgress} className="h-2" />
                             </div>
@@ -217,46 +217,46 @@ export default function Profile() {
             </Card>
 
             {/* Match History */}
-            <Card className="bg-white border-slate-200">
+            <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-slate-900 text-base">Match History</CardTitle>
+                <CardTitle className="text-white text-base">Match History</CardTitle>
               </CardHeader>
               <CardContent>
                 {matchHistory.length === 0 ? (
                   <div className="text-center py-12">
-                    <Gavel className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-slate-500">No matches yet. Join your first debate!</p>
+                    <Gavel className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-400">No matches yet. Join your first debate!</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b border-slate-200">
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Debate</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">My Position</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Opponent</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                        <tr className="border-b border-slate-700">
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Debate</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">My Position</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Opponent</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Date</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase">Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         {matchHistory.map((match, idx) => (
-                          <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
+                          <tr key={idx} className="border-b border-slate-700/50 hover:bg-slate-700/30">
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2">
-                                <Gavel className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                                <span className="text-sm text-slate-900 line-clamp-1">{match.debate.title}</span>
+                                <Gavel className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                                <span className="text-sm text-white line-clamp-1">{match.debate.title}</span>
                               </div>
                             </td>
                             <td className="py-3 px-4">
-                              <Badge variant="outline" className="text-xs border-slate-300 text-slate-700">
+                              <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
                                 {match.myStance.position === "position_a" ? match.debate.position_a : match.debate.position_b}
                               </Badge>
                             </td>
-                            <td className="py-3 px-4 text-sm text-slate-700">
+                            <td className="py-3 px-4 text-sm text-slate-300">
                               @{match.opponentStance.user_name}
                             </td>
-                            <td className="py-3 px-4 text-sm text-slate-500">
+                            <td className="py-3 px-4 text-sm text-slate-400">
                               {new Date(match.session.created_date).toLocaleDateString()}
                             </td>
                             <td className="py-3 px-4">

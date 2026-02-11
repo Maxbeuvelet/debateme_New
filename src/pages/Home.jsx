@@ -772,7 +772,8 @@ export default function Home() {
           display: block;
           position: absolute;
           top: calc(-3.5rem - 1px);
-          left: calc(50% - 1px);
+          left: 50%;
+          transform: translateX(-0.5px);
           width: 1px;
           height: calc(3.5rem + 1px);
           background: #ffffff;

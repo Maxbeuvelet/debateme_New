@@ -201,19 +201,9 @@ export default function WaitingRoom() {
 
             <div className="flex gap-2">
               <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyInvite}
-                className="border-slate-600 text-slate-300 hover:bg-slate-800"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                {copied ? "Copied!" : "Invite Link"}
-              </Button>
-              <Button
-                variant="outline"
                 size="sm"
                 onClick={handleLeave}
-                className="border-red-600/50 text-red-400 hover:bg-red-950/50"
+                className="bg-red-600 text-white hover:bg-red-700"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Leave

@@ -55,6 +55,7 @@ import WaitingRoom from './pages/WaitingRoom';
 import Trending from './pages/Trending';
 import Achievements from './pages/Achievements';
 import Ranked from './pages/Ranked';
+import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +68,7 @@ export const PAGES = {
     "Trending": Trending,
     "Achievements": Achievements,
     "Ranked": Ranked,
+    "Community": Community,
 }
 
 export const pagesConfig = {

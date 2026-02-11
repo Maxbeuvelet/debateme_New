@@ -56,6 +56,7 @@ import PolymarketAdmin from './pages/PolymarketAdmin';
 import Ranked from './pages/Ranked';
 import Trending from './pages/Trending';
 import WaitingRoom from './pages/WaitingRoom';
+import DebateRoom from './pages/DebateRoom';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "Ranked": Ranked,
     "Trending": Trending,
     "WaitingRoom": WaitingRoom,
+    "DebateRoom": DebateRoom,
 }
 
 export const pagesConfig = {

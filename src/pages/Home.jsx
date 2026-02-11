@@ -1124,7 +1124,7 @@ export default function Home() {
         </div>
 
         <footer id="footer">
-          <p className="copyright">&copy; Untitled.</p>
+          <p className="copyright">DebateMe 2026</p>
         </footer>
       </div>
 

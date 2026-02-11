@@ -123,22 +123,30 @@ export default function DebateRoom() {
       setMessages(chatMessages.reverse());
       setVideoRoom(roomResponse.data.roomUrl);
 
-      // Initialize Daily.co
-      if (roomResponse.data.room_url && window.DailyIframe) {
-        const callFrame = window.DailyIframe.createFrame({
-          showLeaveButton: false,
-          iframeStyle: {
-            width: '100%',
-            height: '100%',
-            border: 'none',
-            borderRadius: '8px'
-          }
-        });
-        dailyCallRef.current = callFrame;
-        await callFrame.join({ url: roomResponse.data.room_url });
-      }
-
       setLoading(false);
+
+      // Initialize Daily.co - wait for component to render
+      setTimeout(async () => {
+        if (roomResponse.data.roomUrl && window.DailyIframe) {
+          const container = document.getElementById('video-container');
+          if (container) {
+            const callFrame = window.DailyIframe.createFrame(container, {
+              showLeaveButton: false,
+              iframeStyle: {
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                borderRadius: '8px'
+              }
+            });
+            dailyCallRef.current = callFrame;
+            await callFrame.join({ 
+              url: roomResponse.data.roomUrl,
+              token: roomResponse.data.token
+            });
+          }
+        }
+      }, 100);
     } catch (error) {
       console.error("Error loading debate room:", error);
       navigate(createPageUrl("Categories"));
